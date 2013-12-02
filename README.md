@@ -52,6 +52,6 @@ In Freescape, collision detection is specified as occurring against the axis-ali
 ### Areas
 Areas are individual scenes — they collect some objects with some scripts (animators and conditions on the 16-bit platforms, conditions only on the 8-bit platforms), set a scale for the scene and have some defined entrances.
 
-User traversal between (and, sometimes, within) areas is handled by adding a condition on the thing that looks like a door that warps the user to an entrance elsewhere.
+User traversal between (and, sometimes, within) areas is handled by adding a condition on the thing that looks like a door that checks for collisions and warps the user to an entrance elsewhere when appropriate.
 
 Note the scene scale. It's sort of like floating point for the entire scene. You trade scene size for geometry precision.
