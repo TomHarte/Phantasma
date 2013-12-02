@@ -438,7 +438,7 @@
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "$(SRCROOT)";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SYSTEM_APPS_DIR)/Games/Neverball/Neverball.app/Contents/Frameworks/SDL_ttf.framework/Versions/A\"";
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				MACOSX_DEPLOYMENT_TARGET = gi;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-Wl,-search_paths_first";
 				PRODUCT_NAME = Phantasma;
@@ -470,7 +470,7 @@
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SYSTEM_APPS_DIR)/Games/Neverball/Neverball.app/Contents/Frameworks/SDL_ttf.framework/Versions/A\"";
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				MACOSX_DEPLOYMENT_TARGET = gi;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-Wl,-search_paths_first";
 				PRODUCT_NAME = Phantasma;
