@@ -43,7 +43,7 @@ The 8-bit construction sets use a binary format. If memory serves it's essential
 I no longer specifically recall where I obtained the documentation on the binary code used on the 8-bit platforms but I explicitly did not reverse engineer it myself.
 
 ### Objects
-An object is the fundamental unit of the 3d world. In Freescape world every object is either a convex planar polygon, a cuboid or a 'pyramid' (actually a right frustum). They're all axis aligned. The pyramid may correspondingly have one of six orientations, depending on which direction you want the smaller end to face.
+An object is the fundamental unit of the 3d world. In Freescape world every object is either a convex planar polygon, a cuboid or a 'pyramid' (actually a right rectangular frustum). They're all axis aligned. The pyramid may correspondingly have one of six orientations, depending on which direction you want the smaller end to face.
 
 In Freescape, collision detection is specified as occurring against the axis-aligned bounding boxes of these shapes.
 
