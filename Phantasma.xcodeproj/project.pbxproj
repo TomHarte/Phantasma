@@ -81,7 +81,7 @@
 		4B8F7C140D7A104B007CE309 /* VGAGAME.PAL */ = {isa = PBXFileReference; lastKnownFileType = file; name = VGAGAME.PAL; path = res/VGAGAME.PAL; sourceTree = "<group>"; };
 		4B9320B30D56056800F67B58 /* ebgf_Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ebgf_Matrix.h; sourceTree = "<group>"; };
 		4B9320B40D56056800F67B58 /* EBGFMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EBGFMatrix.cpp; sourceTree = "<group>"; };
-		4B93B7C70D88948700655063 /* Total Eclipse */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Total Eclipse"; path = "res/Total Eclipse"; sourceTree = "<group>"; };
+		4B93B7C70D88948700655063 /* Total Eclipse */ = {isa = PBXFileReference; lastKnownFileType = text; name = "Total Eclipse"; path = "res/Total Eclipse"; sourceTree = "<group>"; };
 		4B94569A0CF4E56300FBD481 /* ebgf_GLExts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ebgf_GLExts.h; sourceTree = "<group>"; };
 		4B94569B0CF4E56300FBD481 /* EBGFGLExts.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EBGFGLExts.cpp; sourceTree = "<group>"; };
 		4B97108A0D7B25D900BCE9E2 /* Freescape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Freescape.h; path = src/Freescape.h; sourceTree = "<group>"; };
@@ -104,9 +104,9 @@
 		4BAAE09F0D565FA200E894B3 /* EBGFShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EBGFShader.cpp; sourceTree = "<group>"; };
 		4BB062210D16B11600DEA3F1 /* ebgf_Polygon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ebgf_Polygon.h; sourceTree = "<group>"; };
 		4BB062220D16B11600DEA3F1 /* EBGFPolygon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EBGFPolygon.cpp; sourceTree = "<group>"; };
-		4BBC46920D85E41D00C39603 /* Dark Side */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Dark Side"; path = "res/Dark Side"; sourceTree = "<group>"; };
+		4BBC46920D85E41D00C39603 /* Dark Side */ = {isa = PBXFileReference; lastKnownFileType = text; name = "Dark Side"; path = "res/Dark Side"; sourceTree = "<group>"; };
 		4BBC46970D85E44A00C39603 /* FreescapeZXBinaryLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FreescapeZXBinaryLoader.cpp; path = src/FreescapeZXBinaryLoader.cpp; sourceTree = "<group>"; };
-		4BBC46CB0D85E66700C39603 /* Driller */ = {isa = PBXFileReference; lastKnownFileType = file; name = Driller; path = res/Driller; sourceTree = "<group>"; };
+		4BBC46CB0D85E66700C39603 /* Driller */ = {isa = PBXFileReference; lastKnownFileType = text; name = Driller; path = res/Driller; sourceTree = "<group>"; };
 		4BD930AE0CF37D370013E4E3 /* ebgf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ebgf.h; sourceTree = "<group>"; };
 		4BD930AF0CF37D370013E4E3 /* ebgf_Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ebgf_Platform.h; sourceTree = "<group>"; };
 		4BD930B00CF37D370013E4E3 /* ebgf_ResourceStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ebgf_ResourceStore.h; sourceTree = "<group>"; };
@@ -348,9 +348,15 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Phantasma" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CityScape */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -433,8 +439,10 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "$(SRCROOT)";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SYSTEM_APPS_DIR)/Games/Neverball/Neverball.app/Contents/Frameworks/SDL_ttf.framework/Versions/A\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-Wl,-search_paths_first";
 				PRODUCT_NAME = Phantasma;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
@@ -443,10 +451,7 @@
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = (
@@ -466,8 +471,10 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SYSTEM_APPS_DIR)/Games/Neverball/Neverball.app/Contents/Frameworks/SDL_ttf.framework/Versions/A\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-Wl,-search_paths_first";
 				PRODUCT_NAME = Phantasma;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
