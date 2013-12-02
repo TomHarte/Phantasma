@@ -55,3 +55,10 @@ Areas are individual scenes — they collect some objects with some scripts (ani
 User traversal between (and, sometimes, within) areas is handled by adding a condition on the thing that looks like a door that checks for collisions and warps the user to an entrance elsewhere when appropriate.
 
 Note the scene scale. It's sort of like floating point for the entire scene. You trade scene size for geometry precision.
+
+## EBGF
+That's event-based game framework. It's a little framework I put together to help with game writing. The fundamental concepts are message passing to communicate events, with all the boring stuff about creating windows, dealing with resizes, etc, all handled for you. It also maintains a stack of screens and has a few maths helpers.
+
+The specific app needs to respond only to the proper messages — update, draw (frame rate compensation is automatic), setup, etc. This project requires very little of EBGF. Check out gamemain.cpp for the interface between Phantasma and EBGF.
+
+It's through the EBGF that the dependencies creep in. As I'd like to eliminate the dependencies in favour of using OS-specific code I'd like to eliminate a large part of this area.
