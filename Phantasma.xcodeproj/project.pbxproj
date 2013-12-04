@@ -41,7 +41,6 @@
 		4BD930D70CF37FF90013E4E3 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BD930C10CF37ECA0013E4E3 /* SDL_image.framework */; };
 		4BD930D80CF37FF90013E4E3 /* SDL_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BD930C20CF37ECA0013E4E3 /* SDL_mixer.framework */; };
 		4BD9310C0CF387D90013E4E3 /* EBGFVertexArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BD9310B0CF387D90013E4E3 /* EBGFVertexArray.cpp */; };
-		4BE1CF34184F148F00147016 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4BE1CF33184F148F00147016 /* Info.plist */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -360,7 +359,6 @@
 			files = (
 				4BA7C9FF0D8451A60088381A /* Tempest.ttf in Resources */,
 				4B99F33F0D870221000F96DA /* FreescapeGL Icon.icns in Resources */,
-				4BE1CF34184F148F00147016 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
