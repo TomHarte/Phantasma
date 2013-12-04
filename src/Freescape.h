@@ -4,7 +4,12 @@
 #include "SDL.h"
 #include "SDL_opengl.h"
 #include "ebgf/ebgf_Vector.h"
+#include "ebgf/ebgf_Matrix.h"
 #include "ebgf/ebgf_Font.h"
+#include "ebgf/ebgf_DrawElements.h"
+#include "ebgf/ebgf_InterleavedArrays.h"
+#include "ebgf/ebgf_DataCollector.h"
+#include "SDL_mixer.h"
 
 class CFreescapeGame;
 struct CFreescapeObject;
@@ -15,16 +20,18 @@ struct CFreescapeObject;
 #define MAX_ANIMATORS_PER_AREA	256
 #define MAX_ENTRANCES_PER_AREA	256
 
+#define MAX_SHOOTERS_PER_FRAME	32
+
 #define FCL_STACK_DEPTH			256
 
 #define	MAX_FCL_LENGTH			65536
 
-#define SENSORFLAG_UP			1
-#define SENSORFLAG_DOWN			2
-#define SENSORFLAG_NORTH		4
-#define SENSORFLAG_SOUTH		8
-#define SENSORFLAG_EAST			16
-#define SENSORFLAG_WEST			32
+#define SENSORFLAG_UP			0x08
+#define SENSORFLAG_DOWN			0x04
+#define SENSORFLAG_NORTH		0x20
+#define SENSORFLAG_SOUTH		0x10
+#define SENSORFLAG_EAST			0x02
+#define SENSORFLAG_WEST			0x01
 
 #define MAX_VISIBLE_MESSAGES	9
 
@@ -38,6 +45,14 @@ struct CFreescapeObject;
 #define VAR_SCORE				258
 
 #define NUM_BITS				256
+#define NUM_SOUNDS				32
+
+class CGameHandler
+{
+	public:
+		virtual ~CGameHandler() {};
+		virtual void DrawHud(CFont *Font, Sint32 *Variables, float Width, float Height) = 0;
+};
 
 class CFreescapeGame
 {
@@ -50,6 +65,7 @@ class CFreescapeGame
 		bool OpenTXT(char *name);
 		bool OpenZXBinary(char *name, int Offset);
 		bool SetFont(char *name);
+		bool LoadSounds(char *name);
 
 		void Reset();
 		void Draw();
@@ -63,7 +79,10 @@ class CFreescapeGame
 		void SetupDisplay();
 		void PostASCII(char key);
 
+		void SetHandler(CGameHandler *H);
+
 	private:
+		CGameHandler *Handler;
 		struct CColour
 		{
 			unsigned char Entry;
@@ -93,6 +112,15 @@ class CFreescapeGame
 		void Delay(int c);
 		void PrintMessage(char *Text, int Instrument);
 		void SetMode(int m);
+		Sint32 GetVariableMask();
+		void PlaySound(int id);
+		void AddShot(float *Pos);
+		void GetFrontVector(float *V);
+		void GetSideVector(float *V);
+
+		CMatrix ViewMatrix;
+
+		CArea *GetCurArea();
 
 		void Assemble();
 
@@ -115,8 +143,9 @@ class CFreescapeGame
 				void Destroy();
 				void SetVis(bool v);
 
-				void Draw();
-				void Update(float Scale);
+				void Draw(float *PlayerPos);
+				void Update();
+				void UpdateLogic(float *PlayerPos, float Scale);
 				void Reset();
 
 				bool GetCollided();		void SetCollided(bool);
@@ -135,14 +164,15 @@ class CFreescapeGame
 				bool GetMoveable();
 				void SetLocation(float *Pos, float *Size);
 				void SetStartPos(float *Pos);
-				void SetNumSides(int c);
+				void SetNumSides(unsigned int c);
 				int GetNumSides();
-				void SetVertex(int id, float *Pos);
-				void SetPyramidType(int c);
+				void SetVertex(unsigned int id, float *Pos);
+				void SetPyramidType(unsigned int c);
 				void SetApex(float *A, float *B);
 				void SetColour(unsigned int, CColour);
 				void SetSensorStats(int Speed, int Range, int DirFlags, int SensorID);
-				void AddObject(int id);
+				void AddObject(unsigned int id);
+				void SetArea(unsigned int id);
 
 				void Assemble();
 				bool CheckInside(float *Pos);
@@ -153,24 +183,44 @@ class CFreescapeGame
 				bool GetElevation(float *PPos, float Radius, float &El);
 
 			private:
-				bool Collided, Shot, Activated, Moveable;
-				float Pos[3], StartPos[3], Size[3];
-				ObjectStates CurState, DefaultState;
+				/* the game to which this object belongs */
 				CFreescapeGame *Parent;
+
+				/* flags that are used during scripting */
+				bool Collided, Shot, Activated;
+
+				/* position and size stats */
+				bool Moveable;
+				float Pos[3], StartPos[3], Size[3];
+
+				/* a few things related to whether the object is visible, invisble, destroyed, etc */
+				ObjectStates CurState, DefaultState;
+
+				/* two bits for tweening */
+				float PosAdd[3];
+				int AddSteps;
+
+				/* two things related to collision detection */
 				float HitNormal[3]; bool Supporting;
 
+				/* the object type */
 				ObjectTypes Type;
+
+				/* some things used temporarily, during construction - need to break them off into a temp struct really */
 				CColour Colours[6];
 				float Verts[6][3];
 				int NumSides;
-				int ObjectPtrs[MAX_OBJECTS_PER_AREA];
-				int GroupSize;
-				
 				int PyramidType;
 				float ApexStart[2], ApexEnd[2];
-				
+
+				/* a quick fix method of storing groups ... */
+				unsigned int GroupSize, Area;
+				int ObjectPtrs[MAX_OBJECTS_PER_AREA];
+
+				/* a bunch of stats, used if this is a sensor object */
 				int Speed, Range, DirFlags, SensorID;
-				
+
+				/* collision structs */
 				struct Plane
 				{
 					CVector Normal;
@@ -179,17 +229,43 @@ class CFreescapeGame
 				struct CollFace
 				{
 					public:
-						bool SetNormal(float *V1, float *V2, float *V3);
-						void AddEdge(float *V1, float *V2);
+						bool SetNormal(CVector &N, float D);
+						void AddEdge(CVector &V1, CVector &V2);
 					Plane SitsOn;
 					Plane Surrounders[6];
 					int NumSurrounders;
 				};
+
+				/* local functions for building the graphic and collision shape */
+				void BeginFace(CColour col);
+				void AddVert(float *V);
+				void AddVert(float x, float y, float z);
+				void EndFace();
+
+				/* the collision form */
 				CollFace Faces[6];
 				int NumFaces;
 
+				/* the graphic */
+				CInterleavedArrays *VArray;
+				CDrawElements *Elements;
+				float PolyOffset;
+
+				/* stuff used for constructing the graphic */
+				static CVector TempVArray[6];
+				static int NumVerts;
+				static CColour CurCol;
+				static DataCollector<GLfloat> *VertexCollector;
+				static DataCollector<GLuint> *IndexCollector;
+
+				/* pointer to this object's script, if it has one at all */
 				CCondition *Condition;
+
+				/* function for checking if the player hits this object, and if so when */
 				bool CheckIntercept(float *Start, float *Move, float I, float Radius, float Descent, float Ascent);
+
+				/* counter for graphic display of shooting the player */
+				int PlayerShot;
 		};
 		class CCondition
 		{
@@ -328,7 +404,9 @@ class CFreescapeGame
 				float GetFrontDistance();
 
 				void SetupDisplay();
-				void Draw();
+				void Enter();
+				void Draw(float *PlayerPos);
+				void UpdateLogic(float *PlayerPos);
 				void Update();
 				void Reset();
 				void Assemble();
@@ -346,8 +424,10 @@ class CFreescapeGame
 				void SetEntrance(unsigned int id, Entrance *);
 
 				bool FixCollisions(float *Pos, float *Move, float Radius, float Ascent, float Descent);
-	
+				float GetHeadRoom(float *Pos, float Radius);
+
 				void SetColours(CColour &Floor, CColour &Sky);
+				void PushOut(float *Pos, float Radius, float Ascent, float Descent);
 
 			private:
 				CObject *Objects[MAX_OBJECTS_PER_AREA];
@@ -371,7 +451,9 @@ class CFreescapeGame
 		Sint32 VarMask;
 		bool ZXVars;
 		bool PosDirty;
-		float PlayerPos[3], PlayerAng[3];	// player position
+		float PlayerPos[3], PlayerAng[3];	// player position, and adders for tweening
+		float PlayerPosAdd[3], PlayerAngAdd[3];
+		int AddSteps;
 		bool Bits[NUM_BITS];				// big bit field, for 8bit games
 		int CurArea;						// the area the player is currently standing in
 		struct
@@ -409,25 +491,28 @@ class CFreescapeGame
 		int GIBase;
 		
 		/* ZX loading */
-		CCondition *GetConditionZXBinary(Uint8 *Ptr, int Len);
+		CCondition *GetConditionZXBinary(Uint8 *Ptr, int Len, bool print = false);
 
 		/* some functions for game update */
-		float VelocityY, CurHeight, CrouchHeight;
+		float VelocityY, CurHeight, CrouchHeight, LastHeight;
 		float FindFrontObject(int &Area, int &Object);
 		bool Crouching;
-		int ShotObject;
 		float MoveVec[3];
 		int DelayCounter;
 		int ForcedMoveCounter;
 		int PlayMode;
 
-		CFont *PrintFont;
 		struct
 		{
 			int Age;
 			char Text[256];
 		} Messages[MAX_VISIBLE_MESSAGES];
 		int MessagePointer;
+
+		Mix_Chunk *Sounds[NUM_SOUNDS];
+		GLfloat Shooters[MAX_SHOOTERS_PER_FRAME][3];
+		int NumShooters;
+		CFont *PrintFont;
 };
 
 #endif

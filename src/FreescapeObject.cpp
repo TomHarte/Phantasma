@@ -1,18 +1,40 @@
 #include "Freescape.h"
+#include "ebgf.h"
+#include "ebgf/ebgf_DataCollector.h"
 #include <stdio.h>
+
+CVector CFreescapeGame::CObject::TempVArray[6];
+int CFreescapeGame::CObject::NumVerts;
+CFreescapeGame::CColour CFreescapeGame::CObject::CurCol;
+DataCollector<GLfloat> *CFreescapeGame::CObject::VertexCollector;
+DataCollector<GLuint> *CFreescapeGame::CObject::IndexCollector;
+
+#define SHOT_NUM_FRAMES	10
 
 CFreescapeGame::CObject::CObject(CFreescapeGame *P)
 {
 	Parent = P;
 	Condition = NULL;
 	GroupSize = 0;
+	DefaultState = VISIBLE;
+	PlayerShot = 0;
+	NumFaces = 0;
+	VArray = NULL;
+	Elements = NULL;
+	PolyOffset = 0;
 }
 
 CFreescapeGame::CObject::~CObject()
 {
 	delete Condition;
 	Condition = NULL;
+	delete VArray;
+	VArray = NULL;
+	delete Elements;
+	Elements = NULL;
 }
+
+#define MAX_MOVE	256
 
 void CFreescapeGame::CObject::Move(float x, float y, float z)
 {
@@ -27,31 +49,21 @@ void CFreescapeGame::CObject::Move(float x, float y, float z)
 				if(O) O->Move(x, y, z);
 			}
 		}
-		Pos[0] += x; Pos[1] += y; Pos[2] += z;
-//		printf("+%0.2f %0.2f %0.2f -> %0.2f %0.2f %0.2f\n", x, y, z, Pos[0], Pos[1], Pos[2]);
+		if(fabs(x) > MAX_MOVE || fabs(y) > MAX_MOVE || fabs(z) > MAX_MOVE)
+		{
+			Pos[0] += x; Pos[1] += y; Pos[2] += z;
+		}
+		else
+		{
+			PosAdd[0] = x * 0.25f; PosAdd[1] = y * 0.25f; PosAdd[2] = z * 0.25f;
+			AddSteps = 4;
+		}
 	}
 }
 
 void CFreescapeGame::CObject::MoveTo(float x, float y, float z)
 {
-	if(Moveable || Type == GROUP)
-	{
-		if(Type == GROUP)
-		{
-			x -= Pos[0]; y -= Pos[1]; z -= Pos[2];
-			int c = GroupSize;
-			while(c--)
-			{
-				CObject *O = Parent->GetObject(ObjectPtrs[c]);
-				if(O) O->Move(x, y, z);
-			}
-			Pos[0] += x; Pos[1] += y; Pos[2] += z;
-		}
-		else
-		{
-			Pos[0] = x; Pos[1] = y; Pos[2] = z;
-		}
-	}
+	Move(x - Pos[0], y - Pos[1], z - Pos[2]);
 }
 
 void CFreescapeGame::CObject::Reset()
@@ -68,6 +80,7 @@ void CFreescapeGame::CObject::Reset()
 		Condition->Reset();
 	}
 	Shot = Activated = Collided = false;
+	AddSteps = 0;
 }
 
 bool CFreescapeGame::CObject::GetCollided()		{ return Collided; }
@@ -100,11 +113,13 @@ void CFreescapeGame::CObject::SetVis(bool v)
 		CurState = v ? VISIBLE : INVISIBLE;
 		if(Type == GROUP)
 		{
+//			printf("group setvis...\n");
 			int c = GroupSize;
 			while(c--)
 			{
-				CObject *O = Parent->GetObject(ObjectPtrs[c]);
-				if(O) O->SetVis(v);
+				Parent->SetVis(ObjectPtrs[c], Area, v);
+//				CObject *O = Parent->GetObject(ObjectPtrs[c]);
+//				if(O) O->SetVis(v);
 			}
 		}
 	}
@@ -170,7 +185,7 @@ void CFreescapeGame::CObject::SetStartPos(float *P)
 	StartPos[0] = Pos[0]; StartPos[1] = Pos[1]; StartPos[2] = Pos[2];
 }
 
-void CFreescapeGame::CObject::SetNumSides(int c)
+void CFreescapeGame::CObject::SetNumSides(unsigned int c)
 {
 	NumSides = c;
 }
@@ -189,14 +204,14 @@ int CFreescapeGame::CObject::GetNumSides()
 	return NumSides;
 }
 
-void CFreescapeGame::CObject::SetVertex(int id, float *Pos)
+void CFreescapeGame::CObject::SetVertex(unsigned int id, float *Pos)
 {
 	Verts[id][0] = Pos[0];
 	Verts[id][1] = Pos[1];
 	Verts[id][2] = Pos[2];
 }
 
-void CFreescapeGame::CObject::SetPyramidType(int c)
+void CFreescapeGame::CObject::SetPyramidType(unsigned int c)
 {
 	PyramidType = c;
 }
@@ -217,34 +232,23 @@ void CFreescapeGame::CObject::SetSensorStats(int S, int R, int DF, int SID)
 	Speed = S; Range = R; DirFlags = DF; SensorID = SID;
 }
 
-void CFreescapeGame::CObject::AddObject(int o)
+void CFreescapeGame::CObject::AddObject(unsigned int o)
 {
 	ObjectPtrs[GroupSize] = o; GroupSize++;
 }
 
-bool CFreescapeGame::CObject::CollFace::SetNormal(float *Vert1, float *Vert2, float *Vert3)
+bool CFreescapeGame::CObject::CollFace::SetNormal(CVector &N, float D)
 {
-	CVector V1, V2, V3, E1, E2;
-	V1 = Vert1; V2 = Vert2; V3 = Vert3;
-	E1 = V2 - V1;
-	E2 = V3 - V1;
-	
-	if(!E1.SQLength()) return false;
-	if(!E2.SQLength()) return false;
-	
-	SitsOn.Normal = E2^E1;
-	SitsOn.Normal.Normalise();
-	SitsOn.Distance = SitsOn.Normal*V1;
+	SitsOn.Normal = N;
+	SitsOn.Distance = D;
 
 	NumSurrounders = 0;
 	return true;
 }
 
-void CFreescapeGame::CObject::CollFace::AddEdge(float *Vert1, float *Vert2)
+void CFreescapeGame::CObject::CollFace::AddEdge(CVector &V1, CVector &V2)
 {
-	CVector V1, V2, E;
-	V1 = Vert1;
-	V2 = Vert2;
+	CVector E;
 	E = V2 - V1;
 
 	if(!E.SQLength()) return;
@@ -255,8 +259,72 @@ void CFreescapeGame::CObject::CollFace::AddEdge(float *Vert1, float *Vert2)
 	NumSurrounders++;
 }
 
+void CFreescapeGame::CObject::BeginFace(CColour col)
+{
+	CurCol = col;
+	NumVerts = 0;
+}
+
+void CFreescapeGame::CObject::AddVert(float *V)
+{
+	TempVArray[NumVerts] = V;
+	// kill same spot vertices here
+	if(NumVerts > 0)
+	{
+		CVector V1 = TempVArray[NumVerts];
+		CVector V2 = TempVArray[NumVerts-1];
+		CVector Edge = V1 - V2;
+		if(Edge.SQLength() < 0.001) return;
+	}
+	NumVerts++;
+}
+
+void CFreescapeGame::CObject::AddVert(float x, float y, float z)
+{
+	float Array[3] = {x, y, z};
+	AddVert(Array);
+}
+
+void CFreescapeGame::CObject::EndFace()
+{
+	if(NumVerts < 3 || !CurCol.Entry) return;
+
+	CVector E1, E2;
+	E1 = TempVArray[1] - TempVArray[0];
+	E2 = TempVArray[2] - TempVArray[0];
+
+	CVector Normal = E2^E1;
+	Normal.Normalise();
+	float Distance = Normal*TempVArray[0];
+
+	Faces[NumFaces].SetNormal(Normal, Distance);
+	int c = NumVerts;
+	while(c--)
+		Faces[NumFaces].AddEdge(TempVArray[c], TempVArray[(c+1)%NumVerts]);
+
+	NumFaces++;
+
+	/* and add to vertex / face array - aiming for GL_C4F_N3F_V3F */
+	int IndexBase = VertexCollector->GetNum() / 10;
+	for(c = 0; c < NumVerts; c++)
+	{
+		VertexCollector->Add(CurCol.Col[0]); VertexCollector->Add(CurCol.Col[1]); VertexCollector->Add(CurCol.Col[2]); VertexCollector->Add(1);
+		VertexCollector->Add(Normal.Data[0]); VertexCollector->Add(Normal.Data[1]); VertexCollector->Add(Normal.Data[2]);
+		VertexCollector->Add(TempVArray[c].Data[0]); VertexCollector->Add(TempVArray[c].Data[1]); VertexCollector->Add(TempVArray[c].Data[2]);
+	}
+	for(c = 0; c < NumVerts-2; c++)
+	{
+		IndexCollector->Add(IndexBase);
+		IndexCollector->Add(IndexBase+1+c);
+		IndexCollector->Add(IndexBase+2+c);
+	}
+}
+
 void CFreescapeGame::CObject::Assemble()
 {
+	VertexCollector = new DataCollector<GLfloat>;
+	IndexCollector = new DataCollector<GLuint>;
+
 	NumFaces = 0;
 	switch(Type)
 	{
@@ -280,112 +348,88 @@ void CFreescapeGame::CObject::Assemble()
 		break;
 		case PLANAR:
 		{
+			PolyOffset = 1;
 			if(NumSides > 2)
 			{
-				NumFaces = 2;
-				Faces[0].SetNormal(Verts[0], Verts[1], Verts[2]);
-				Faces[1].SetNormal(Verts[2], Verts[1], Verts[0]);
-
-				int c = NumSides;
-				while(c--)
-				{
-					Faces[0].AddEdge(Verts[c], Verts[(c+1)%NumSides]);
-					Faces[1].AddEdge(Verts[(c+1)%NumSides], Verts[c]);
-				}
-
-				if(!Size[0])
-				{
-					c =NumSides;
+				BeginFace(Colours[0]);
+					for(int c = 0; c < NumSides; c++)
+						AddVert(Verts[c]);
+				EndFace();
+				BeginFace(Colours[1]);
+					int c = NumSides;
 					while(c--)
-					{
-						Verts[c][0]++;
-					}
-					Pos[0] -= 1;
-					Size[0] += 2;
-				}
-				if(!Size[1])
-				{
-					c =NumSides;
-					while(c--)
-					{
-						Verts[c][1]++;
-					}
-					Pos[1] -= 1;
-					Size[1] += 2;
-				}
-				if(!Size[2])
-				{
-					c =NumSides;
-					while(c--)
-					{
-						Verts[c][2]++;
-					}
-					Pos[2] -= 1;
-					Size[2] += 2;
-				}
+						AddVert(Verts[c]);
+				EndFace();
+			}
+			else
+			{
+				GLfloat LocVerts[] = {
+									Colours[0].Col[0], Colours[0].Col[1], Colours[0].Col[2], Verts[0][0], Verts[0][1], Verts[0][2],
+									Colours[0].Col[0], Colours[0].Col[1], Colours[0].Col[2], Verts[1][0], Verts[1][1], Verts[1][2]};
+				GLubyte Indices[] = {0, 1};
+				VArray = new CInterleavedArrays(GL_C3F_V3F, 0, LocVerts, 2);
+				Elements = new CDrawElements(GL_LINES, 2, GL_UNSIGNED_BYTE, Indices);
 			}
 		}
 		break;
-
-#define LSet(n, x, y, z) LVerts[n][0] = x; LVerts[n][1] = y; LVerts[n][2] = z;
-#define UploadQuad()\
-			Faces[NumFaces].SetNormal(LVerts[0], LVerts[1], LVerts[2]);\
-			c = 4;\
-			while(c--)\
-				Faces[NumFaces].AddEdge(LVerts[c], LVerts[(c+1)%4]);\
-			NumFaces++;
-#define UploadQuadA(A, B, C, D)\
-			if(!Faces[NumFaces].SetNormal(A, B, C))\
-				if(!Faces[NumFaces].SetNormal(A, C, D))\
-					Faces[NumFaces].SetNormal(A, B, D);\
-			Faces[NumFaces].AddEdge(A, B);\
-			Faces[NumFaces].AddEdge(B, C);\
-			Faces[NumFaces].AddEdge(C, D);\
-			Faces[NumFaces].AddEdge(D, A);\
-			NumFaces++;
-
-		case CUBOID:
 		case RECTANGLE:
 		{
-			float LVerts[4][3];
-			NumFaces = 0;
-			int c;
-
-			if(Size[0] && Size[1])
+			PolyOffset = 1;
+			if(!Size[0])
 			{
-				LSet(0, 0, 0, 0); LSet(1, Size[0], 0, 0); LSet(2, Size[0], Size[1], 0); LSet(3, 0, Size[1], 0);
-				UploadQuad();
-				LSet(0, Size[0], 0, Size[2]); LSet(1, 0, 0, Size[2]); LSet(2, 0, Size[1], Size[2]); LSet(3, Size[0], Size[1], Size[2]);
-				UploadQuad();
+				BeginFace(Colours[0]);
+					AddVert(0, 0, Size[2]); AddVert(0, 0, 0); AddVert(0, Size[1], 0); AddVert(0, Size[1], Size[2]); 
+				EndFace();
+				BeginFace(Colours[1]);
+					AddVert(0, 0, 0); AddVert(0, 0, Size[2]); AddVert(0, Size[1], Size[2]); AddVert(0, Size[1], 0);
+				EndFace();
 			}
-			if(Size[2] && Size[1])
+			if(!Size[1])
 			{
-				LSet(0, 0, 0, Size[2]); LSet(1, 0, 0, 0); LSet(2, 0, Size[1], 0); LSet(3, 0, Size[1], Size[2]);
-				UploadQuad();
-				LSet(0, Size[0], 0, 0); LSet(1, Size[0], 0, Size[2]); LSet(2, Size[0], Size[1], Size[2]); LSet(3, Size[0], Size[1], 0);
-				UploadQuad();
+				BeginFace(Colours[0]);
+					AddVert(0, 0, 0); AddVert(0, 0, Size[2]); AddVert(Size[0], 0, Size[2]); AddVert(Size[0], 0, 0); 
+				EndFace();
+				BeginFace(Colours[1]);
+					AddVert(0, 0, Size[2]); AddVert(0, 0, 0); AddVert(Size[0], 0, 0); AddVert(Size[0], 0, Size[2]);
+				EndFace();
 			}
-			if(Size[0] && Size[2])
+			if(!Size[2])
 			{
-				LSet(0, 0, 0, 0); LSet(1, 0, 0, Size[2]); LSet(2, Size[0], 0, Size[2]); LSet(3, Size[0], 0, 0);
-				UploadQuad();
-				LSet(0, 0, Size[1], Size[2]); LSet(1, 0, Size[1], 0); LSet(2, Size[0], Size[1], 0); LSet(3, Size[0], Size[1], Size[2]);
-				UploadQuad();
+				BeginFace(Colours[0]);
+					AddVert(0, 0, 0); AddVert(Size[0], 0, 0); AddVert(Size[0], Size[1], 0); AddVert(0, Size[1], 0);
+				EndFace();
+				BeginFace(Colours[1]);
+					AddVert(Size[0], 0, 0); AddVert(0, 0, 0); AddVert(0, Size[1], 0); AddVert(Size[0], Size[1], 0); 
+				EndFace();
 			}
 		}
 		break;
-
+		case CUBOID:
+			BeginFace(Colours[4]);
+				AddVert(0, 0, 0); AddVert(Size[0], 0, 0); AddVert(Size[0], Size[1], 0); AddVert(0, Size[1], 0);
+			EndFace();
+			BeginFace(Colours[5]);
+				AddVert(Size[0], 0, Size[2]); AddVert(0, 0, Size[2]); AddVert(0, Size[1], Size[2]); AddVert(Size[0], Size[1], Size[2]);
+			EndFace();
+			BeginFace(Colours[0]);
+				AddVert(0, 0, Size[2]); AddVert(0, 0, 0); AddVert(0, Size[1], 0); AddVert(0, Size[1], Size[2]);
+			EndFace();
+			BeginFace(Colours[1]);
+				AddVert(Size[0], 0, 0); AddVert(Size[0], 0, Size[2]); AddVert(Size[0], Size[1], Size[2]); AddVert(Size[0], Size[1], 0);
+			EndFace();
+			BeginFace(Colours[2]);
+				AddVert(0, 0, 0); AddVert(0, 0, Size[2]); AddVert(Size[0], 0, Size[2]); AddVert(Size[0], 0, 0);
+			EndFace();
+			BeginFace(Colours[3]);
+				AddVert(0, Size[1], Size[2]); AddVert(0, Size[1], 0); AddVert(Size[0], Size[1], 0); AddVert(Size[0], Size[1], Size[2]);
+			EndFace();
+		break;
 		case PYRAMID:
 		{
-			float Verts[8][3];
-			NumFaces = 0;
+			GLfloat Verts[8][3];
 #define Set(n, x, y, z) Verts[n][0] = x; Verts[n][1] = y; Verts[n][2] = z;
 				switch(PyramidType)
 				{
-/*					default:
-						printf("don't know how to draw %d\n", PyramidType);
-						goto end;
-					break;*/
 					case 3: //
 						Set(0, 0,		0,	0);
 						Set(1, Size[0],	0,	0);
@@ -454,327 +498,59 @@ void CFreescapeGame::CObject::Assemble()
 					break;
 				}
 #undef Set
-
-				UploadQuadA(Verts[1], Verts[2], Verts[6], Verts[5]);
-				UploadQuadA(Verts[3], Verts[0], Verts[4], Verts[7]);
-				UploadQuadA(Verts[0], Verts[1], Verts[5], Verts[4]);
-				UploadQuadA(Verts[2], Verts[3], Verts[7], Verts[6]);
-				UploadQuadA(Verts[3], Verts[2], Verts[1], Verts[0]);
-				UploadQuadA(Verts[4], Verts[5], Verts[6], Verts[7]);
+			BeginFace(Colours[0]);
+				AddVert(Verts[1]); AddVert(Verts[2]); AddVert(Verts[6]); AddVert(Verts[5]);
+			EndFace();
+			BeginFace(Colours[1]);
+				AddVert(Verts[3]); AddVert(Verts[0]); AddVert(Verts[4]); AddVert(Verts[7]);
+			EndFace();
+			BeginFace(Colours[2]);
+				AddVert(Verts[0]); AddVert(Verts[1]); AddVert(Verts[5]); AddVert(Verts[4]);
+			EndFace();
+			BeginFace(Colours[3]);
+				AddVert(Verts[2]); AddVert(Verts[3]); AddVert(Verts[7]); AddVert(Verts[6]);
+			EndFace();
+			BeginFace(Colours[4]);
+				AddVert(Verts[3]); AddVert(Verts[2]); AddVert(Verts[1]); AddVert(Verts[0]);
+			EndFace();
+			BeginFace(Colours[5]);
+				AddVert(Verts[4]); AddVert(Verts[5]); AddVert(Verts[6]); AddVert(Verts[7]);
+			EndFace();
 		}
 		break;
 	}
-}
-#undef LSet
-#undef UploadQuad
 
-void CFreescapeGame::CObject::Draw()
+	// make display object
+	if(VertexCollector->GetNum())
+	{
+		VArray = new CInterleavedArrays(GL_C4F_N3F_V3F, 0, VertexCollector->GetArray(), VertexCollector->GetNum() / 10);
+		Elements = new CDrawElements(GL_TRIANGLES, IndexCollector->GetNum(), GL_UNSIGNED_INT, IndexCollector->GetArray());
+	}
+	delete VertexCollector;
+	delete IndexCollector;
+}
+
+void CFreescapeGame::CObject::Draw(float *PlayerPos)
 {
 	if(CurState != VISIBLE) return;
-//	if(Shot) {Shot = false; return;}
+
+	if(PlayerShot)
+	{
+		if((Speed - PlayerShot) < SHOT_NUM_FRAMES)
+		{
+			Parent->AddShot(Pos);
+		}
+	}
 
 	glPushMatrix();
 		glTranslatef(Pos[0], Pos[1], Pos[2]);
-				
-	switch(Type)
-	{
-		case RECTANGLE:
-			glPolygonOffset(-1, -1);
-			glBegin(GL_QUADS);
-				if(!Size[0])
-				{
-					if(Colours[1].Entry)
-					{
-						glColor3fv(Colours[1].Col);
-						glVertex3f(0, 0, 0);
-						glVertex3f(0, 0, Size[2]);
-						glVertex3f(0, Size[1], Size[2]);
-						glVertex3f(0, Size[1], 0);
-					}
-
-					if(Colours[0].Entry)
-					{
-						glColor3fv(Colours[0].Col);
-						glVertex3f(0, 0, Size[2]);
-						glVertex3f(0, 0, 0);
-						glVertex3f(0, Size[1], 0);
-						glVertex3f(0, Size[1], Size[2]);
-					}
-				}
-				if(!Size[1])
-				{
-					if(Colours[1].Entry)
-					{
-						glColor3fv(Colours[1].Col);
-						glVertex3f(0, 0, Size[2]);
-						glVertex3f(0, 0, 0);
-						glVertex3f(Size[0], 0, 0);
-						glVertex3f(Size[0], 0, Size[2]);
-					}
-
-					if(Colours[0].Entry)
-					{
-						glColor3fv(Colours[0].Col);
-						glVertex3f(0, 0, 0);
-						glVertex3f(0, 0, Size[2]);
-						glVertex3f(Size[0], 0, Size[2]);
-						glVertex3f(Size[0], 0, 0);
-					}
-				}
-				if(!Size[2])
-				{
-					if(Colours[0].Entry)
-					{
-						glColor3fv(Colours[0].Col);
-						glVertex3f(0, 0, 0);
-						glVertex3f(Size[0], 0, 0);
-						glVertex3f(Size[0], Size[1], 0);
-						glVertex3f(0, Size[1], 0);
-					}
-
-					if(Colours[1].Entry)
-					{
-						glColor3fv(Colours[1].Col);
-						glVertex3f(Size[0], 0, 0);
-						glVertex3f(0, 0, 0);
-						glVertex3f(0, Size[1], 0);
-						glVertex3f(Size[0], Size[1], 0);
-					}
-				}
-			glEnd();
-		break;
-		case PLANAR:
-			glPolygonOffset(-1, -1);
-				if(NumSides > 2)
-				{
-					if(Colours[0].Entry)
-					{
-						glBegin(GL_POLYGON);
-						glColor3fv(Colours[0].Col);
-						for(int c = 0; c < NumSides; c++)
-							glVertex3f(Verts[c][0], Verts[c][1], Verts[c][2]);
-						glEnd();
-					}
-					if(Colours[1].Entry)
-					{
-						glBegin(GL_POLYGON);
-						glColor3fv(Colours[1].Col);
-						int c = NumSides;
-						while(c--)
-							glVertex3f(Verts[c][0], Verts[c][1], Verts[c][2]);
-						glEnd();
-					}
-				}
-				else
-				{
-					glColor3fv(Colours[0].Col);
-					glBegin(GL_LINES);
-						glVertex3f(Verts[0][0], Verts[0][1], Verts[0][2]);
-						glVertex3f(Verts[1][0], Verts[1][1], Verts[1][2]);
-					glEnd();
-				}
-		break;
-		case CUBOID:
-			glPolygonOffset(0, 0);
-			glBegin(GL_QUADS);
-				if(Colours[4].Entry)
-				{
-					glColor3fv(Colours[4].Col);
-					glVertex3f(0, 0, 0);
-					glVertex3f(Size[0], 0, 0);
-					glVertex3f(Size[0], Size[1], 0);
-					glVertex3f(0, Size[1], 0);
-				}
-
-				if(Colours[5].Entry)
-				{
-					glColor3fv(Colours[5].Col);
-					glVertex3f(Size[0], 0, Size[2]);
-					glVertex3f(0, 0, Size[2]);
-					glVertex3f(0, Size[1], Size[2]);
-					glVertex3f(Size[0], Size[1], Size[2]);
-				}
-
-				if(Colours[0].Entry)
-				{
-					glColor3fv(Colours[0].Col);
-					glVertex3f(0, 0, Size[2]);
-					glVertex3f(0, 0, 0);
-					glVertex3f(0, Size[1], 0);
-					glVertex3f(0, Size[1], Size[2]);
-				}
-
-				if(Colours[1].Entry)
-				{
-					glColor3fv(Colours[1].Col);
-					glVertex3f(Size[0], 0, 0);
-					glVertex3f(Size[0], 0, Size[2]);
-					glVertex3f(Size[0], Size[1], Size[2]);
-					glVertex3f(Size[0], Size[1], 0);
-				}
-
-				if(Colours[2].Entry)
-				{
-					glColor3fv(Colours[2].Col);
-					glVertex3f(0, 0, 0);
-					glVertex3f(0, 0, Size[2]);
-					glVertex3f(Size[0], 0, Size[2]);
-					glVertex3f(Size[0], 0, 0);
-				}
-
-				if(Colours[3].Entry)
-				{
-					glColor3fv(Colours[3].Col);
-					glVertex3f(0, Size[1], Size[2]);
-					glVertex3f(0, Size[1], 0);
-					glVertex3f(Size[0], Size[1], 0);
-					glVertex3f(Size[0], Size[1], Size[2]);
-				}
-
-			glEnd();
-		break;
-		case PYRAMID:
+		if(VArray && Elements)
 		{
-//			bool D = true;
-			GLfloat Verts[8][3];
-			glPolygonOffset(0, 0);
-				
-#define Set(n, x, y, z) Verts[n][0] = x; Verts[n][1] = y; Verts[n][2] = z;
-				switch(PyramidType)
-				{
-					default:
-						printf("don't know how to draw %d\n", PyramidType);
-						goto end;
-					break;
-					case 3: //
-						Set(0, 0,		0,	0);
-						Set(1, Size[0],	0,	0);
-						Set(2, Size[0],	0,	Size[2]);
-						Set(3, 0,		0,	Size[2]);
-
-						Set(4, ApexStart[0],	Size[1],	ApexStart[1]);
-						Set(5, ApexEnd[0],		Size[1],	ApexStart[1]);
-						Set(6, ApexEnd[0],		Size[1],	ApexEnd[1]);
-						Set(7, ApexStart[0],	Size[1],	ApexEnd[1]);
-					break;
-					case 4: //
-						Set(5, ApexStart[0], 0, ApexStart[1]);
-						Set(4, ApexEnd[0], 0, ApexStart[1]);
-						Set(7, ApexEnd[0], 0, ApexEnd[1]);
-						Set(6, ApexStart[0], 0, ApexEnd[1]);
-
-						Set(1, 0, Size[1], 0);
-						Set(0, Size[0], Size[1], 0);
-						Set(3, Size[0], Size[1], Size[2]);
-						Set(2, 0, Size[1], Size[2]);
-					break;
-					case 1:
-						Set(3, 0,	0,			0);
-						Set(2, 0,	Size[1],	0);
-						Set(1, 0,	Size[1],	Size[2]);
-						Set(0, 0,	0,			Size[2]);
-
-						Set(7, Size[0],	ApexStart[0],	ApexStart[1]);
-						Set(6, Size[0],	ApexEnd[0],	ApexStart[1]);
-						Set(5, Size[0],	ApexEnd[0],	ApexEnd[1]);
-						Set(4, Size[0],	ApexStart[0],	ApexEnd[1]);
-					break;
-					case 2: // perfect per area 4
-						Set(0, Size[0],	0,			0);
-						Set(1, Size[0],	Size[1],	0);
-						Set(2, Size[0],	Size[1],	Size[2]);
-						Set(3, Size[0],	0,			Size[2]);
-
-						Set(4, 0,	ApexStart[0],	ApexStart[1]);
-						Set(5, 0,	ApexEnd[0],	ApexStart[1]);
-						Set(6, 0,	ApexEnd[0],	ApexEnd[1]);
-						Set(7, 0,	ApexStart[0],	ApexEnd[1]);
-					break;
-					case 6: //
-						Set(0, 0,		0,			Size[2]);
-						Set(1, Size[0],	0,			Size[2]);
-						Set(2, Size[0],	Size[1],	Size[2]);
-						Set(3, 0,		Size[1],	Size[2]);
-
-						Set(4, ApexStart[0],	ApexStart[1],	0);
-						Set(5, ApexEnd[0],		ApexStart[1],	0);
-						Set(6, ApexEnd[0],		ApexEnd[1],	0);
-						Set(7, ApexStart[0],	ApexEnd[1],	0);
-					break;
-					case 5: // perfect
-						Set(3, 0,		0,			0);
-						Set(2, Size[0],	0,			0);
-						Set(1, Size[0],	Size[1],	0);
-						Set(0, 0,		Size[1],	0);
-
-						Set(7, ApexStart[0],	ApexStart[1],	Size[2]);
-						Set(6, ApexEnd[0],		ApexStart[1],	Size[2]);
-						Set(5, ApexEnd[0],		ApexEnd[1],	Size[2]);
-						Set(4, ApexStart[0],	ApexEnd[1],	Size[2]);
-					break;
-				}
-#undef Set
-			glBegin(GL_QUADS);
-
-				if(Colours[0].Entry)
-				{
-					glColor3fv(Colours[0].Col);
-					glVertex3fv(Verts[1]);
-					glVertex3fv(Verts[2]);
-					glVertex3fv(Verts[6]);
-					glVertex3fv(Verts[5]);
-				}
-
-				if(Colours[1].Entry)
-				{
-					glColor3fv(Colours[1].Col);
-					glVertex3fv(Verts[3]);
-					glVertex3fv(Verts[0]);
-					glVertex3fv(Verts[4]);
-					glVertex3fv(Verts[7]);
-				}
-	
-				if(Colours[2].Entry)
-				{
-					glColor3fv(Colours[2].Col);
-					glVertex3fv(Verts[0]);
-					glVertex3fv(Verts[1]);
-					glVertex3fv(Verts[5]);
-					glVertex3fv(Verts[4]);
-				}
-
-				if(Colours[3].Entry)
-				{
-					glColor3fv(Colours[3].Col);
-					glVertex3fv(Verts[2]);
-					glVertex3fv(Verts[3]);
-					glVertex3fv(Verts[7]);
-					glVertex3fv(Verts[6]);
-				}
-
-				if(Colours[4].Entry)
-				{
-					glColor3fv(Colours[4].Col);
-					glVertex3fv(Verts[3]);
-					glVertex3fv(Verts[2]);
-					glVertex3fv(Verts[1]);
-					glVertex3fv(Verts[0]);
-				}
-
-				if(Colours[5].Entry)
-				{
-					glColor3fv(Colours[5].Col);
-					glVertex3fv(Verts[4]);
-					glVertex3fv(Verts[5]);
-					glVertex3fv(Verts[6]);
-					glVertex3fv(Verts[7]);
-				}
-
-			glEnd();
-			end:;
+			glPolygonOffset(-PolyOffset, -PolyOffset);
+			VArray->Enable();
+			Elements->Draw();
+			VArray->Disable();
 		}
-		break;
-	}
 	glPopMatrix();
 }
 
@@ -820,43 +596,56 @@ float CFreescapeGame::CObject::TestRayCollision(float *Start, float *Direction)
 	return Distance;
 }
 
-void CFreescapeGame::CObject::Update(float Scale)
+void CFreescapeGame::CObject::Update()
+{
+	if(PlayerShot)
+		PlayerShot--;
+	if(AddSteps)
+	{
+		AddSteps--;
+		Pos[0] += PosAdd[0]; Pos[1] += PosAdd[1]; Pos[2] += PosAdd[2];
+	}
+}
+
+void CFreescapeGame::CObject::UpdateLogic(float *PlayerPos, float Scale)
 {
 	if(Type == SENSOR && CurState == VISIBLE)
 	{
-		float PlayerPos[3] = {Parent->GetVariable(0), Parent->GetVariable(1), Parent->GetVariable(2)};
-		float Diffs[3] = {PlayerPos[0] - Pos[0], PlayerPos[1] - Pos[1], PlayerPos[2] - Pos[2]};
-		float SQDist = Diffs[0]*Diffs[0] + Diffs[1]*Diffs[1] + Diffs[2]*Diffs[2];
-		if(SQDist*Scale < Range*Range)
+		float Diffs[3] = {Pos[0] - PlayerPos[0], Pos[1] - PlayerPos[1], Pos[2] - PlayerPos[2]};
+		float Dist = fabs(Diffs[0]) + fabs(Diffs[1]) + fabs(Diffs[2]); // it's Manhattan distance!
+		if(Dist < Range)
 		{
+
 			bool Seen = false;
-			if(Diffs[0] >= 0 && (DirFlags&SENSORFLAG_EAST)) Seen = true;
-			if(Diffs[0] <= 0 && (DirFlags&SENSORFLAG_WEST)) Seen = true;
-			if(Diffs[1] >= 0 && (DirFlags&SENSORFLAG_UP)) Seen = true;
-			if(Diffs[1] <= 0 && (DirFlags&SENSORFLAG_DOWN)) Seen = true;
-			if(Diffs[2] >= 0 && (DirFlags&SENSORFLAG_NORTH)) Seen = true;
-			if(Diffs[2] <= 0 && (DirFlags&SENSORFLAG_SOUTH)) Seen = true;
-/*			if(fabs(Diffs[0]) > fabs(Diffs[1]) && fabs(Diffs[0]) > fabs(Diffs[1]))
-			{
-				if((Diffs[0] > 0) && (DirFlags&SENSORFLAG_EAST)) Seen = true;
-				if((Diffs[0] < 0) && (DirFlags&SENSORFLAG_WEST)) Seen = true;
-			}
-			if(fabs(Diffs[1]) > fabs(Diffs[0]) && fabs(Diffs[1]) > fabs(Diffs[2]))
-			{
-				if((Diffs[1] > 0) && (DirFlags&SENSORFLAG_UP)) Seen = true;
-				if((Diffs[1] < 0) && (DirFlags&SENSORFLAG_DOWN)) Seen = true;
-			}
-			if(fabs(Diffs[2]) > fabs(Diffs[0]) && fabs(Diffs[2]) > fabs(Diffs[1]))
-			{
-				if((Diffs[2] > 0) && (DirFlags&SENSORFLAG_NORTH)) Seen = true;
-				if((Diffs[2] < 0) && (DirFlags&SENSORFLAG_SOUTH)) Seen = true;
-			}*/
+			if((Diffs[0] > 0) && (DirFlags&SENSORFLAG_EAST)) Seen = true;
+			if((Diffs[0] < 0) && (DirFlags&SENSORFLAG_WEST)) Seen = true;
+			if((Diffs[1] > 0) && (DirFlags&SENSORFLAG_UP)) Seen = true;
+			if((Diffs[1] < 0) && (DirFlags&SENSORFLAG_DOWN)) Seen = true;
+			if((Diffs[2] > 0) && (DirFlags&SENSORFLAG_NORTH)) Seen = true;
+			if((Diffs[2] < 0) && (DirFlags&SENSORFLAG_SOUTH)) Seen = true;
 
 			if(Seen)
 			{
-//				printf("spotted by %d (%0.2f %0.2f %0.2f v %0.2f %0.2f %0.2f: %0.2f)\n", SensorID, PlayerPos[0], PlayerPos[1], PlayerPos[2], Pos[0], Pos[1], Pos[2], sqrt(SQDist));
+				CArea *P = Parent->GetCurArea();
+				float Dir[3] = {PlayerPos[0] - Pos[0], PlayerPos[1] - Pos[1], PlayerPos[2] - Pos[2]};
+				if(P->FindFrontObject(Pos, Dir) >= 0)
+				{
+					float d = P->GetFrontDistance();
+					if(d < 0.99f)
+						Seen = false;
+				}
+			}
+
+			if(Seen)
+			{
 				Parent->SetVariable(13, SensorID);
 				Parent->SetVariable(14, Parent->GetVariable(14)+1);
+				if(!PlayerShot)
+				{
+					Parent->PlaySound(1);
+					Parent->SetVariable(11, Parent->GetVariable(11)+1);
+					PlayerShot = Speed;
+				}
 			}
 		}
 	}
@@ -979,8 +768,6 @@ float CFreescapeGame::CObject::GetCollisionTime(float *Start, float *Move, float
 			}
 	}
 
-	//
-
 	return HitTime < 1 ? HitTime : -100;
 }
 
@@ -1006,6 +793,8 @@ bool CFreescapeGame::CObject::GetElevation(float *PPos, float Radius, float &El)
 
 bool CFreescapeGame::CObject::CheckInside(float *PPos)
 {
+	// only for objects that have moved or changed visibility!
+	return false;
 	if(PPos[0] < Pos[0]) return false;
 	if(PPos[1] < Pos[1]) return false;
 	if(PPos[2] < Pos[2]) return false;
@@ -1014,3 +803,5 @@ bool CFreescapeGame::CObject::CheckInside(float *PPos)
 	if(PPos[2] > Pos[2]+Size[2]) return false;
 	return true;
 }
+
+void CFreescapeGame::CObject::SetArea(unsigned int a) {Area = a;}

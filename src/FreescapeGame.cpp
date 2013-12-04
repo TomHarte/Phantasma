@@ -1,12 +1,23 @@
 #include "Freescape.h"
 #include "ebgf/ebgf.h"
+#include "ebgf/ebgf_VertexArray.h"
+#include "ebgf/ebgf_DrawElements.h"
 #include <stdio.h>
 #include <math.h>
 
 #define FORCEDMOVE_PAUSE	10
 #define SHOT_PAUSER			15
 #define SHOT_LASTDRAW		10
-#define MESSAGE_LIFE		150
+#define MESSAGE_LIFE		1500
+#define MESSAGE_SHORTLIFE	150
+
+#define PLAYER_WIDTH	32.0
+#define PLAYER_ASCENT	16.0
+#define PLAYER_DESCENT	2.0
+
+#define GetRadius()	(PLAYER_WIDTH / Areas[CurArea]->GetScale())
+#define GetAscent() ((CurHeight*Areas[CurArea]->GetScale()) + PLAYER_ASCENT)
+#define GetDescent() (MaxClimb * Areas[CurArea]->GetScale())
 
 CFreescapeGame::CFreescapeGame()
 {
@@ -17,8 +28,11 @@ CFreescapeGame::CFreescapeGame()
 	GlobalArea = new CArea(this);
 	MoveVec[0] = MoveVec[1] = MoveVec[2] = 0;
 	PrintFont = NULL;
-/*	lastn = 0; 
-	charptr = 2;*/
+	Handler = NULL;
+
+	c = NUM_SOUNDS;
+	while(c--)
+		Sounds[c] = NULL;
 }
 
 CFreescapeGame::~CFreescapeGame()
@@ -31,6 +45,15 @@ CFreescapeGame::~CFreescapeGame()
 	}
 	delete GlobalArea;
 	EBGF_ReturnResource(PrintFont); PrintFont = NULL;
+
+	c = NUM_SOUNDS;
+	while(c--)
+		if(Sounds[c])
+		{
+			Mix_FreeChunk(Sounds[c]);
+			Sounds[c] = NULL;
+		}
+
 }
 
 /*
@@ -65,6 +88,7 @@ void CFreescapeGame::SetVariable(unsigned int id, Sint32 value)
 {
 //	if(id < 22) printf("reserved variable %d changed\n", id);
 //	if(id < 3) ForcedMoveCounter = FORCEDMOVE_PAUSE;
+
 
 	if(ZXVars && (id >= 112) && (id <= 120))
 	{
@@ -130,6 +154,12 @@ CFreescapeGame::CObject *CFreescapeGame::GetObject(unsigned int id)
 void CFreescapeGame::Goto(unsigned int Entrance, unsigned int Area)
 {
 	printf("goto %d, %d\n", Entrance, Area);
+
+/*	if(Entrance == 3 && Area == 2)
+	{
+		printf("yo ho ho [%d]\n", (int)Variables[10]);
+	}*/
+
 	ProcessingMask = true;
 
 	if(Area >= MAX_AREAS) return;
@@ -149,7 +179,20 @@ void CFreescapeGame::Goto(unsigned int Entrance, unsigned int Area)
 	}
 	PlayerPos[0] = E->Pos[0]; PlayerPos[1] = E->Pos[1]; PlayerPos[2] = E->Pos[2];
 	PlayerAng[0] = E->Rotation[0]; PlayerAng[1] = E->Rotation[1]; PlayerAng[2] = E->Rotation[2];
+	AddSteps = 0;
 	Areas[CurArea]->SetupDisplay();
+	Areas[CurArea]->Enter();
+	Areas[CurArea]->PushOut(PlayerPos, GetRadius(), GetAscent(), GetDescent());
+	LastHeight = PlayerPos[1];
+
+	/* flag all current messages to disappear soon */
+	int c = 0;
+	while(c < MessagePointer)
+	{
+		if(Messages[c].Age < MESSAGE_LIFE-MESSAGE_SHORTLIFE) 
+			Messages[c].Age = MESSAGE_LIFE-MESSAGE_SHORTLIFE;
+		c++;
+	}
 }
 
 void CFreescapeGame::SetAnimatorActive(unsigned int Animator, unsigned int Area, bool Active)
@@ -180,6 +223,11 @@ float CFreescapeGame::FindFrontObject(int &Area, int &Object)
 	Object = Areas[CurArea]->FindFrontObject(Pos, Front);
 	if(Object >= 0) Area = CurArea;
 	return Areas[CurArea]->GetFrontDistance();
+}
+
+CFreescapeGame::CArea *CFreescapeGame::GetCurArea()
+{
+	return Areas[CurArea];
 }
 
 void CFreescapeGame::Activate()
@@ -213,21 +261,15 @@ void CFreescapeGame::Shoot()
 	else
 		Variables[21]++;
 
+	PlaySound(0);
 	ShotLastFrame = SHOT_PAUSER;
 	int A, O;
 	FindFrontObject(A, O);
 	if(A >= 0)
 	{
-//		if(O != ShotObject)
-		{
-			printf("%d\n", O);
-			CObject *Obj = Areas[A]->GetObject(O);
-			if(Obj)
-			{
-				Obj->SetShot(true);
-			}
-		}
-		ShotObject = O;
+//		printf("%d\n", O);
+		CObject *Obj = Areas[A]->GetObject(O);
+		if(Obj)	Obj->SetShot(true);
 	}
 }
 
@@ -245,7 +287,7 @@ void CFreescapeGame::Move(float x, float y, float z, float xr, float yr, float z
 
 	MoveVec[2] += -x*sin(YAng);
 	MoveVec[0] += x*cos(YAng);
-	
+
 	if(PlayMode != 1)	//flying?
 	{
 		MoveVec[0] *= sin(XAng);
@@ -261,18 +303,19 @@ void CFreescapeGame::SetupDisplay()
 	if(Areas[CurArea]) Areas[CurArea]->SetupDisplay();
 }
 
-#define PLAYER_WIDTH	32.0
-#define PLAYER_ASCENT	2.0
-#define PLAYER_DESCENT	2.0
+
+#define MAX_MOVE		256
+//#define MAX_ROTATE		5
 
 void CFreescapeGame::Update()
 {
+	float PPos[3] = {PlayerPos[0], PlayerPos[1] + CurHeight*Areas[CurArea]->GetScale(), PlayerPos[2]};
 	static int Framec = 0;
 	Framec++;
 
 	TimerVar++;
 	ProcessingMask = false;
-	
+
 	// gravity, check for collisions, run conditions, etc, etc
 	{
 //		ForcedMoveCounter--;
@@ -294,96 +337,162 @@ void CFreescapeGame::Update()
 			if(PlayMode == 1)
 				MoveVec[1] -= 2.5f;
 
-			if(Areas[CurArea]->FixCollisions(PlayerPos, MoveVec, PLAYER_WIDTH / Areas[CurArea]->GetScale(), (CurHeight*Areas[CurArea]->GetScale()) + PLAYER_ASCENT, MaxClimb * Areas[CurArea]->GetScale()))
+			if(Areas[CurArea]->FixCollisions(PlayerPos, MoveVec, GetRadius(), GetAscent(), GetDescent()))//PLAYER_WIDTH / Areas[CurArea]->GetScale(), (CurHeight*Areas[CurArea]->GetScale()) + PLAYER_ASCENT, MaxClimb * Areas[CurArea]->GetScale()))
+			{
+				if((LastHeight - PlayerPos[1] > MaxFall*Areas[CurArea]->GetScale()) && (PlayMode == 1))
+					Variables[10] = (int)(LastHeight - PlayerPos[1] - MaxFall) / Areas[CurArea]->GetScale();
+//				printf("ground! %d\n", Variables[10]);
+				LastHeight = PlayerPos[1];
 				MoveVec[1] = 0;
+			}
 
-			if(Crouching)
-				CurHeight += (CrouchHeight - CurHeight) * 0.2f;
-			else
-				CurHeight += (Start.Height - CurHeight) * 0.2f;
+//			if(!ProcessingMask)
+			{
+				if(Crouching)
+					CurHeight += (CrouchHeight - CurHeight) * 0.2f;
+				else
+					CurHeight += (Start.Height - CurHeight) * 0.2f;
+
+				float H = (Areas[CurArea]->GetHeadRoom(PlayerPos, PLAYER_WIDTH / Areas[CurArea]->GetScale())-PLAYER_ASCENT) / Areas[CurArea]->GetScale();
+				if(H >= 0 && H < CurHeight)
+					Crouching = true;
+			}
 		}
 	}
 	MoveVec[0] = MoveVec[2] = 0;
 
-	if(Framec&1) return;
-
-	if(ZXVars)
-	{
-		Variables[122] = (Variables[122]+1)&255;
-		if(!Variables[122])
-			Variables[123]++;
-	}
-	else
-		Variables[19]++; //50 Hz timer
-//	printf("%d\n", (int)Variables[19]);
-
-	if(DelayCounter)
-	{
-		DelayCounter--;
-		return;
-	}
-
-	if(Framec&2) return;
-	/* update some variables */
-	if(ZXVars)
-	{
-		Variables[112] = ((int)PlayerPos[0])&255;
-		Variables[113] = ((int)PlayerPos[0] >> 8)&255;
-		Variables[114] = ((int)PlayerPos[1])&255;
-		Variables[115] = ((int)PlayerPos[1] >> 8)&255;
-		Variables[116] = ((int)PlayerPos[2])&255;
-		Variables[117] = ((int)PlayerPos[2] >> 8)&255;
-		Variables[118] = ((int)(PlayerAng[0] / 5))%72;
-		Variables[119] = ((int)(PlayerAng[1] / 5))%72;
-		Variables[120] = ((int)(PlayerAng[2] / 5))%72;
-	}
-	else
-	{
-		Variables[0] = (int)PlayerPos[0];
-		Variables[1] = (int)PlayerPos[1];
-		Variables[2] = (int)PlayerPos[2];
-		Variables[3] = (int)PlayerAng[0];
-		Variables[4] = (int)PlayerAng[1];
-		Variables[5] = (int)PlayerAng[2];
-	}
-	PosDirty = false;
-
-	// object & area conditions
-	Areas[CurArea]->Update();
-
-	// global conditions
-	GlobalArea->Update();		
-
-	// mouse click variable
-	if(!ZXVars) Variables[16] = 0;
-
-	// check for player movement
-	if(PosDirty)
+	// frames 0: update
+	if(!(Framec&1))
 	{
 		if(ZXVars)
 		{
-			PlayerPos[0] = (float)(Variables[112] | (Variables[113] << 8));
-			PlayerPos[1] = (float)(Variables[114] | (Variables[115] << 8));
-			PlayerPos[2] = (float)(Variables[116] | (Variables[117] << 8));
-			PlayerAng[0] = (float)(Variables[118] * 5);
-			PlayerAng[1] = (float)(Variables[119] * 5);
-			PlayerAng[2] = (float)(Variables[120] * 5);
+			Variables[122] = (Variables[122]+1)&255;
+			if(!Variables[122])
+				Variables[123]++;
+		}
+		else
+			Variables[19]++; //50 Hz timer
+	}
+
+	if(DelayCounter) DelayCounter--;
+
+	if(!(Framec&3) && !DelayCounter)
+	{
+		int c = 3;
+		while(c--)
+		{
+			PlayerAng[c] = fmod(PlayerAng[c], 360); if(PlayerAng[c] < 0) PlayerAng[c] += 360;
+		}
+
+		/* update some variables */
+		if(ZXVars)
+		{
+			Variables[112] = ((int)PlayerPos[0])&255;
+			Variables[113] = ((int)PlayerPos[0] >> 8)&255;
+			Variables[114] = ((int)PlayerPos[1])&255;
+			Variables[115] = ((int)PlayerPos[1] >> 8)&255;
+			Variables[116] = ((int)PlayerPos[2])&255;
+			Variables[117] = ((int)PlayerPos[2] >> 8)&255;
+			Variables[118] = ((int)(PlayerAng[0] / 5))%72;
+			Variables[119] = ((int)(PlayerAng[1] / 5))%72;
+			Variables[120] = ((int)(PlayerAng[2] / 5))%72;
 		}
 		else
 		{
-			PlayerPos[0] = (float)Variables[0];
-			PlayerPos[1] = (float)Variables[1];
-			PlayerPos[2] = (float)Variables[2];
-			PlayerAng[0] = (float)Variables[3];
-			PlayerAng[1] = (float)Variables[4];
-			PlayerAng[2] = (float)Variables[5];
+			Variables[0] = (int)(PlayerPos[0] + 0.5f);
+			Variables[1] = (int)(PlayerPos[1] + 0.5f);
+			Variables[2] = (int)(PlayerPos[2] + 0.5f);
+			Variables[3] = (int)(PlayerAng[0] + 0.5f);
+			Variables[4] = (int)(PlayerAng[1] + 0.5f);
+			Variables[5] = (int)(PlayerAng[2] + 0.5f);
 		}
+		PosDirty = false;
+
+		// object & area conditions
+		Areas[CurArea]->UpdateLogic(PPos);
+
+		// global conditions
+		GlobalArea->UpdateLogic(PPos);
+
+		// clear mouse click variable
+		if(!ZXVars) Variables[16] = 0;
+
+		// check for player movement
+		if(PosDirty)
+		{
+			float NewPlayerPos[3], NewPlayerAng[3];
+			if(ZXVars)
+			{
+				PlayerPos[0] = (float)(Variables[112] | (Variables[113] << 8));
+				PlayerPos[1] = (float)(Variables[114] | (Variables[115] << 8));
+				PlayerPos[2] = (float)(Variables[116] | (Variables[117] << 8));
+				PlayerAng[0] = (float)(Variables[118] * 5);
+				PlayerAng[1] = (float)(Variables[119] * 5);
+				PlayerAng[2] = (float)(Variables[120] * 5);
+			}
+			else
+			{
+				NewPlayerPos[0] = (float)Variables[0];
+				LastHeight = NewPlayerPos[1] = (float)Variables[1];
+				NewPlayerPos[2] = (float)Variables[2];
+				NewPlayerAng[0] = (float)Variables[3];
+				NewPlayerAng[1] = (float)Variables[4];
+				NewPlayerAng[2] = (float)Variables[5];
+			}
+
+			if(
+				fabs(NewPlayerPos[0] - PlayerPos[0]) < MAX_MOVE &&
+				fabs(NewPlayerPos[1] - PlayerPos[1]) < MAX_MOVE &&
+				fabs(NewPlayerPos[2] - PlayerPos[2]) < MAX_MOVE
+				)
+			{
+				PlayerPosAdd[0] = (NewPlayerPos[0] - PlayerPos[0]) * 0.25f;
+				PlayerPosAdd[1] = (NewPlayerPos[1] - PlayerPos[1]) * 0.25f;
+				PlayerPosAdd[2] = (NewPlayerPos[2] - PlayerPos[2]) * 0.25f;
+
+				// need to think about wrapping here
+				int c = 3;
+				while(c--)
+				{
+					NewPlayerAng[c] = fmod(NewPlayerAng[c], 360); if(NewPlayerAng[c] < 0) NewPlayerAng[c] += 360;
+
+					NewPlayerAng[c] -= PlayerAng[c];
+
+					float alternate;
+
+					alternate = (NewPlayerAng[c] > 0) ? -(360 - NewPlayerAng[c]) : 360 + NewPlayerAng[c];
+					if(fabs(NewPlayerAng[c]) < fabs(alternate)) PlayerAngAdd[c] = NewPlayerAng[c] * 0.25f; else PlayerAngAdd[c] = alternate * 0.25f;
+
+					if(fabs(PlayerAngAdd[c]) <= 0.5f * 0.25f) PlayerAngAdd[c] = 0;
+				}
+
+				AddSteps = 4;
+			}
+			else
+			{
+				memcpy(PlayerPos, NewPlayerPos, sizeof(float)*3);
+				memcpy(PlayerAng, NewPlayerAng, sizeof(float)*3);
+			}
+		}
+	}
+
+	Areas[CurArea]->Update();
+	GlobalArea->Update();
+	if(AddSteps)
+	{
+		AddSteps--;
+		PlayerPos[0] += PlayerPosAdd[0];
+		PlayerPos[1] += PlayerPosAdd[1];
+		PlayerPos[2] += PlayerPosAdd[2];
+		PlayerAng[0] += PlayerAngAdd[0];
+		PlayerAng[1] += PlayerAngAdd[1];
+		PlayerAng[2] += PlayerAngAdd[2];
 	}
 }
 
 void CFreescapeGame::Delay(int c)
 {
-	DelayCounter = c;
+	DelayCounter = c * 2;
 }
 
 bool CFreescapeGame::StopProcessing() { return ProcessingMask;}
@@ -421,13 +530,16 @@ void CFreescapeGame::Reset()
 	TimerVar = 0;
 	ShotLastFrame = 0;
 	
-	Goto(Start.Entrance, Start.Area);
 	CurHeight = Start.Height;
 	VelocityY = 0;
 	Crouching = false;
 	DelayCounter = ForcedMoveCounter = 0;
 	MessagePointer = 0;
 	PlayMode = 1;
+
+	AddSteps = 0;
+
+	Goto(Start.Entrance, Start.Area);
 }
 
 void CFreescapeGame::ToggleCrouch()
@@ -447,16 +559,22 @@ void CFreescapeGame::ToggleCrouch()
 
 void CFreescapeGame::Draw()
 {
+	NumShooters = 0;
+	GLdouble Projection[16];
+	GLdouble ModelView[16];
+	glGetDoublev(GL_PROJECTION_MATRIX, Projection);
 	glPushMatrix();
 		if(Areas[CurArea])
 		{
+			float PretendPos[3] = {PlayerPos[0], PlayerPos[1] + CurHeight*Areas[CurArea]->GetScale(), PlayerPos[2]};
 			glRotatef(PlayerAng[2], 0, 0, 1);
 			glRotatef(PlayerAng[0], 1, 0, 0);
 			glRotatef(180+PlayerAng[1], 0, 1, 0);
 			Areas[CurArea]->LoadScale();
 			glTranslatef(-PlayerPos[0], -(PlayerPos[1] + CurHeight*Areas[CurArea]->GetScale()), -PlayerPos[2]);
+			glGetDoublev(GL_MODELVIEW_MATRIX, ModelView);
 
-			Areas[CurArea]->Draw();
+			Areas[CurArea]->Draw(PretendPos);
 		}
 	glPopMatrix();
 
@@ -487,24 +605,23 @@ void CFreescapeGame::Draw()
 			glEnd();
 		}
 	}
-	else
-		ShotObject = -1;
 
+	float R = EBGF_GetHFOV() / EBGF_GetVFOV();
 	if(MessagePointer)
 	{
 		int ms = 0;
 		int Shuffle = 0;
 		glPushMatrix();
-			glTranslatef(-0.05, -0.04, -0.1);
+			glTranslatef(-R*0.04f, -0.04, -0.1);
 			glScalef(0.005, 0.005, 0.005);
-			
+
 			glTranslatef(0, MessagePointer, 0);
 			while(ms < MessagePointer)
 			{
 				float I = (float)(MESSAGE_LIFE - Messages[ms].Age) / 25.0f;
 				glColor4f(1, 1, 1, I);
 				PrintFont->Print(Messages[ms].Text);
-				Messages[ms].Age++;
+				if(Messages[ms].Age >= 0) Messages[ms].Age++;
 				if(Messages[ms].Age > MESSAGE_LIFE)
 					Shuffle++;
 				ms++;
@@ -523,12 +640,90 @@ void CFreescapeGame::Draw()
 			MessagePointer--;
 		}
 	}
+
+	if(Handler)
+	{
+		glPushMatrix();
+			glTranslatef(-R*0.04f, -0.04, -0.1);
+			glScalef(0.005, 0.005, 0.005);
+			Handler->DrawHud(PrintFont, Variables, R*16, 16);
+
+		glPopMatrix();
+			while(NumShooters--)
+			{
+				GLdouble OutX, OutY, OutZ;
+				GLint ViewPort[] = {0, 0, 1, 1};
+				gluProject(Shooters[NumShooters][0], Shooters[NumShooters][1], Shooters[NumShooters][2], ModelView, Projection, ViewPort, &OutX, &OutY, &OutZ);
+
+				if(OutZ < 1 && OutX >= 0 && OutY >= 0 && OutX < 1 && OutY < 1)
+				{
+					glColor3f(flrand(), flrand(), flrand());
+					glBegin(GL_LINES);
+						glVertex3f(0.0825*R*(OutX - 0.5), 0.0825*(OutY - 0.5), -0.1);
+						glVertex3f(0.0825*R*(0 - 0.5), 0.0825*(0 - 0.5), -0.1);
+
+						glVertex3f(0.0825*R*(OutX - 0.5), 0.0825*(OutY - 0.5), -0.1);
+						glVertex3f(0.0825*R*(0 - 0.5), 0.0825*(0 + 0.5), -0.1);
+
+						glVertex3f(0.0825*R*(OutX - 0.5), 0.0825*(OutY - 0.5), -0.1);
+						glVertex3f(0.0825*R*(0 + 0.5), 0.0825*(0 + 0.5), -0.1);
+
+						glVertex3f(0.0825*R*(OutX - 0.5), 0.0825*(OutY - 0.5), -0.1);
+						glVertex3f(0.0825*R*(0 + 0.5), 0.0825*(0 - 0.5), -0.1);
+					glEnd();
+				}
+			}
+	}
 }
 
 void CFreescapeGame::PrintMessage(char *Text, int Instrument)
 {
+	if(strlen(Text) > 255)
+	{
+		printf("ERROR: message too long [%s]\n", Text);
+		return;
+	}
+
+	char OutputMessage[256];
+
+	/* filter message - remove leading spaces and all \ns */
+	bool NS = false;
+	char *Ptr = OutputMessage;
+	while(*Text)
+	{
+		switch(*Text)
+		{
+			case 27:	// 3d Construction Kit uses character 27 for backslash
+				Text++;
+			break;
+			case ' ':
+				if(NS) *Ptr++ = *Text;
+			break;
+			default:
+				NS = true;
+				*Ptr++ = *Text;
+			break;
+		}
+		Text++;
+	}
+	*Ptr = '\0';
+
+	/* if this leaves nothing to display then it was meant to clear the display — flag a message to disappear */
+	if(!strlen(OutputMessage))
+	{
+		int c = 0;
+		while(c < MessagePointer)
+		{
+			if(Messages[c].Age < MESSAGE_LIFE-MESSAGE_SHORTLIFE) break;
+			c++;
+		}
+		if(c < MessagePointer)
+			Messages[c].Age = MESSAGE_LIFE-MESSAGE_SHORTLIFE;
+		return;
+	}
+
 	if(MessagePointer)
-		if(!strcmp(Messages[MessagePointer-1].Text, Text))
+		if(!strcmp(Messages[MessagePointer-1].Text, OutputMessage))
 		{
 			Messages[MessagePointer-1].Age = 0;
 			return;
@@ -546,21 +741,7 @@ void CFreescapeGame::PrintMessage(char *Text, int Instrument)
 	}
 	Messages[MessagePointer].Age = 0;
 
-	char *Ptr = Messages[MessagePointer].Text;
-	while(*Text)
-	{
-		switch(*Text)
-		{
-			case 27:
-				Text++;
-			break;
-			default:
-				*Ptr++ = *Text;
-			break;
-		}
-		Text++;
-	}
-	*Ptr = '\0';
+	strcpy(Messages[MessagePointer].Text, OutputMessage);
 	MessagePointer++;
 }
 
@@ -592,4 +773,34 @@ void CFreescapeGame::SetVariableMode(bool ZX)
 {
 	VarMask = ZX ? 255 : -1;
 	ZXVars = ZX;
+}
+
+Sint32 CFreescapeGame::GetVariableMask()
+{
+	return VarMask;
+}
+
+void CFreescapeGame::SetHandler(CGameHandler *H)
+{
+	Handler = H;
+}
+
+void CFreescapeGame::PlaySound(int id)
+{
+	if(id >= 32) return;
+	if(!Sounds[id])
+	{
+		printf("attempt to play sound %d\n", id);
+		return;
+	}
+	Mix_PlayChannel(-1, Sounds[id], 0);
+}
+
+void CFreescapeGame::AddShot(float *Pos)
+{
+	if(NumShooters == MAX_SHOOTERS_PER_FRAME) return;
+	Shooters[NumShooters][0] = Pos[0];
+	Shooters[NumShooters][1] = Pos[1];
+	Shooters[NumShooters][2] = Pos[2];
+	NumShooters++;
 }

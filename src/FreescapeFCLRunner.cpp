@@ -445,14 +445,27 @@ bool CFreescapeGame::CCondition::QueryCondition(CObject *obj, FCLInstruction *Co
 		return Var1 > Var2;
 		case TIMERQ:
 		return Parent->QueryTimerTicked();
+		case ADDVAR:
+			GetBinaryValues(Conditional, Var1, Var2);
+			Var2 += Var1;
+			if(Conditional->Data.BinaryOp.Dest.Type == VARIABLE)
+				Parent->SetVariable(Conditional->Data.BinaryOp.Dest.Data.Value, Var2);
+		return (Var2&Parent->GetVariableMask()) ? true : false;
+		case SUBVAR:
+			GetBinaryValues(Conditional, Var1, Var2);
+			Var2 -= Var1;
+			if(Conditional->Data.BinaryOp.Dest.Type == VARIABLE)
+				Parent->SetVariable(Conditional->Data.BinaryOp.Dest.Data.Value, Var2);
+		return (Var2&Parent->GetVariableMask()) ? true : false;
 	}
 	return Res;
 }
 
 bool CFreescapeGame::CCondition::Execute(CObject *obj)
 {
-	Sint32 Var1, Var2, Var3;
+	Sint32 Var1, Var2, Var3, Mask;
 
+	Mask = Parent->GetVariableMask();
 	if(!Head || !Active) {return true;}
 //	if(Animator) printf("anim %d\n", Active);
 
@@ -468,7 +481,7 @@ bool CFreescapeGame::CCondition::Execute(CObject *obj)
 				printf("Unhandled FCLInstruction %s\n", ConNames[(int)Instr->Type]);
 				ResetProg();
 			return false;
-			
+
 			case IF:
 			{
 				FCLInstruction *Conditional = ProgramStack[StackPtr];
@@ -573,18 +586,18 @@ bool CFreescapeGame::CCondition::Execute(CObject *obj)
 				Var2 = Parent->GetCurrentArea();
 				GetBinaryValues(Instr, Var1, Var2);
 				Parent->SetAnimatorActive(Var1, Var2, true);
-				printf("startanim %d, %d\n", (int)Var1, (int)Var2);
+//				printf("startanim %d, %d\n", (int)Var1, (int)Var2);
 			break;
 			case STOPANIM:
 				Var2 = Parent->GetCurrentArea();
 				GetBinaryValues(Instr, Var1, Var2);
 				Parent->SetAnimatorActive(Var1, Var2, false);
-				printf("stopanim %d, %d\n", (int)Var1, (int)Var2);
+//				printf("stopanim %d, %d\n", (int)Var1, (int)Var2);
 			break;
 			case TRIGANIM:
 				GetUnaryValue(Instr, Var1);
 				Parent->TriggerAnimator(Var1);
-				printf("triganim %d\n",  (int)Var1);
+//				printf("triganim %d\n",  (int)Var1);
 			break;
 
 			case CLEARBIT:
@@ -602,7 +615,6 @@ bool CFreescapeGame::CCondition::Execute(CObject *obj)
 
 			case SETVAR:
 				GetBinaryValues(Instr, Var1, Var2);
-//				printf("setting var %d\n", Instr->Data.BinaryOp.Dest.Data.Value);
 				Parent->SetVariable(Instr->Data.BinaryOp.Dest.Data.Value, Var1);
 			break;
 
@@ -612,14 +624,14 @@ bool CFreescapeGame::CCondition::Execute(CObject *obj)
 				Var2 += Var1;
 				if(Instr->Data.BinaryOp.Dest.Type == VARIABLE)
 					Parent->SetVariable(Instr->Data.BinaryOp.Dest.Data.Value, Var2);
-				if(! (int)Var2) Status = true;
+				Status = (Var2&Mask) ? true : false;
 			break;
 			case SUBVAR:
 				GetBinaryValues(Instr, Var1, Var2);
 				Var2 -= Var1;
 				if(Instr->Data.BinaryOp.Dest.Type == VARIABLE)
 					Parent->SetVariable(Instr->Data.BinaryOp.Dest.Data.Value, Var2);
-				if(! (int)Var2) Status = true;
+				Status = (Var2&Mask) ? true : false;
 			break;
 
 			case WAITTRIG:
@@ -709,6 +721,8 @@ bool CFreescapeGame::CCondition::Execute(CObject *obj)
 
 			case SOUND:
 			case SYNCSND:
+				GetUnaryValue(Instr, Var1);
+				Parent->PlaySound(Var1-1); // should subtract 1?
 //				printf("ignored sound\n");
 			break;
 			case UPDATEI:

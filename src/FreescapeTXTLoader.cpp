@@ -129,7 +129,10 @@ CFreescapeGame::CColour CFreescapeGame::GetColour()
 		col.Entry |= GetInt();
 	}
 	else
+	{
 		UnGetC();
+		col.Entry += (col.Entry >> 4);	// not sure why
+	}
 	MapColour(&col);
 	return col;
 }
@@ -562,6 +565,7 @@ bool CFreescapeGame::OpenTXT(char *name)
 							break;
 							case GROUP:
 							{
+								NewObj->SetArea(AreaNum);
 								Find("included objects");
 //								printf("\t\tgroup: ");
 								char newc = GetC();
@@ -611,11 +615,12 @@ bool CFreescapeGame::OpenTXT(char *name)
 								UnGetC();
 								
 								Find("speed");
-								int Speed, Range, DirFlags = 0;
+								int Speed, Range, DirFlags;
+								DirFlags = 0;
 								Speed = GetInt();
 								Find("range");
 								Range = GetInt();
-								
+
 								Find("shoots");
 								while(1)
 								{

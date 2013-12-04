@@ -110,6 +110,21 @@ void CFreescapeGame::CArea::SetupDisplay()
 	glClearColor(Sky.Col[0], Sky.Col[1], Sky.Col[2], 1);
 }
 
+void CFreescapeGame::CArea::Enter()
+{
+	int c = MAX_OBJECTS_PER_AREA;
+	while(c--)
+		if(Objects[c])
+		{
+			Objects[c]->SetActivated(false);
+			Objects[c]->SetCollided(false);
+			Objects[c]->SetShot(false);
+			CCondition *C = Objects[c]->GetCondition();
+			if(C)
+				C->Reset();
+		}
+}
+
 void CFreescapeGame::CArea::Reset()
 {
 	int c = MAX_OBJECTS_PER_AREA;
@@ -134,7 +149,7 @@ void CFreescapeGame::CArea::Reset()
 		}
 }
 
-void CFreescapeGame::CArea::Draw()
+void CFreescapeGame::CArea::Draw(float *PlayerPos)
 {
 	if(HasFloor)
 	{
@@ -149,42 +164,49 @@ void CFreescapeGame::CArea::Draw()
 	int c = MAX_OBJECTS_PER_AREA;
 	while(c--)
 		if(Objects[c])
-			Objects[c]->Draw();
+			Objects[c]->Draw(PlayerPos);
 }
 
 void CFreescapeGame::CArea::Update()
 {
-	static int Framec = 0;
-	Framec++;
-
 	int c = MAX_OBJECTS_PER_AREA;
 	while(c--)
 		if(Objects[c])
-		{
-			CCondition *C = Objects[c]->GetCondition();
-			if(C)
-			{
-				if(!C->Execute(Objects[c]))
-					printf("failed on object %d\n", c);
-			}
-			Objects[c]->Update(Scale);
-			if(Parent->StopProcessing()) return;
-		}
+			Objects[c]->Update();
+}
+
+void CFreescapeGame::CArea::UpdateLogic(float *PlayerPos)
+{
+	int c;
 
 	c = MAX_CONDITIONS_PER_AREA;
 	while(c--)
 		if(Conditions[c])
 		{
-			Conditions[c]->Execute(NULL);
 			if(Parent->StopProcessing()) return;
+			Conditions[c]->Execute(NULL);
 		}
 
 	c = MAX_ANIMATORS_PER_AREA;
 	while(c--)
 		if(Animators[c])
 		{
-			Animators[c]->Execute(NULL);
 			if(Parent->StopProcessing()) return;
+			Animators[c]->Execute(NULL);
+		}
+
+	c = MAX_OBJECTS_PER_AREA;
+	while(c--)
+		if(Objects[c])
+		{
+			if(Parent->StopProcessing()) return;
+			Objects[c]->UpdateLogic(PlayerPos, Scale);
+			CCondition *C = Objects[c]->GetCondition();
+			if(C)
+			{
+				if(!C->Execute(Objects[c]))
+					printf("failed on object %d\n", c);
+			}
 		}
 }
 
@@ -201,7 +223,7 @@ CFreescapeGame::CArea::Entrance *CFreescapeGame::CArea::GetEntrance(unsigned int
 	return Entrances[id];
 }
 
-#define PLAYER_WIDTH	32.0
+//#define PLAYER_WIDTH	32.0
 #define ERROR_BOUND		0.001
 
 bool CFreescapeGame::CArea::FixCollisions(float *Pos, float *Move, float Radius, float Ascent, float Descent)
@@ -261,7 +283,6 @@ bool CFreescapeGame::CArea::FixCollisions(float *Pos, float *Move, float Radius,
 		}
 	}
 
-	// push up step
 	int c = MAX_OBJECTS_PER_AREA;
 	CObject *PushObj = NULL;
 	float PushL = 0;
@@ -271,9 +292,9 @@ bool CFreescapeGame::CArea::FixCollisions(float *Pos, float *Move, float Radius,
 			float L;
 			if(Objects[c]->GetElevation(Pos, Radius, L))
 			{
-				if(L < 0 && L >= -(Descent+1) || Objects[c]->CheckInside(Pos))
+				if(L < 0 && L >= -(Descent+1))// || Objects[c]->CheckInside(Pos))
 				{
-					Pos[1] -= L;//*0.25f;
+					Pos[1] -= L*0.25f;
 					Supported = true;
 					if(L < PushL)
 					{
@@ -287,10 +308,10 @@ bool CFreescapeGame::CArea::FixCollisions(float *Pos, float *Move, float Radius,
 	if(PushObj) PushObj->SetCollided(true);
 
 	// and boundaries must be observed
-/*	if(Pos[0] < 0) Pos[0] = 0;
+	if(Pos[0] < 0) Pos[0] = 0;
 	if(Pos[2] < 0) Pos[2] = 0;
-	if(Pos[0] > 4080) Pos[0] = 4080;
-	if(Pos[2] > 4080) Pos[2] = 4080;*/
+	if(Pos[0] > 8192) Pos[0] = 8192;
+	if(Pos[2] > 8192) Pos[2] = 8192;
 //	printf("%0.2f %0.2f\n", Pos[0], Pos[2]);
 
 	// all areas have an infinite floor, so...
@@ -301,6 +322,29 @@ bool CFreescapeGame::CArea::FixCollisions(float *Pos, float *Move, float Radius,
 	}
 	
 	return Supported;
+}
+
+float CFreescapeGame::CArea::GetHeadRoom(float *Pos, float Radius)
+{
+	float HeadRoom = -1;
+	int c = MAX_OBJECTS_PER_AREA;
+	while(c--)
+		if(Objects[c] && Objects[c]->GetVis() && Objects[c]->GetType() != GROUP)
+		{
+			float *ObjPos = Objects[c]->GetPos();
+			float *ObjSize = Objects[c]->GetSize();
+			if(Pos[0] + Radius < ObjPos[0]+ERROR_BOUND) continue;
+			if(Pos[2] + Radius < ObjPos[2]+ERROR_BOUND) continue;
+			if(Pos[0] - Radius > ObjPos[0]+ObjSize[0]-ERROR_BOUND) continue;
+			if(Pos[2] - Radius > ObjPos[2]+ObjSize[2]-ERROR_BOUND) continue;
+			if(Pos[1] > ObjPos[1]-ERROR_BOUND) continue;
+
+			float Diff = ObjPos[1] - Pos[1];
+			if(Diff < HeadRoom || HeadRoom < 0)
+				HeadRoom = Diff;
+		}
+
+	return HeadRoom;
 }
 
 void CFreescapeGame::CArea::SetColours(CFreescapeGame::CColour &Fl, CFreescapeGame::CColour &Sk)
@@ -343,4 +387,56 @@ void CFreescapeGame::CArea::Assemble()
 	while(c--)
 		if(Objects[c])
 			Objects[c]->Assemble();
+}
+
+void CFreescapeGame::CArea::PushOut(float *Pos, float Radius, float Ascent, float Descent)
+{
+	return;
+
+	int c = MAX_OBJECTS_PER_AREA;
+	while(c--)
+	{
+		if(Objects[c])
+		{
+			float *ObjPos;
+			ObjPos = Objects[c]->GetPos();
+			printf("\tobject %d at (%0.2f %0.2f %0.2f) is %s\n", c, ObjPos[0], ObjPos[1], ObjPos[2], Objects[c]->GetVis() ? "visible" : "invisible");
+		}
+		if(Objects[c] && Objects[c]->GetType() != GROUP && Objects[c]->GetVis())
+		{
+			float *ObjPos, *ObjSize;
+			ObjPos = Objects[c]->GetPos();
+			ObjSize = Objects[c]->GetSize();
+
+			if(Pos[0] - Radius > ObjPos[0] + ObjSize[0]) continue;
+			if(Pos[0] + Radius < ObjPos[0]) continue;
+			if(Pos[2] - Radius > ObjPos[2] + ObjSize[2]) continue;
+			if(Pos[2] + Radius < ObjPos[2]) continue;
+			if(Pos[1]+Descent > ObjPos[1] + ObjSize[1]) continue;
+			if(Pos[1]+Ascent < ObjPos[1]) continue;
+
+			/* find shortest push */
+			float Centre[3] = {ObjPos[0] + (ObjSize[0] / 2), ObjPos[1] + (ObjSize[1] / 2), ObjPos[2] + (ObjSize[2] / 2)};
+			float Moves[3] = {1000, 1000, 1000};
+			if(Pos[0] < Centre[0]) {Moves[0] = Pos[0] - (ObjPos[0] - Radius);} else {Moves[0] = Pos[0] - (ObjPos[0] + ObjSize[0] + Radius);}
+			if(Pos[2] < Centre[2]) {Moves[2] = Pos[2] - (ObjPos[2] - Radius);} else {Moves[2] = Pos[2] - (ObjPos[2] + ObjSize[2] + Radius);}
+
+			if(fabs(Moves[0]) < fabs(Moves[1]) && fabs(Moves[0]) < fabs(Moves[2]))
+			{
+				Pos[0] += Moves[0];
+				printf("warp x!\n");
+			}
+			if(fabs(Moves[2]) < fabs(Moves[1]) && fabs(Moves[2]) < fabs(Moves[0]))
+			{
+				Pos[2] += Moves[2];
+				printf("warp z! %0.2f\n", Moves[2]);
+			}
+/*			if(Pos[0] - Radius < ObjPos[0] + ObjSize[0]){ Pos[0] = ObjPos[0] + ObjSize[0] + Radius;}
+			if(Pos[0] + Radius > ObjPos[0]) continue;
+			if(Pos[2] - Radius > ObjPos[2] + ObjSize[2]) continue;
+			if(Pos[2] + Radius < ObjPos[2]) continue;
+			if(Pos[1]+Descent > ObjPos[1] + ObjSize[1]) continue;
+			if(Pos[1]+Ascent < ObjPos[1]) continue;*/
+		}
+	}
 }

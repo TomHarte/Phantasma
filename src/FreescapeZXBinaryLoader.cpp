@@ -3,35 +3,50 @@
 #define Get8(v) v = *DPtr; DPtr++;
 #define Get16(v) v = *DPtr; DPtr++; v |= (*DPtr) << 8; DPtr++;
 
-CFreescapeGame::CCondition *CFreescapeGame::GetConditionZXBinary(Uint8 *Ptr, int Len)
+CFreescapeGame::CCondition *CFreescapeGame::GetConditionZXBinary(Uint8 *Ptr, int Len, bool print )
 {
 	Uint8 *OPtr = Ptr;
 	CCondition *NewC = new CCondition;
 	bool Shot = (Ptr[0]&0x80) ? true : false;
 
 	if(Shot)
+	{
 		NewC->AddInstruction("if shot? then ");
+		if(print) printf("\tif shot? then\n");
+	}
 	else
+	{
 		NewC->AddInstruction("if collided? then ");
+		if(print) printf("\tif collided? then\n");
+	}
 
 	int c = 0;
 	while(c < Len)
 	{
 		bool NewShot = (Ptr[c]&0x80) ? true : false;
-		
+
 		if(Shot != NewShot)
 		{
 			NewC->AddInstruction("endif ");
+			if(print) printf("\tendif\n");
 			if(NewShot)
+			{
 				NewC->AddInstruction("if shot? then ");
+				if(print) printf("\tif shot? then\n");
+			}
 			else
+			{
 				NewC->AddInstruction("if collided? then ");
+				if(print) printf("\tif collided? then\n");
+			}
 		}
+		Shot = NewShot;
 
 		bool Understood = true;
 		char NewCommand[256];
 		Uint8 Command;
 		Command = Ptr[c]&0x1f; c++;
+		sprintf(NewCommand, "");
 		switch(Command)
 		{
 			default:
@@ -44,7 +59,6 @@ CFreescapeGame::CCondition *CFreescapeGame::GetConditionZXBinary(Uint8 *Ptr, int
 			}
 			break;
 			case 0:	//seems to be NOP?
-				sprintf(NewCommand, "");
 			break;
 			case 1:
 			{
@@ -82,7 +96,7 @@ CFreescapeGame::CCondition *CFreescapeGame::GetConditionZXBinary(Uint8 *Ptr, int
 				sprintf(NewCommand, "subvar (1,v%d) ", Ptr[c]); c++;
 			break;
 			case 11:
-				sprintf(NewCommand, "if var!=? (v%d,%d) then end ", Ptr[c], Ptr[c+1]); c+=2;
+				sprintf(NewCommand, "if var!=? (v%d,%d) then end endif ", Ptr[c], Ptr[c+1]); c+=2;
 			break;
 			case 12:
 				sprintf(NewCommand, "setbit (%d) ", Ptr[c]); c++;
@@ -91,7 +105,7 @@ CFreescapeGame::CCondition *CFreescapeGame::GetConditionZXBinary(Uint8 *Ptr, int
 				sprintf(NewCommand, "clrbit (%d) ", Ptr[c]); c++;
 			break;
 			case 14:
-				sprintf(NewCommand, "if bit!=? (%d, %d) then end ", Ptr[c], Ptr[c+1]); c+=2;
+				sprintf(NewCommand, "if bit!=? (%d, %d) then end endif ", Ptr[c], Ptr[c+1]); c+=2;
 			break;
 			case 15:
 				sprintf(NewCommand, "sound (%d) ", Ptr[c]); c++;
@@ -130,16 +144,18 @@ CFreescapeGame::CCondition *CFreescapeGame::GetConditionZXBinary(Uint8 *Ptr, int
 				sprintf(NewCommand, "togbit (%d) ", Ptr[c]); c++;
 			break;
 			case 30:
-				sprintf(NewCommand, "if invis? (%d) then end ", Ptr[c]); c++;
+				sprintf(NewCommand, "if invis? (%d) then end endif ", Ptr[c]); c++;
 			break;
 			case 31:
-				sprintf(NewCommand, "if vis? (%d) then end ", Ptr[c]); c++;
+				sprintf(NewCommand, "if vis? (%d) then end endif ", Ptr[c]); c++;
 			break;
 		}
 		if(Understood) NewC->AddInstruction(NewCommand); else break;
+		if(print) printf("\t%s\n", NewCommand);
 	}
 
 	NewC->AddInstruction("endif ");
+	if(print) printf("\tendif\n\n");
 	NewC->Compile(false, this);
 	return NewC;
 }
@@ -155,36 +171,33 @@ bool CFreescapeGame::OpenZXBinary(char *name, int Offset)
 
 	FILE *b = fopen(name, "rb");
 	if(!b) return false;
-	
+
 	Uint8 Buffer[49152];
 	fread(Buffer, 1, 49152, b);
 	fclose(b);
-	
-	Uint8 *DPtr = &Buffer[Offset - 16384], *Base;
-	Base = DPtr;
 
-	Uint8 NumRooms; Get8(NumRooms);
-	Uint16 DataBaseLength; Get16(DataBaseLength);
-//	printf("%d Rooms, %d bytes\n", NumRooms, DataBaseLength);
-	
-	Get8(Start.Area);
-	Get8(Start.Entrance);
+	Uint8 *Base = &Buffer[Offset - 16384];
 
-	Uint8 InitJetEnergy, InitJetShield, InitProbeEnergy, InitProbeShield;
-	Get8(InitJetEnergy); Get8(InitJetShield);
-	Get8(InitProbeEnergy); Get8(InitProbeShield);
+	Uint8 NumRooms = Base[0];
 
-	DPtr += 0x3c; //skip shade patterns
+	Start.Area = Base[3];
+	Start.Entrance = Base[4];
 
-	Uint16 UnknownTable, GlobalByteCodeTable;
-	Get16(UnknownTable);
-	Get16(GlobalByteCodeTable);
+//	Uint8 InitJetEnergy, InitJetShield, InitProbeEnergy, InitProbeShield;
+//	Get8(InitJetEnergy); Get8(InitJetShield);
+//	Get8(InitProbeEnergy); Get8(InitProbeShield);
+
+	Uint16 GlobalByteCodeTable;
+	GlobalByteCodeTable = Base[0x48] | (Base[0x49] << 8);
+
+	printf("GBCT: %d\n", GlobalByteCodeTable);
+
 	Uint8 *ConditionPointer = &Base[GlobalByteCodeTable];
 	int NumConditions = ConditionPointer[0]; ConditionPointer++;
 	printf("%d global conditions\n", NumConditions);
 	while(NumConditions--)
 	{
-		CCondition *NewCon = GetConditionZXBinary(&ConditionPointer[1], ConditionPointer[0]);
+		CCondition *NewCon = GetConditionZXBinary(&ConditionPointer[1], ConditionPointer[0], true);
 		GlobalArea->AddCondition(NumConditions, NewCon);
 		printf("\t%d bytes\n", *ConditionPointer);
 		ConditionPointer += *ConditionPointer;
@@ -192,13 +205,12 @@ bool CFreescapeGame::OpenZXBinary(char *name, int Offset)
 
 	Uint16 Offsets[35];
 	memset(Offsets, 0, sizeof(Uint16)*35);
-	DPtr += 0xc8 - 0x49;
-	
+
 	for(int c = 0; c < NumRooms; c++)
 	{
-		Get16(Offsets[c]);
+		Offsets[c] = Base[0xc8 + (c*2)] | (Base[0xc9 + (c*2)] << 8);
 	}
-	
+
 	for(int c = 0; c < 35; c++)
 	{
 		if(Offsets[c])
@@ -206,26 +218,20 @@ bool CFreescapeGame::OpenZXBinary(char *name, int Offset)
 			Uint8 *IPtr = &Base[Offsets[c]];
 			Uint16 BytePointer;
 
-//			printf("Area %d\n", IPtr[2]);
 			int AreaId = IPtr[2];
 			CArea *CurArea = Areas[AreaId] = new CArea(this);
 			BytePointer = IPtr[3] | IPtr[4] << 8;
 			CurArea->SetScale(IPtr[5]);
 
-//			if(Offset == OFFSET_TOTALECLIPSE)
-//				Set16PaletteGradient(SpecCols[7], SpecCols[0]);
-//			else
-				Set16PaletteGradient(SpecCols[IPtr[8]&15], SpecCols[IPtr[9]&15]);
+			Set16PaletteGradient(SpecCols[IPtr[8]&15], SpecCols[IPtr[9]&15]);
 
 			/* get area conditions */
 			Uint8 *ConditionPointer = &IPtr[BytePointer];
 			int NumConditions = ConditionPointer[0]; ConditionPointer++;
-//			printf("%d conditions\n", NumConditions);
 			while(NumConditions--)
 			{
-				CCondition *NewCon = GetConditionZXBinary(&ConditionPointer[1], ConditionPointer[0]);
+				CCondition *NewCon = GetConditionZXBinary(&ConditionPointer[1], ConditionPointer[0], true);
 				CurArea->AddCondition(NumConditions, NewCon);
-//				printf("\t%d bytes\n", *ConditionPointer);
 				ConditionPointer += *ConditionPointer;
 			}
 
@@ -251,7 +257,6 @@ bool CFreescapeGame::OpenZXBinary(char *name, int Offset)
 					ObjPtr += ObjLen;
 
 					CurArea->SetEntrance(ObjId, NewE);
-					printf("adding entrance %d to area %d\n", ObjId, AreaId); 
 				}
 				else
 				{
@@ -261,7 +266,6 @@ bool CFreescapeGame::OpenZXBinary(char *name, int Offset)
 
 					Pos[0] = ObjPtr[1]*32; Pos[1] = ObjPtr[2]*32; Pos[2] = ObjPtr[3]*32;
 					Size[0] = ObjPtr[4]*32; Size[1] = ObjPtr[5]*32; Size[2] = ObjPtr[6]*32;
-					printf("adding object %d to area %d\n", ObjId, AreaId); 
 
 					switch(ObjType)
 					{
@@ -300,7 +304,7 @@ bool CFreescapeGame::OpenZXBinary(char *name, int Offset)
 						{
 							NewObj->SetType(PYRAMID);
 							NewObj->SetPyramidType(ObjType-3);
-							
+
 							CColour col;
 							col.Entry = ObjPtr[9]>> 4; MapColour(&col); NewObj->SetColour(1, col);
 							col.Entry = ObjPtr[9]&0x0f; MapColour(&col); NewObj->SetColour(0, col);
@@ -326,14 +330,15 @@ bool CFreescapeGame::OpenZXBinary(char *name, int Offset)
 						break;
 						case 2:
 							NewObj->SetType(SENSOR);
-//							printf("Sensor, rate %d range %d?", ObjPtr[9] + (ObjPtr[10] << 8), ObjPtr[11] + (ObjPtr[12] << 8));
-							EndPointer = 13;
+							NewObj->SetSensorStats(ObjPtr[9] | (ObjPtr[10] << 8), ObjPtr[11] | (ObjPtr[12] << 8), ObjPtr[13], ObjId);
+							printf("Sensor, speed %d range %d flags %02x\n", ObjPtr[9] | (ObjPtr[10] << 8), ObjPtr[11] | (ObjPtr[12] << 8), ObjPtr[13]);
+							EndPointer = 14;
 						break;
 					}
 
 					if(NewObj)
 					{
-						if(ObjPtr[0]&0x80) NewObj->SetDefaultVisible(false);
+						if(ObjPtr[0]&0xd0) NewObj->SetDefaultVisible(false);
 
 						if(NewObj->GetType() == PLANAR)
 						{
@@ -341,7 +346,7 @@ bool CFreescapeGame::OpenZXBinary(char *name, int Offset)
 							CColour col;
 							col.Entry = ObjPtr[9]>> 4; MapColour(&col); NewObj->SetColour(1, col);
 							col.Entry = ObjPtr[9]&0x0f; MapColour(&col); NewObj->SetColour(0, col);
-							
+
 							float Low[3], High[3];
 
 							for(int c = 0; c < NewObj->GetNumSides(); c++)
@@ -373,10 +378,10 @@ bool CFreescapeGame::OpenZXBinary(char *name, int Offset)
 
 						NewObj->SetLocation(Pos, Size);
 						CurArea->AddObject(ObjId, NewObj);
-						
+
 						if(EndPointer != ObjLen)
 						{
-							CCondition *C = GetConditionZXBinary(&ObjPtr[EndPointer], ObjLen - EndPointer);
+							CCondition *C = GetConditionZXBinary(&ObjPtr[EndPointer], ObjLen - EndPointer, AreaId == 24);
 							NewObj->SetCondition(C);
 						}
 					}
@@ -391,9 +396,6 @@ bool CFreescapeGame::OpenZXBinary(char *name, int Offset)
 	MaxClimb = 32;
 	Start.Height = 64;//Areas[Start.Area]->GetEntrance(Start.Entrance)->Pos[1];
 	Start.ResetCondition = 0;
-
-//	Start.Area = 2;
-//	Start.Entrance = 48;
 
 	Assemble();
 	return true;

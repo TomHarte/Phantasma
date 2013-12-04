@@ -27,10 +27,12 @@ bool CFreescapeGame::SetPalette(char *name)
 
 	for(int entry = 0; entry < 256; entry++)
 	{
+		unsigned char col[3];
+		col[0] = fgetc(f); col[1] = fgetc(f); col[2] = fgetc(f);
 		for(int component = 0; component < 3; component++)
 		{
-			Palette[entry][component] = (float)(fgetc(f)&63) / 63.0f;
-//			if(Palette[entry][component] > 63) Palette[entry][component] &= 31;
+			unsigned char ch = col[component];
+			Palette[entry][component] = (float)(ch&63) / 63.0f;
 		}
 	}
 
@@ -45,4 +47,18 @@ bool CFreescapeGame::SetFont(char *name)
 {
 	PrintFont = EBGF_GetFont(name);
 	return PrintFont ? true : false;
+}
+
+bool CFreescapeGame::LoadSounds(char *mask)
+{
+	bool found = false;
+	char Filename[512];
+	int c = NUM_SOUNDS;
+	while(c--)
+	{
+		sprintf(Filename, "%s%02d.wav", mask, c);
+		if(Sounds[c] = Mix_LoadWAV(Filename))
+			found = true;
+	}
+	return found;
 }

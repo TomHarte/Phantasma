@@ -65,6 +65,7 @@ static NSString *getApplicationName(void)
 #endif
 
 @interface SDLApplication : NSApplication
+- (void)sendEvent:(NSEvent *)anEvent;
 @end
 
 @implementation SDLApplication
@@ -81,7 +82,7 @@ static NSString *getApplicationName(void)
 	/* filter out keys with command pressed */
 	if( NSKeyDown == [anEvent type] || NSKeyUp == [anEvent type] )
 	{
-		if( [anEvent modifierFlags] & NSCommandKeyMask) 
+		if( [anEvent modifierFlags] & NSCommandKeyMask)
 			[super sendEvent: anEvent];
 	}
 	else 
