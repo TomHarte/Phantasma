@@ -15,19 +15,8 @@
 		4B1E688918554BFD003A9847 /* PTDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E688718554BFD003A9847 /* PTDocument.xib */; };
 		4B1E688C18554BFD003A9847 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E688A18554BFD003A9847 /* MainMenu.xib */; };
 		4B1E688E18554BFD003A9847 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E688D18554BFD003A9847 /* Images.xcassets */; };
-		4B1E689518554BFD003A9847 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B1E689418554BFD003A9847 /* XCTest.framework */; };
-		4B1E689618554BFD003A9847 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B1E687218554BFD003A9847 /* Cocoa.framework */; };
+		4B1E68AB18554E7D003A9847 /* FreescapeGL Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E68AA18554E7D003A9847 /* FreescapeGL Icon.icns */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		4B1E689718554BFD003A9847 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4B1E686718554BFD003A9847 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4B1E686E18554BFD003A9847;
-			remoteInfo = Phantasma;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		4B1E686F18554BFD003A9847 /* Phantasma.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Phantasma.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -45,8 +34,9 @@
 		4B1E688818554BFD003A9847 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PTDocument.xib; sourceTree = "<group>"; };
 		4B1E688B18554BFD003A9847 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		4B1E688D18554BFD003A9847 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		4B1E689318554BFD003A9847 /* PhantasmaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhantasmaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B1E689418554BFD003A9847 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		4B1E68A918554D08003A9847 /* Phantasma.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Phantasma.entitlements; sourceTree = "<group>"; };
+		4B1E68AA18554E7D003A9847 /* FreescapeGL Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "FreescapeGL Icon.icns"; path = "../../../res/FreescapeGL Icon.icns"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,15 +45,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B1E687318554BFD003A9847 /* Cocoa.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4B1E689018554BFD003A9847 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4B1E689618554BFD003A9847 /* Cocoa.framework in Frameworks */,
-				4B1E689518554BFD003A9847 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,7 +64,6 @@
 			isa = PBXGroup;
 			children = (
 				4B1E686F18554BFD003A9847 /* Phantasma.app */,
-				4B1E689318554BFD003A9847 /* PhantasmaTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -111,6 +91,7 @@
 		4B1E687818554BFD003A9847 /* Phantasma */ = {
 			isa = PBXGroup;
 			children = (
+				4B1E68A918554D08003A9847 /* Phantasma.entitlements */,
 				4B1E688418554BFD003A9847 /* PTDocument.h */,
 				4B1E688518554BFD003A9847 /* PTDocument.m */,
 				4B1E688718554BFD003A9847 /* PTDocument.xib */,
@@ -124,6 +105,7 @@
 		4B1E687918554BFD003A9847 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				4B1E68AA18554E7D003A9847 /* FreescapeGL Icon.icns */,
 				4B1E687A18554BFD003A9847 /* Phantasma-Info.plist */,
 				4B1E687B18554BFD003A9847 /* InfoPlist.strings */,
 				4B1E687E18554BFD003A9847 /* main.m */,
@@ -153,24 +135,6 @@
 			productReference = 4B1E686F18554BFD003A9847 /* Phantasma.app */;
 			productType = "com.apple.product-type.application";
 		};
-		4B1E689218554BFD003A9847 /* PhantasmaTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4B1E68A618554BFD003A9847 /* Build configuration list for PBXNativeTarget "PhantasmaTests" */;
-			buildPhases = (
-				4B1E688F18554BFD003A9847 /* Sources */,
-				4B1E689018554BFD003A9847 /* Frameworks */,
-				4B1E689118554BFD003A9847 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				4B1E689818554BFD003A9847 /* PBXTargetDependency */,
-			);
-			name = PhantasmaTests;
-			productName = PhantasmaTests;
-			productReference = 4B1E689318554BFD003A9847 /* PhantasmaTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -181,8 +145,12 @@
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Thomas Harte";
 				TargetAttributes = {
-					4B1E689218554BFD003A9847 = {
-						TestTargetID = 4B1E686E18554BFD003A9847;
+					4B1E686E18554BFD003A9847 = {
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -200,7 +168,6 @@
 			projectRoot = "";
 			targets = (
 				4B1E686E18554BFD003A9847 /* Phantasma */,
-				4B1E689218554BFD003A9847 /* PhantasmaTests */,
 			);
 		};
 /* End PBXProject section */
@@ -214,14 +181,8 @@
 				4B1E688E18554BFD003A9847 /* Images.xcassets in Resources */,
 				4B1E688318554BFD003A9847 /* Credits.rtf in Resources */,
 				4B1E688918554BFD003A9847 /* PTDocument.xib in Resources */,
+				4B1E68AB18554E7D003A9847 /* FreescapeGL Icon.icns in Resources */,
 				4B1E688C18554BFD003A9847 /* MainMenu.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4B1E689118554BFD003A9847 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -237,22 +198,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4B1E688F18554BFD003A9847 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		4B1E689818554BFD003A9847 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4B1E686E18554BFD003A9847 /* Phantasma */;
-			targetProxy = 4B1E689718554BFD003A9847 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		4B1E687B18554BFD003A9847 /* InfoPlist.strings */ = {
@@ -361,11 +307,25 @@
 		4B1E68A418554BFD003A9847 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CODE_SIGN_ENTITLEMENTS = Phantasma/Phantasma.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Phantasma/Phantasma-Prefix.pch";
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
 				INFOPLIST_FILE = "Phantasma/Phantasma-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -374,53 +334,27 @@
 		4B1E68A518554BFD003A9847 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CODE_SIGN_ENTITLEMENTS = Phantasma/Phantasma.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Phantasma/Phantasma-Prefix.pch";
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
 				INFOPLIST_FILE = "Phantasma/Phantasma-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
-		4B1E68A718554BFD003A9847 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Phantasma.app/Contents/MacOS/Phantasma";
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Phantasma/Phantasma-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "PhantasmaTests/PhantasmaTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Debug;
-		};
-		4B1E68A818554BFD003A9847 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Phantasma.app/Contents/MacOS/Phantasma";
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Phantasma/Phantasma-Prefix.pch";
-				INFOPLIST_FILE = "PhantasmaTests/PhantasmaTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
 		};
@@ -441,15 +375,6 @@
 			buildConfigurations = (
 				4B1E68A418554BFD003A9847 /* Debug */,
 				4B1E68A518554BFD003A9847 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4B1E68A618554BFD003A9847 /* Build configuration list for PBXNativeTarget "PhantasmaTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4B1E68A718554BFD003A9847 /* Debug */,
-				4B1E68A818554BFD003A9847 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
