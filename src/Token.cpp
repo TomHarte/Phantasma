@@ -19,7 +19,7 @@ Token::Token(std::string *_string)
 	string = _string;
 }
 
-Token::Token(Type _type, uint32_t _value)
+Token::Token(Type _type, int32_t _value)
 {
 	type = _type;
 	value = _value;
@@ -30,12 +30,12 @@ Token::Type Token::getType()
 	return type;
 }
 
-uint32_t Token::GetValue(CGameState *gameState, uint32_t suggestedValue)
+int32_t Token::getValue(CGameState *gameState, int32_t suggestedValue)
 {
 	switch(type)
 	{
 		case CONSTANT:	return value;
-		case VARIABLE:	return gameState->GetVariable(value);
+		case VARIABLE:	return gameState->getVariable(value);
 		default:		return suggestedValue;
 	}
 }

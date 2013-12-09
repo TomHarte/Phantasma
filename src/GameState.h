@@ -14,7 +14,7 @@
 class CGameState
 {
 	public:
-		uint32_t GetVariable(uint32_t variableNumber);
+		int32_t getVariable(int32_t variableNumber);
 };
 
 #endif /* defined(__Phantasma__GameState__) */

@@ -11,6 +11,7 @@
 
 #include "Token.h"
 #include <vector>
+class CGameState;
 
 class FCLInstruction
 {
@@ -21,6 +22,10 @@ class FCLInstruction
 		void setArguments(Token *);
 		void setArguments(Token *, Token *);
 		void setArguments(Token *, Token *, Token *);
+
+		void getValue(CGameState *gameState, int32_t &);
+		void getValue(CGameState *gameState, int32_t &, int32_t &);
+		void getValue(CGameState *gameState, int32_t &, int32_t &, int32_t &);
 
 		void setBranches(std::vector<FCLInstruction *> *thenBranch, std::vector<FCLInstruction *> *elseBranch);
 

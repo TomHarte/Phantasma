@@ -138,7 +138,7 @@ class CParser
 			long value = strtol(startOfNumber, &endOfNumber, 10);
 			if(startOfNumber != endOfNumber)
 			{
-				lastToken = new Token(discoveredType, (uint32_t)value);
+				lastToken = new Token(discoveredType, (int32_t)value);
 				codePointer += (size_t)(endOfNumber - startOfNumber);
 				return lastToken;
 			}

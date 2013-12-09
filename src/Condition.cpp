@@ -1,5 +1,22 @@
 #include "Condition.h"
 
+CCondition::CCondition(CGameState *_gameState, std::vector<FCLInstruction *> *_instructions, bool _isAnimator)
+{
+	gameState = _gameState;
+	instructions = _instructions;
+	isAnimator = _isAnimator;
+}
+
+CCondition::~CCondition()
+{
+//	for(std::vector<int>::size_type i = 0; i < instructions->size(); i++)
+//	{
+//		FCLInstruction *instruction = instructions[i];
+//		delete instruction;
+//	}
+	delete instructions;
+}
+
 /*void CFreescapeGame::CCondition::SetLooping(bool c)
 {
 	Looping = c;
@@ -30,27 +47,6 @@ const char *ConNames[] =
 	"swapjet", "bit!=?", "var!=?"
 };
 
-CFreescapeGame::CCondition::CCondition()
-{
-	Head = NULL;
-	Program = NULL;
-	RepeatToken = false;
-	Looping = true;
-	ResetProg();
-}
-
-CFreescapeGame::CCondition::~CCondition()
-{
-	Clear();
-}
-
-void CFreescapeGame::CCondition::Clear()
-{
-	delete Head; Head = NULL;
-	delete[] Program; Program = NULL;
-	RepeatToken = false;
-}
-
 void CFreescapeGame::CCondition::ResetProg()
 {
 	if(Active > 0) Active--;
@@ -72,30 +68,6 @@ void CFreescapeGame::CCondition::Reset()
 void CFreescapeGame::CCondition::SetActive(bool s)	{ if(s && Active >= 0) Active++; if(!s) Active = 0;}
 void CFreescapeGame::CCondition::Trigger()			{ Triggered = true; }
 
-Sint32 CFreescapeGame::CCondition::Token::GetValue(CFreescapeGame *g, Sint32 Suggested)
-{
-	if(Type == CONSTANT) return Data.Value;
-	if(Type == VARIABLE) return g->GetVariable(Data.Value);
-	return Suggested;
-}
-
-void CFreescapeGame::CCondition::GetTernaryValues(FCLInstruction *I, Sint32 &Var1, Sint32 &Var2, Sint32 &Var3)
-{
-	Var1 = I->Data.TernaryOp.Source.GetValue(Parent, Var1);
-	Var2 = I->Data.TernaryOp.Dest.GetValue(Parent, Var2);
-	Var3 = I->Data.TernaryOp.Other.GetValue(Parent, Var3);
-}
-
-void CFreescapeGame::CCondition::GetBinaryValues(FCLInstruction *I, Sint32 &Var1, Sint32 &Var2)
-{
-	Var1 = I->Data.BinaryOp.Source.GetValue(Parent, Var1);
-	Var2 = I->Data.BinaryOp.Dest.GetValue(Parent, Var2);
-}
-
-void CFreescapeGame::CCondition::GetUnaryValue(FCLInstruction *I, Sint32 &Var)
-{
-	Var = I->Data.UnaryOp.GetValue(Parent, Var);
-}
 
 bool CFreescapeGame::CCondition::QueryCondition(CObject *obj, FCLInstruction *Conditional)
 {

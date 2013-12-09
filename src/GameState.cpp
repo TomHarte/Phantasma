@@ -8,7 +8,7 @@
 
 #include "GameState.h"
 
-uint32_t CGameState::GetVariable(uint32_t variableNumber)
+int32_t CGameState::getVariable(int32_t variableNumber)
 {
 	return 0;
 }

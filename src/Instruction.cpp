@@ -56,3 +56,24 @@ void FCLInstruction::setBranches(std::vector<FCLInstruction *> *thenBranch, std:
 	conditional.thenInstructions = thenBranch;
 	conditional.elseInstructions = elseBranch;
 }
+
+/*
+	Similarly routine getters...
+*/
+void FCLInstruction::getValue(CGameState *gameState, int32_t &source)
+{
+	source		= arguments.source->getValue(gameState, source);
+}
+
+void FCLInstruction::getValue(CGameState *gameState, int32_t &source, int32_t &destination)
+{
+	source		= arguments.source->getValue(gameState, source);
+	destination	= arguments.destination->getValue(gameState, destination);
+}
+
+void FCLInstruction::getValue(CGameState *gameState, int32_t &source, int32_t &destination, int32_t &option)
+{
+	source		= arguments.source->getValue(gameState, source);
+	destination	= arguments.destination->getValue(gameState, destination);
+	option		= arguments.option->getValue(gameState, option);
+}

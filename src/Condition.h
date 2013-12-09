@@ -17,14 +17,10 @@ class FCLInstruction;
 class CCondition
 {
 	public:
-		CCondition(CGameState *gameState, std::vector<FCLInstruction *> *instructions);
+		CCondition(CGameState *gameState, std::vector<FCLInstruction *> *instructions, bool isAnimator);
 		virtual ~CCondition();
 
-/*		void Clear();
-		void AddInstruction(const char *Text);
-		void Compile(bool Animator, CFreescapeGame *Game);
-
-		void Reset();
+/*		void Reset();
 		void SetActive(bool);
 		void Trigger();
 		void SetLooping(bool);
@@ -33,8 +29,9 @@ class CCondition
 
 	private:
 
-		/*bool Animator;
-		CFreescapeGame *Parent;*/
+		std::vector<FCLInstruction *> *instructions;
+		bool isAnimator;
+		CGameState *gameState;
 
 		/*
 			the compiled program itself, and its state - plus functions that operate on these
