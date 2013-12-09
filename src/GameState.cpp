@@ -12,3 +12,8 @@ int32_t CGameState::getVariable(int32_t variableNumber)
 {
 	return 0;
 }
+
+bool CGameState::getBit(int32_t bitNumber)
+{
+	return false;
+}
