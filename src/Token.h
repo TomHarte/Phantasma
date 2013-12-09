@@ -16,7 +16,7 @@
 struct Token
 {
 	public:
-		uint32_t GetValue(CGameState *GameState, uint32_t SuggestedValue = 0);
+		uint32_t GetValue(CGameState *gameState, uint32_t suggestedValue = 0);
 
 		enum Type
 		{
@@ -44,14 +44,18 @@ struct Token
 		};
 
 		Token(Type type);
+		Token(std::string *string);
+		Token(Type type, uint32_t value);
+
+		Type getType();
 
 	private:
-		Type Type;
+		Type type;
 
 		union
 		{
-			uint32_t Value;
-			std::string String;
+			uint32_t value;
+			std::string *string;
 		};
 };
 

@@ -8,9 +8,12 @@
 
 #include "Token.h"
 
-uint32_t Token::GetValue(CGameState *GameState, uint32_t SuggestedValue)
+uint32_t Token::GetValue(CGameState *gameState, uint32_t suggestedValue)
 {
-	if(Type == CONSTANT) return Value;
-	if(Type == VARIABLE) return GameState->GetVariable(Value);
-	return SuggestedValue;
+	switch(type)
+	{
+		case CONSTANT:	return value;
+		case VARIABLE:	return gameState->GetVariable(value);
+		default:		return suggestedValue;
+	}
 }

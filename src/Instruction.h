@@ -10,14 +10,21 @@
 #define __Phantasma__Instruction__
 
 #include "Token.h"
-#include <string>
+#include <vector>
 
 class FCLInstruction
 {
 	public:
-		FCLInstruction();
-		~FCLInstruction();
+		FCLInstruction(Token::Type type);
+		virtual ~FCLInstruction();
 
+		void setArguments(Token *);
+		void setArguments(Token *, Token *);
+		void setArguments(Token *, Token *, Token *);
+		
+		void setBranches(std::vector<FCLInstruction *> *thenBranch, std::vector<FCLInstruction *> *elseBranch);
+
+	private:
 		enum Token::Type Type;
 
 		union
