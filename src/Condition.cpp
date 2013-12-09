@@ -1,12 +1,11 @@
 #include "Condition.h"
 
-
-void CFreescapeGame::CCondition::UnGetToken()
+void CCondition::UnGetToken()
 {
 	RepeatToken = true;
 }
 
-CFreescapeGame::CCondition::Token CFreescapeGame::CCondition::GetToken()
+CCondition::Token CFreescapeGame::CCondition::GetToken()
 {
 	static Token R;
 	if(RepeatToken)

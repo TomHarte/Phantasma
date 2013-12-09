@@ -17,6 +17,9 @@
 		4B1E688E18554BFD003A9847 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E688D18554BFD003A9847 /* Images.xcassets */; };
 		4B1E68AB18554E7D003A9847 /* FreescapeGL Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E68AA18554E7D003A9847 /* FreescapeGL Icon.icns */; };
 		4B1E68AF18555129003A9847 /* Condition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68AE18555129003A9847 /* Condition.cpp */; };
+		4B1E68B318555553003A9847 /* Instruction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68B118555553003A9847 /* Instruction.cpp */; };
+		4B1E68B6185555AA003A9847 /* Token.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68B4185555AA003A9847 /* Token.cpp */; };
+		4B1E68B91855571E003A9847 /* GameState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68B71855571E003A9847 /* GameState.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +43,12 @@
 		4B1E68AA18554E7D003A9847 /* FreescapeGL Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "FreescapeGL Icon.icns"; path = "../../../res/FreescapeGL Icon.icns"; sourceTree = "<group>"; };
 		4B1E68AE18555129003A9847 /* Condition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Condition.cpp; path = ../../Condition.cpp; sourceTree = "<group>"; };
 		4B1E68B018555179003A9847 /* Condition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Condition.h; path = ../../Condition.h; sourceTree = "<group>"; };
+		4B1E68B118555553003A9847 /* Instruction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Instruction.cpp; path = ../../Instruction.cpp; sourceTree = "<group>"; };
+		4B1E68B218555553003A9847 /* Instruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Instruction.h; path = ../../Instruction.h; sourceTree = "<group>"; };
+		4B1E68B4185555AA003A9847 /* Token.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Token.cpp; path = ../../Token.cpp; sourceTree = "<group>"; };
+		4B1E68B5185555AA003A9847 /* Token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Token.h; path = ../../Token.h; sourceTree = "<group>"; };
+		4B1E68B71855571E003A9847 /* GameState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameState.cpp; path = ../../GameState.cpp; sourceTree = "<group>"; };
+		4B1E68B81855571E003A9847 /* GameState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameState.h; path = ../../GameState.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,8 +103,9 @@
 		4B1E687818554BFD003A9847 /* Phantasma */ = {
 			isa = PBXGroup;
 			children = (
-				4B1E68B018555179003A9847 /* Condition.h */,
-				4B1E68AE18555129003A9847 /* Condition.cpp */,
+				4B1E68B71855571E003A9847 /* GameState.cpp */,
+				4B1E68B81855571E003A9847 /* GameState.h */,
+				4B1E68BA18555724003A9847 /* Command Language */,
 				4B1E68AD18555112003A9847 /* OS X */,
 				4B1E687918554BFD003A9847 /* Supporting Files */,
 			);
@@ -126,6 +136,19 @@
 				4B1E688D18554BFD003A9847 /* Images.xcassets */,
 			);
 			name = "OS X";
+			sourceTree = "<group>";
+		};
+		4B1E68BA18555724003A9847 /* Command Language */ = {
+			isa = PBXGroup;
+			children = (
+				4B1E68AE18555129003A9847 /* Condition.cpp */,
+				4B1E68B018555179003A9847 /* Condition.h */,
+				4B1E68B4185555AA003A9847 /* Token.cpp */,
+				4B1E68B5185555AA003A9847 /* Token.h */,
+				4B1E68B118555553003A9847 /* Instruction.cpp */,
+				4B1E68B218555553003A9847 /* Instruction.h */,
+			);
+			name = "Command Language";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -207,7 +230,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B1E688618554BFD003A9847 /* PTDocument.m in Sources */,
+				4B1E68B91855571E003A9847 /* GameState.cpp in Sources */,
+				4B1E68B6185555AA003A9847 /* Token.cpp in Sources */,
 				4B1E687F18554BFD003A9847 /* main.m in Sources */,
+				4B1E68B318555553003A9847 /* Instruction.cpp in Sources */,
 				4B1E68AF18555129003A9847 /* Condition.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
