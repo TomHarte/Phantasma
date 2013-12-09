@@ -1,10 +1,16 @@
 # Phantasma
 
-A remake of Domark's Freescape engine, allowing games created with the 3d Construction Set to run on modern computers.
+A remake of Incentive Software's Freescape engine, allowing games created with the 3d Construction Set to run on modern computers.
+
+Freescape was an early cross-platform scripted 3d game engine, first being used in 1987's Driller for the Spectrum, CPC, C64, Amiga, ST and PC. This project was inspired by 1991's 3D Construction Kit, released as the Virtual Reality Studio in some overseas markets, which allowed users to make their own wholly original games through a combination of modelling and scripting. Such games could be freely redistributed with the Freescape runtime, making Freescape technically the world's first licensed 3d game engine.
 
 WARNING: this code is half a decade old and predates my switch to computer science as a career. It wears its juvenilia visibly. 
 
 I'm hoping to address that.
+
+## Ongoing Work
+
+See the development branch. In that branch I’m cleaning, commenting, refactoring and removing dependencies. It’s work in progress and will return to master when it’s playable.
 
 ## Build Requirements
 
