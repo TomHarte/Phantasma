@@ -51,6 +51,8 @@ class CCondition
 		void GetUnaryValue(FCLInstruction *I, Sint32 &V);
 		bool QueryCondition(CObject *obj, FCLInstruction *Conditional);
 		void ResetProg();*/
+
+		bool statusOfConditional(FCLInstruction *conditional);
 };
 
 

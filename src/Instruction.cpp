@@ -77,3 +77,8 @@ void FCLInstruction::getValue(CGameState *gameState, int32_t &source, int32_t &d
 	destination	= arguments.destination->getValue(gameState, destination);
 	option		= arguments.option->getValue(gameState, option);
 }
+
+Token::Type FCLInstruction::getType()
+{
+	return type;
+}

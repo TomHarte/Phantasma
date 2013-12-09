@@ -23,6 +23,8 @@ class FCLInstruction
 		void setArguments(Token *, Token *);
 		void setArguments(Token *, Token *, Token *);
 
+		Token::Type getType();
+
 		void getValue(CGameState *gameState, int32_t &);
 		void getValue(CGameState *gameState, int32_t &, int32_t &);
 		void getValue(CGameState *gameState, int32_t &, int32_t &, int32_t &);

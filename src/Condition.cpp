@@ -1,4 +1,5 @@
 #include "Condition.h"
+#include "Instruction.h"
 
 CCondition::CCondition(CGameState *_gameState, std::vector<FCLInstruction *> *_instructions, bool _isAnimator)
 {
@@ -17,23 +18,100 @@ CCondition::~CCondition()
 	delete instructions;
 }
 
+bool CCondition::statusOfConditional(FCLInstruction *conditional)	//CObject *obj,
+{
+	int32_t var1, var2;
+	bool result = false;
+
+	switch(conditional->getType())
+	{
+		default:
+			std::cerr << "Unknown conditional" << conditional;
+		break;
+
+		/*
+			Collided, shot and activated all atomically test and reset object state bits;
+			so they delegate determining the result to the object itself
+		*/
+//		case COLLIDEDQ:
+//			Res = obj ? obj->GetCollided() : true;
+//			if(obj) obj->SetCollided(false);
+//		return Res;
+//		case SHOTQ:
+//			Res = obj ? obj->GetShot() : false;
+//			if(obj) obj->SetShot(false);
+//		return Res;
+//		case ACTIVATEDQ:
+//			Res = obj ? obj->GetActivated() : false;
+//			obj->SetActivated(false);	// not sure about this
+//		return Res;
+
+		/*
+			Visibility and, therefore, invisibility, depend on the scene's current state,
+			and we want the scene graph to do the complicated maths anyway...
+		*/
+//		case VISQ:
+//			Var2 = Parent->GetCurrentArea();
+//			GetBinaryValues(Conditional, Var1, Var2);
+//		return Parent->GetVis(Var1, Var2);
+//		case INVISQ:
+//			Var2 = Parent->GetCurrentArea();
+//			GetBinaryValues(Conditional, Var1, Var2);
+//		return !Parent->GetVis(Var1, Var2);
+
+		/*
+			Some easy ones — just compare one value to another
+		*/
+		case Token::VAREQ:
+			conditional->getValue(gameState, var1, var2);
+		return var1 == var2;
+
+		case Token::VARNOTEQ:
+			conditional->getValue(gameState, var1, var2);
+		return var1 != var2;
+
+		case Token::VARLQ:
+			conditional->getValue(gameState, var1, var2);
+		return var1 < var2;
+
+		case Token::VARGQ:
+			conditional->getValue(gameState, var1, var2);
+		return var1 > var2;
+
+		// bit not equal, which this code implements via the reserved word
+		// bit!=?, is added to facilitate running of 8-bit games — syntax is
+		// bit!=? (bit number, value), with the two things treated as Booleans
+		case Token::BITNOTEQ:
+			conditional->getValue(gameState, var1, var2);
+			bool B = gameState->getBit(var1);
+		return B == (var2 ? true : false);
+
+
+
+//		case TIMERQ:
+//		return Parent->QueryTimerTicked();
+//		case ADDVAR:
+//			GetBinaryValues(Conditional, Var1, Var2);
+//			Var2 += Var1;
+//			if(Conditional->Data.BinaryOp.Dest.Type == VARIABLE)
+//				Parent->SetVariable(Conditional->Data.BinaryOp.Dest.Data.Value, Var2);
+//		return (Var2&Parent->GetVariableMask()) ? true : false;
+//		case SUBVAR:
+//			GetBinaryValues(Conditional, Var1, Var2);
+//			Var2 -= Var1;
+//			if(Conditional->Data.BinaryOp.Dest.Type == VARIABLE)
+//				Parent->SetVariable(Conditional->Data.BinaryOp.Dest.Data.Value, Var2);
+//		return (Var2&Parent->GetVariableMask()) ? true : false;
+	}
+
+	return result;
+}
+
+
 /*void CFreescapeGame::CCondition::SetLooping(bool c)
 {
 	Looping = c;
 	if(!c && Active < 0) Active = 1;
-}
-
-void CFreescapeGame::CCondition::Compile(bool Anim, CFreescapeGame *P)
-{
-	Animator = Anim; Parent = P;
-
-	PPtr = Program;
-	if(!PPtr) return;
-	ErrNum = 0;
-
-	Head = GetChain();
-
-	delete[] Program; Program = NULL;
 }
 
 const char *ConNames[] =
@@ -67,70 +145,6 @@ void CFreescapeGame::CCondition::Reset()
 
 void CFreescapeGame::CCondition::SetActive(bool s)	{ if(s && Active >= 0) Active++; if(!s) Active = 0;}
 void CFreescapeGame::CCondition::Trigger()			{ Triggered = true; }
-
-
-bool CFreescapeGame::CCondition::QueryCondition(CObject *obj, FCLInstruction *Conditional)
-{
-	Sint32 Var1, Var2;
-	bool Res = false;
-	switch(Conditional->Type)
-	{
-		default:
-			printf("Unknown conditional %s\n", ConNames[(int)Conditional->Type]);
-		break;
-		case COLLIDEDQ:
-			Res = obj ? obj->GetCollided() : true;
-			if(obj) obj->SetCollided(false);
-		return Res;
-		case SHOTQ:
-			Res = obj ? obj->GetShot() : false;
-			if(obj) obj->SetShot(false);
-		return Res;
-		case ACTIVATEDQ:
-			Res = obj ? obj->GetActivated() : false;
-			obj->SetActivated(false);	// not sure about this
-		return Res;
-		case VISQ:
-			Var2 = Parent->GetCurrentArea();
-			GetBinaryValues(Conditional, Var1, Var2);
-		return Parent->GetVis(Var1, Var2);
-		case INVISQ:
-			Var2 = Parent->GetCurrentArea();
-			GetBinaryValues(Conditional, Var1, Var2);
-		return !Parent->GetVis(Var1, Var2);
-		case VAREQ:
-			GetBinaryValues(Conditional, Var1, Var2);
-		return (int)Var1 == (int)Var2;
-		case VARNOTEQ:
-			GetBinaryValues(Conditional, Var1, Var2);
-		return (int)Var1 != (int)Var2;
-		case BITNOTEQ:
-			GetBinaryValues(Conditional, Var1, Var2);
-			bool B = Parent->GetBit(Var1);
-		return B == (Var2 ? true : false);
-		case VARLQ:
-			GetBinaryValues(Conditional, Var1, Var2);
-		return Var1 < Var2;
-		case VARGQ:
-			GetBinaryValues(Conditional, Var1, Var2);
-		return Var1 > Var2;
-		case TIMERQ:
-		return Parent->QueryTimerTicked();
-		case ADDVAR:
-			GetBinaryValues(Conditional, Var1, Var2);
-			Var2 += Var1;
-			if(Conditional->Data.BinaryOp.Dest.Type == VARIABLE)
-				Parent->SetVariable(Conditional->Data.BinaryOp.Dest.Data.Value, Var2);
-		return (Var2&Parent->GetVariableMask()) ? true : false;
-		case SUBVAR:
-			GetBinaryValues(Conditional, Var1, Var2);
-			Var2 -= Var1;
-			if(Conditional->Data.BinaryOp.Dest.Type == VARIABLE)
-				Parent->SetVariable(Conditional->Data.BinaryOp.Dest.Data.Value, Var2);
-		return (Var2&Parent->GetVariableMask()) ? true : false;
-	}
-	return Res;
-}
 
 bool CFreescapeGame::CCondition::Execute(CObject *obj)
 {

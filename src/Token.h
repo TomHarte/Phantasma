@@ -48,7 +48,7 @@ struct Token
 		Token(Type type, int32_t value);
 
 		Type getType();
-		
+
 		virtual ~Token();
 
 	private:
