@@ -9,11 +9,16 @@
 #ifndef Phantasma_Condition_h
 #define Phantasma_Condition_h
 
+#import "GameState.h"
+#import <vector>
+
+class FCLInstruction;
+
 class CCondition
 {
 	public:
-		CCondition();
-		~CCondition();
+		CCondition(CGameState *gameState, std::vector<FCLInstruction *> *instructions);
+		virtual ~CCondition();
 
 /*		void Clear();
 		void AddInstruction(const char *Text);

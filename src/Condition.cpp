@@ -1,19 +1,9 @@
 #include "Condition.h"
 
-void CFreescapeGame::CCondition::SetLooping(bool c)
+/*void CFreescapeGame::CCondition::SetLooping(bool c)
 {
 	Looping = c;
 	if(!c && Active < 0) Active = 1;
-}
-
-void CFreescapeGame::CCondition::AddInstruction(const char *Text)
-{
-	if(!Program)
-	{
-		PPtr = Program = new char[MAX_FCL_LENGTH];
-	}
-	strcpy(PPtr, Text);
-	PPtr += strlen(PPtr); PPtr[0] = '\n'; PPtr[1] = '\0'; PPtr++;
 }
 
 void CFreescapeGame::CCondition::Compile(bool Anim, CFreescapeGame *P)
@@ -28,16 +18,7 @@ void CFreescapeGame::CCondition::Compile(bool Anim, CFreescapeGame *P)
 
 	delete[] Program; Program = NULL;
 }
-/*CFreescapeGame::CCondition::FCLInstruction::~FCLInstruction()
-{
-	if(Next)
-		delete Next;
-	if(Type == THEN)
-	{
-		delete Data.Then.Passed;
-		delete Data.Then.Failed;
-	}
-}*/
+
 const char *ConNames[] =
 {
 	"activated?", "addvar", "again", "and", "andv", "collided?", "delay", "destroy", "destroyed?", "else",
@@ -135,7 +116,7 @@ bool CFreescapeGame::CCondition::QueryCondition(CObject *obj, FCLInstruction *Co
 		return Res;
 		case ACTIVATEDQ:
 			Res = obj ? obj->GetActivated() : false;
-			obj->SetActivated(false);	/*not sure about this */
+			obj->SetActivated(false);	// not sure about this
 		return Res;
 		case VISQ:
 			Var2 = Parent->GetCurrentArea();
@@ -187,7 +168,7 @@ bool CFreescapeGame::CCondition::Execute(CObject *obj)
 	if(!Head || !Active) {return true;}
 //	if(Animator) printf("anim %d\n", Active);
 
-	/* oh man! */
+	// oh man!
 	while(ProgramStack[StackPtr])
 	{
 		FCLInstruction *Instr = ProgramStack[StackPtr];
@@ -252,7 +233,7 @@ bool CFreescapeGame::CCondition::Execute(CObject *obj)
 			break;
 
 			case EXECUTE:
-				/* execute someone else's script as though mine */
+				// execute someone else's script as though mine
 				GetUnaryValue(Instr, Var1);
 //				printf("execute %d\n", (int)Var1);
 				CObject *NewObj = Parent->GetObject(Var1);
@@ -336,7 +317,7 @@ bool CFreescapeGame::CCondition::Execute(CObject *obj)
 				Parent->SetVariable(Instr->Data.BinaryOp.Dest.Data.Value, Var1);
 			break;
 
-			/* addvar & subvar. Not sure if they really affect Status here */
+			// addvar & subvar. Not sure if they really affect Status here
 			case ADDVAR:
 				GetBinaryValues(Instr, Var1, Var2);
 				Var2 += Var1;
@@ -361,9 +342,9 @@ bool CFreescapeGame::CCondition::Execute(CObject *obj)
 				Triggered = false;
 			break;
 
-			/*
-				loops
-			*/
+			//
+			//	loops
+			//
 			case LOOP:
 				GetUnaryValue(Instr, Var1);
 				LoopPos = ProgramStack[StackPtr];
@@ -379,9 +360,9 @@ bool CFreescapeGame::CCondition::Execute(CObject *obj)
 				}
 			return true;
 
-			/*
-				Animator specific bits
-			*/
+			//
+			//	Animator specific bits
+			//
 			case START:
 				if(Animator)
 				{
@@ -470,4 +451,4 @@ bool CFreescapeGame::CCondition::Execute(CObject *obj)
 	// if we got to here then we reached the end of the program, so set things back to default for next time
 	ResetProg();
 	return true;
-}
+}*/

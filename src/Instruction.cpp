@@ -14,7 +14,6 @@ FCLInstruction::FCLInstruction(Token::Type _type)
 	type = _type;
 
 	arguments.source = arguments.destination = arguments.option = NULL;
-	string = NULL;
 	conditional.thenInstructions = conditional.elseInstructions = NULL;
 }
 

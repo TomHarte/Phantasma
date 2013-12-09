@@ -6,49 +6,49 @@
 //  Copyright (c) 2013 Thomas Harte. All rights reserved.
 //
 
-#include "InstructionBuilder.h"
+#include "Parser.h"
 #include <stdlib.h>
 #include <cstring>
 #include <iostream>
 
-class CSyntaxBuilder
+class CParser
 {
 	private:
-		bool RepeatLastToken;
-		Token *LastToken;
+		bool repeatLastToken;
+		Token *lastToken;
 		uint32_t errorNumber;
 
-		size_t CodePointer;
-		std::string *SourceCode;
+		size_t codePointer;
+		std::string *sourceCode;
 	
 		// we implement a single token pushback; this is
-		// achieved by just keeping the value of LastToken
+		// achieved by just keeping the value of lastToken
 		// that we already have
 		void UnGetToken()
 		{
-			RepeatLastToken = true;
+			repeatLastToken = true;
 		}
 
 		Token *GetToken()
 		{
-			if(RepeatLastToken)
+			if(repeatLastToken)
 			{
-				RepeatLastToken = false;
-				return LastToken;
+				repeatLastToken = false;
+				return lastToken;
 			}
 
 			// skip white space
-			while((*SourceCode)[CodePointer] == ' ' || (*SourceCode)[CodePointer] == '\t' || (*SourceCode)[CodePointer] == '\n')
-				CodePointer++;
+			while((*sourceCode)[codePointer] == ' ' || (*sourceCode)[codePointer] == '\t' || (*sourceCode)[codePointer] == '\n')
+				codePointer++;
 
 			// note where we are now, so we can report a meaningful error later if required
-			size_t CodePointerBeforeToken = CodePointer;
+			size_t codePointerBeforeToken = codePointer;
 
 			// check whether we've hit the end of the string
-			if((*SourceCode)[CodePointer] == '\0')
+			if((*sourceCode)[codePointer] == '\0')
 			{
-				LastToken = new Token(Token::ENDOFFILE);
-				return LastToken;
+				lastToken = new Token(Token::ENDOFFILE);
+				return lastToken;
 			}
 
 			// this is a table mapping the FCL reserved words to entries in our Type enum
@@ -90,11 +90,11 @@ class CSyntaxBuilder
 			while(currentToken->name)
 			{
 				// check if the text matches
-				if(!SourceCode->compare(CodePointer, strlen(currentToken->name), currentToken->name))
+				if(!sourceCode->compare(codePointer, strlen(currentToken->name), currentToken->name))
 				{
-					LastToken = new Token(currentToken->type);
-					CodePointer += strlen(currentToken->name);
-					return LastToken;
+					lastToken = new Token(currentToken->type);
+					codePointer += strlen(currentToken->name);
+					return lastToken;
 				}
 				currentToken++;
 			}
@@ -103,17 +103,17 @@ class CSyntaxBuilder
 			// so it's time to try some other guesses...
 
 			// maybe we've found a string literal? If so it'll be bounded by double quotes
-			if((*SourceCode)[CodePointer] == '"')
+			if((*sourceCode)[codePointer] == '"')
 			{
 				// skip the initial quote
-				CodePointer++;
+				codePointer++;
 
 				// find the end
-				while((*SourceCode)[CodePointer] != '"') CodePointer++;
+				while((*sourceCode)[codePointer] != '"') codePointer++;
 
 				// create a token
-				LastToken = new Token(new std::string(*SourceCode, CodePointerBeforeToken+1, CodePointer - CodePointerBeforeToken - 2));
-				return LastToken;
+				lastToken = new Token(new std::string(*sourceCode, codePointerBeforeToken+1, codePointer - codePointerBeforeToken - 2));
+				return lastToken;
 			}
 
 			// maybe it's a reference to a constant or a variable?
@@ -124,25 +124,25 @@ class CSyntaxBuilder
 			// to having found a variable reference if it starts with a v,
 			// advancing the code pointer at the same time
 			Token::Type discoveredType = Token::CONSTANT;
-			if((*SourceCode)[CodePointer] == 'v')
+			if((*sourceCode)[codePointer] == 'v')
 			{
 				discoveredType = Token::VARIABLE;
-				CodePointer++;
+				codePointer++;
 			}
 
 			// read in an integer number
-			const char *startOfNumber = &SourceCode->c_str()[CodePointer];
+			const char *startOfNumber = &sourceCode->c_str()[codePointer];
 			char *endOfNumber;
 			long value = strtol(startOfNumber, &endOfNumber, 10);
 			if(startOfNumber != endOfNumber)
 			{
-				LastToken = new Token(discoveredType, (uint32_t)value);
-				return LastToken;
+				lastToken = new Token(discoveredType, (uint32_t)value);
+				return lastToken;
 			}
 
 			// okay, fine, we've got no idea what we found
-			LastToken = new Token(Token::UNKNOWN);
-			return LastToken;
+			lastToken = new Token(Token::UNKNOWN);
+			return lastToken;
 		}
 
 		// Expect takes an expected token type and raises an error
@@ -186,8 +186,11 @@ class CSyntaxBuilder
 		}
 
 	public:
-		CSyntaxBuilder(std::string *SourceCode);
-		
+		CParser(std::string *_sourceCode)
+		{
+			sourceCode = _sourceCode;
+		}
+
 		std::vector<FCLInstruction *> *getInstructions(bool isSubBranch)
 		{
 			std::vector<FCLInstruction *> *instructions = new std::vector<FCLInstruction *>;
@@ -305,8 +308,8 @@ class CSyntaxBuilder
 						something more robust will be needed at some point
 					*/
 					default:
-						std::cerr << "don't know how to handle token before [" << CodePointer << "]" << std::endl;
-						std::cerr << SourceCode << std::endl;
+						std::cerr << "don't know how to handle token before [" << codePointer << "]" << std::endl;
+						std::cerr << sourceCode << std::endl;
 						return instructions;
 					break;
 				}
@@ -319,6 +322,6 @@ class CSyntaxBuilder
 
 std::vector<FCLInstruction *> *getInstructions(std::string *sourceCode)
 {
-	CSyntaxBuilder syntaxBuilder(sourceCode);
+	CParser syntaxBuilder(sourceCode);
 	return syntaxBuilder.getInstructions(false);
 }

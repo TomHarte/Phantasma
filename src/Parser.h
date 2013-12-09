@@ -1,13 +1,13 @@
 //
-//  SyntaxBuilder.h
+//  Parser.h
 //  Phantasma
 //
 //  Created by Thomas Harte on 08/12/2013.
 //  Copyright (c) 2013 Thomas Harte. All rights reserved.
 //
 
-#ifndef __Phantasma__InstructionBuilder__
-#define __Phantasma__InstructionBuilder__
+#ifndef __Phantasma__Parser__
+#define __Phantasma__Parser__
 
 #include <vector>
 #include <string>

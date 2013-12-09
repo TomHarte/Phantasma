@@ -20,7 +20,7 @@
 		4B1E68B318555553003A9847 /* Instruction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68B118555553003A9847 /* Instruction.cpp */; };
 		4B1E68B6185555AA003A9847 /* Token.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68B4185555AA003A9847 /* Token.cpp */; };
 		4B1E68B91855571E003A9847 /* GameState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68B71855571E003A9847 /* GameState.cpp */; };
-		4B1E68BD18555970003A9847 /* InstructionBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68BB18555970003A9847 /* InstructionBuilder.cpp */; };
+		4B1E68BD18555970003A9847 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68BB18555970003A9847 /* Parser.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,8 +50,8 @@
 		4B1E68B5185555AA003A9847 /* Token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Token.h; path = ../../Token.h; sourceTree = "<group>"; };
 		4B1E68B71855571E003A9847 /* GameState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameState.cpp; path = ../../GameState.cpp; sourceTree = "<group>"; };
 		4B1E68B81855571E003A9847 /* GameState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameState.h; path = ../../GameState.h; sourceTree = "<group>"; };
-		4B1E68BB18555970003A9847 /* InstructionBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InstructionBuilder.cpp; path = ../../InstructionBuilder.cpp; sourceTree = "<group>"; };
-		4B1E68BC18555970003A9847 /* InstructionBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstructionBuilder.h; path = ../../InstructionBuilder.h; sourceTree = "<group>"; };
+		4B1E68BB18555970003A9847 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Parser.cpp; path = ../../Parser.cpp; sourceTree = "<group>"; };
+		4B1E68BC18555970003A9847 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser.h; path = ../../Parser.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,8 +150,8 @@
 				4B1E68B5185555AA003A9847 /* Token.h */,
 				4B1E68B118555553003A9847 /* Instruction.cpp */,
 				4B1E68B218555553003A9847 /* Instruction.h */,
-				4B1E68BB18555970003A9847 /* InstructionBuilder.cpp */,
-				4B1E68BC18555970003A9847 /* InstructionBuilder.h */,
+				4B1E68BB18555970003A9847 /* Parser.cpp */,
+				4B1E68BC18555970003A9847 /* Parser.h */,
 			);
 			name = "Command Language";
 			sourceTree = "<group>";
@@ -239,7 +239,7 @@
 				4B1E68B6185555AA003A9847 /* Token.cpp in Sources */,
 				4B1E687F18554BFD003A9847 /* main.m in Sources */,
 				4B1E68B318555553003A9847 /* Instruction.cpp in Sources */,
-				4B1E68BD18555970003A9847 /* InstructionBuilder.cpp in Sources */,
+				4B1E68BD18555970003A9847 /* Parser.cpp in Sources */,
 				4B1E68AF18555129003A9847 /* Condition.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
