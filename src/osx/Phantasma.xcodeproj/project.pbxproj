@@ -11,7 +11,7 @@
 		4B1E687D18554BFD003A9847 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E687B18554BFD003A9847 /* InfoPlist.strings */; };
 		4B1E687F18554BFD003A9847 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E687E18554BFD003A9847 /* main.m */; };
 		4B1E688318554BFD003A9847 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E688118554BFD003A9847 /* Credits.rtf */; };
-		4B1E688618554BFD003A9847 /* PTDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E688518554BFD003A9847 /* PTDocument.m */; };
+		4B1E688618554BFD003A9847 /* PTDocument.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E688518554BFD003A9847 /* PTDocument.mm */; };
 		4B1E688918554BFD003A9847 /* PTDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E688718554BFD003A9847 /* PTDocument.xib */; };
 		4B1E688C18554BFD003A9847 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E688A18554BFD003A9847 /* MainMenu.xib */; };
 		4B1E688E18554BFD003A9847 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E688D18554BFD003A9847 /* Images.xcassets */; };
@@ -35,7 +35,7 @@
 		4B1E688018554BFD003A9847 /* Phantasma-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Phantasma-Prefix.pch"; sourceTree = "<group>"; };
 		4B1E688218554BFD003A9847 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		4B1E688418554BFD003A9847 /* PTDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PTDocument.h; sourceTree = "<group>"; };
-		4B1E688518554BFD003A9847 /* PTDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PTDocument.m; sourceTree = "<group>"; };
+		4B1E688518554BFD003A9847 /* PTDocument.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PTDocument.mm; sourceTree = "<group>"; };
 		4B1E688818554BFD003A9847 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PTDocument.xib; sourceTree = "<group>"; };
 		4B1E688B18554BFD003A9847 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		4B1E688D18554BFD003A9847 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -133,7 +133,7 @@
 			children = (
 				4B1E68A918554D08003A9847 /* Phantasma.entitlements */,
 				4B1E688418554BFD003A9847 /* PTDocument.h */,
-				4B1E688518554BFD003A9847 /* PTDocument.m */,
+				4B1E688518554BFD003A9847 /* PTDocument.mm */,
 				4B1E688718554BFD003A9847 /* PTDocument.xib */,
 				4B1E688A18554BFD003A9847 /* MainMenu.xib */,
 				4B1E688D18554BFD003A9847 /* Images.xcassets */,
@@ -234,7 +234,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B1E688618554BFD003A9847 /* PTDocument.m in Sources */,
+				4B1E688618554BFD003A9847 /* PTDocument.mm in Sources */,
 				4B1E68B91855571E003A9847 /* GameState.cpp in Sources */,
 				4B1E68B6185555AA003A9847 /* Token.cpp in Sources */,
 				4B1E687F18554BFD003A9847 /* main.m in Sources */,

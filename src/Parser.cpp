@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <cstring>
 #include <iostream>
+#include <algorithm>
 
 class CParser
 {
@@ -108,11 +109,12 @@ class CParser
 				// skip the initial quote
 				codePointer++;
 
-				// find the end
+				// find the end, and advance one place beyond it
 				while((*sourceCode)[codePointer] != '"') codePointer++;
+				codePointer++;
 
 				// create a token
-				lastToken = new Token(new std::string(*sourceCode, codePointerBeforeToken+1, codePointer - codePointerBeforeToken - 2));
+				lastToken = new Token(new std::string(*sourceCode, codePointerBeforeToken+1, codePointer - codePointerBeforeToken - 3));
 				return lastToken;
 			}
 
@@ -137,6 +139,7 @@ class CParser
 			if(startOfNumber != endOfNumber)
 			{
 				lastToken = new Token(discoveredType, (uint32_t)value);
+				codePointer += (size_t)(endOfNumber - startOfNumber);
 				return lastToken;
 			}
 
@@ -188,11 +191,19 @@ class CParser
 	public:
 		CParser(std::string *_sourceCode)
 		{
+			// store the source code pointer
 			sourceCode = _sourceCode;
+
+			// initialise state
+			repeatLastToken = false;
+			lastToken = NULL;
+			errorNumber = 0;
+			codePointer = 0;
 		}
 
 		std::vector<FCLInstruction *> *getInstructions(bool isSubBranch)
 		{
+			// create a vector into which to deposit instructions
 			std::vector<FCLInstruction *> *instructions = new std::vector<FCLInstruction *>;
 
 			while(1)
@@ -322,6 +333,11 @@ class CParser
 
 std::vector<FCLInstruction *> *getInstructions(std::string *sourceCode)
 {
-	CParser syntaxBuilder(sourceCode);
+	// create a lowercase copy of the original
+	std::string lowercaseSourceCode = *sourceCode;
+	std::transform(lowercaseSourceCode.begin(), lowercaseSourceCode.end(), lowercaseSourceCode.begin(), ::tolower);
+
+	// grab the tokens
+	CParser syntaxBuilder(&lowercaseSourceCode);
 	return syntaxBuilder.getInstructions(false);
 }
