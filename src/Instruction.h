@@ -21,31 +21,23 @@ class FCLInstruction
 		void setArguments(Token *);
 		void setArguments(Token *, Token *);
 		void setArguments(Token *, Token *, Token *);
-		
+
 		void setBranches(std::vector<FCLInstruction *> *thenBranch, std::vector<FCLInstruction *> *elseBranch);
 
 	private:
-		enum Token::Type Type;
+		enum Token::Type type;
 
 		union
 		{
 			struct
 			{
-				Token Source, Dest, Other;
-			} TernaryOp;
+				Token *source, *destination, *option;
+			} arguments;
 
 			struct
 			{
-				Token Source, Dest;
-			} BinaryOp;
-
-			std::string String;
-
-			Token UnaryOp;
-			struct
-			{
-				FCLInstruction *Passed, *Failed;
-			} Then;
+				std::vector<FCLInstruction *> *thenInstructions, *elseInstructions;
+			} conditional;
 		};
 };
 
