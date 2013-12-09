@@ -1,9 +1,5 @@
-#include "Freescape.h"
-#include <stdio.h>
+#include "Condition.h"
 
-#include "Freescape.h"
-#include <stdio.h>
-#include <string.h>
 
 void CFreescapeGame::CCondition::UnGetToken()
 {

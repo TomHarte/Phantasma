@@ -16,6 +16,7 @@
 		4B1E688C18554BFD003A9847 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E688A18554BFD003A9847 /* MainMenu.xib */; };
 		4B1E688E18554BFD003A9847 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E688D18554BFD003A9847 /* Images.xcassets */; };
 		4B1E68AB18554E7D003A9847 /* FreescapeGL Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E68AA18554E7D003A9847 /* FreescapeGL Icon.icns */; };
+		4B1E68AF18555129003A9847 /* Condition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68AE18555129003A9847 /* Condition.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,8 @@
 		4B1E689418554BFD003A9847 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		4B1E68A918554D08003A9847 /* Phantasma.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Phantasma.entitlements; sourceTree = "<group>"; };
 		4B1E68AA18554E7D003A9847 /* FreescapeGL Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "FreescapeGL Icon.icns"; path = "../../../res/FreescapeGL Icon.icns"; sourceTree = "<group>"; };
+		4B1E68AE18555129003A9847 /* Condition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Condition.cpp; path = ../../Condition.cpp; sourceTree = "<group>"; };
+		4B1E68B018555179003A9847 /* Condition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Condition.h; path = ../../Condition.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,12 +94,9 @@
 		4B1E687818554BFD003A9847 /* Phantasma */ = {
 			isa = PBXGroup;
 			children = (
-				4B1E68A918554D08003A9847 /* Phantasma.entitlements */,
-				4B1E688418554BFD003A9847 /* PTDocument.h */,
-				4B1E688518554BFD003A9847 /* PTDocument.m */,
-				4B1E688718554BFD003A9847 /* PTDocument.xib */,
-				4B1E688A18554BFD003A9847 /* MainMenu.xib */,
-				4B1E688D18554BFD003A9847 /* Images.xcassets */,
+				4B1E68B018555179003A9847 /* Condition.h */,
+				4B1E68AE18555129003A9847 /* Condition.cpp */,
+				4B1E68AD18555112003A9847 /* OS X */,
 				4B1E687918554BFD003A9847 /* Supporting Files */,
 			);
 			path = Phantasma;
@@ -113,6 +113,19 @@
 				4B1E688118554BFD003A9847 /* Credits.rtf */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		4B1E68AD18555112003A9847 /* OS X */ = {
+			isa = PBXGroup;
+			children = (
+				4B1E68A918554D08003A9847 /* Phantasma.entitlements */,
+				4B1E688418554BFD003A9847 /* PTDocument.h */,
+				4B1E688518554BFD003A9847 /* PTDocument.m */,
+				4B1E688718554BFD003A9847 /* PTDocument.xib */,
+				4B1E688A18554BFD003A9847 /* MainMenu.xib */,
+				4B1E688D18554BFD003A9847 /* Images.xcassets */,
+			);
+			name = "OS X";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -195,6 +208,7 @@
 			files = (
 				4B1E688618554BFD003A9847 /* PTDocument.m in Sources */,
 				4B1E687F18554BFD003A9847 /* main.m in Sources */,
+				4B1E68AF18555129003A9847 /* Condition.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
