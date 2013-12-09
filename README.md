@@ -6,6 +6,10 @@ WARNING: this code is half a decade old and predates my switch to computer scien
 
 I'm hoping to address that.
 
+## Ongoing Work
+
+See the development branch. In that branch I’m cleaning, commenting, refactoring and removing dependencies. It’s work in progress and will return to master when it’s playable.
+
 ## Build Requirements
 
 SDL, SDL_mixer, SDL_image, Freetype.
