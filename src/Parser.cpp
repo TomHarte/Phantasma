@@ -12,11 +12,11 @@
 #include <iostream>
 #include <algorithm>
 
-class CParser
+class Parser
 {
 	private:
 		bool repeatLastToken;
-		Token *lastToken;
+		Token lastToken;
 		uint32_t errorNumber;
 
 		size_t codePointer;
@@ -25,12 +25,12 @@ class CParser
 		// we implement a single token pushback; this is
 		// achieved by just keeping the value of lastToken
 		// that we already have
-		void UnGetToken()
+		void ungetToken()
 		{
 			repeatLastToken = true;
 		}
 
-		Token *GetToken()
+		Token getToken()
 		{
 			if(repeatLastToken)
 			{
@@ -48,7 +48,7 @@ class CParser
 			// check whether we've hit the end of the string
 			if((*sourceCode)[codePointer] == '\0')
 			{
-				lastToken = new Token(Token::ENDOFFILE);
+				lastToken = Token(Token::ENDOFFILE);
 				return lastToken;
 			}
 
@@ -93,7 +93,7 @@ class CParser
 				// check if the text matches
 				if(!sourceCode->compare(codePointer, strlen(currentToken->name), currentToken->name))
 				{
-					lastToken = new Token(currentToken->type);
+					lastToken = Token(currentToken->type);
 					codePointer += strlen(currentToken->name);
 					return lastToken;
 				}
@@ -114,7 +114,10 @@ class CParser
 				codePointer++;
 
 				// create a token
-				lastToken = new Token(new std::string(*sourceCode, codePointerBeforeToken+1, codePointer - codePointerBeforeToken - 3));
+				std::string *string = new std::string(*sourceCode, codePointerBeforeToken+1, codePointer - codePointerBeforeToken - 3);
+				std::shared_ptr<std::string> stringPtr(string);
+
+				lastToken = Token(stringPtr);
 				return lastToken;
 			}
 
@@ -138,13 +141,13 @@ class CParser
 			long value = strtol(startOfNumber, &endOfNumber, 10);
 			if(startOfNumber != endOfNumber)
 			{
-				lastToken = new Token(discoveredType, (int32_t)value);
+				lastToken = Token(discoveredType, (int32_t)value);
 				codePointer += (size_t)(endOfNumber - startOfNumber);
 				return lastToken;
 			}
 
 			// okay, fine, we've got no idea what we found
-			lastToken = new Token(Token::UNKNOWN);
+			lastToken = Token(Token::UNKNOWN);
 			return lastToken;
 		}
 
@@ -152,81 +155,74 @@ class CParser
 		// condition if a different kind of token is found
 		void Expect(Token::Type type)
 		{
-			Token *newToken = GetToken();
-			if(newToken->getType() != type)
+			Token newToken = getToken();
+			if(newToken.getType() != type)
 				errorNumber = 1;
-
-			delete newToken;
 		}
 
 		// functions take up to three arguments, and function calls
 		// look like C with an opening and closing bracket and commas
 		// separating arguments
-		void GetArguments(FCLInstruction *instruction)
+		void GetArguments(FCLInstruction &instruction)
 		{
-			Token *tokens[3];
+			Token tokens[3];
 
 			Expect(Token::OPENBRACKET);
 			unsigned int tokenPointer;
 			for(tokenPointer = 0; tokenPointer < 3; tokenPointer++)
 			{
-				tokens[tokenPointer] = GetToken();
+				tokens[tokenPointer] = getToken();
 
-				Token *nextToken = GetToken();
-				Token::Type type = nextToken->getType();
-				delete nextToken;
+				Token nextToken = getToken();
+				Token::Type type = nextToken.getType();
 
 				if(type == Token::CLOSEBRACKET) break;
 			}
 
 			switch(tokenPointer)
 			{
-				case 0: instruction->setArguments(tokens[0]);						break;
-				case 1: instruction->setArguments(tokens[0], tokens[1]);			break;
-				case 2: instruction->setArguments(tokens[0], tokens[1], tokens[2]);	break;
+				case 0: instruction.setArguments(tokens[0]);						break;
+				case 1: instruction.setArguments(tokens[0], tokens[1]);				break;
+				case 2: instruction.setArguments(tokens[0], tokens[1], tokens[2]);	break;
 				default: break;
 			}
 		}
 
 	public:
-		CParser(std::string *_sourceCode)
+		Parser(std::string *_sourceCode)
 		{
 			// store the source code pointer
 			sourceCode = _sourceCode;
 
 			// initialise state
 			repeatLastToken = false;
-			lastToken = NULL;
 			errorNumber = 0;
 			codePointer = 0;
 		}
 
-		std::vector<FCLInstruction *> *getInstructions(bool isSubBranch)
+		FCLInstructionVector getInstructions(bool isSubBranch = false)
 		{
 			// create a vector into which to deposit instructions
-			std::vector<FCLInstruction *> *instructions = new std::vector<FCLInstruction *>;
+			FCLInstructionVector instructions(new std::vector<FCLInstruction>);
 
 			while(1)
 			{
 				// get the next token
-				Token *newToken = GetToken();
+				Token newToken = getToken();
 
 				// if we've hit end of file then stop
-				if(newToken->getType() == Token::ENDOFFILE)
-				{
-					delete newToken;
+				if(newToken.getType() == Token::ENDOFFILE)
 					break;
-				}
 
 				// create an instruction to hold this token
-				FCLInstruction *instruction = new FCLInstruction(newToken->getType());
+				FCLInstruction instruction(newToken.getType());
 				instructions->push_back(instruction);
 
 				// determine whether we need to get arguments; a remnant of
 				// an older implementation means that I've divided the various functions
 				// by number of arguments — that can be fixed once the code as a whole
 				// is working properly again
-				switch(newToken->getType())
+				switch(newToken.getType())
 				{
 					/*
 						functions with no arguments
@@ -280,20 +276,17 @@ class CParser
 					*/
 					case Token::THEN:
 					{
-						std::vector<FCLInstruction *> *thenInstructions = getInstructions(true);
-						std::vector<FCLInstruction *> *elseInstructions = NULL;
+						FCLInstructionVector thenInstructions = getInstructions(true);
+						FCLInstructionVector elseInstructions = NULL;
 
 						// check for an else branch
-						Token *nextToken = GetToken();
-						if(nextToken->getType() == Token::ELSE)
-						{
+						Token nextToken = getToken();
+						if(nextToken.getType() == Token::ELSE)
 							elseInstructions = getInstructions(true);
-							delete nextToken;
-						}
 						else
-							UnGetToken();
+							ungetToken();
 
-						instruction->setBranches(thenInstructions, elseInstructions);
+						instruction.setBranches(thenInstructions, elseInstructions);
 					}
 					break;
 
@@ -309,7 +302,7 @@ class CParser
 					case Token::ELSE:
 						if(isSubBranch)
 						{
-							UnGetToken();
+							ungetToken();
 							return instructions;
 						}
 					break;
@@ -331,13 +324,13 @@ class CParser
 
 };
 
-std::vector<FCLInstruction *> *getInstructions(std::string *sourceCode)
+FCLInstructionVector getInstructions(std::string *sourceCode)
 {
 	// create a lowercase copy of the original
 	std::string lowercaseSourceCode = *sourceCode;
 	std::transform(lowercaseSourceCode.begin(), lowercaseSourceCode.end(), lowercaseSourceCode.begin(), ::tolower);
 
 	// grab the tokens
-	CParser syntaxBuilder(&lowercaseSourceCode);
-	return syntaxBuilder.getInstructions(false);
+	Parser syntaxBuilder(&lowercaseSourceCode);
+	return syntaxBuilder.getInstructions();
 }

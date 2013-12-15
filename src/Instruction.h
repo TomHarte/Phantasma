@@ -13,39 +13,40 @@
 #include <vector>
 class CGameState;
 
+class FCLInstruction;
+using namespace std;
+typedef shared_ptr<vector<FCLInstruction>> FCLInstructionVector;
+
 class FCLInstruction
 {
 	public:
 		FCLInstruction(Token::Type type);
-		virtual ~FCLInstruction();
+		FCLInstruction(const FCLInstruction &source);
 
-		void setArguments(Token *);
-		void setArguments(Token *, Token *);
-		void setArguments(Token *, Token *, Token *);
+		void setArguments(Token &);
+		void setArguments(Token &, Token &);
+		void setArguments(Token &, Token &, Token &);
 
 		Token::Type getType();
 
-		void getValue(CGameState *gameState, int32_t &);
-		void getValue(CGameState *gameState, int32_t &, int32_t &);
-		void getValue(CGameState *gameState, int32_t &, int32_t &, int32_t &);
+		void getValue(CGameState &, int32_t &);
+		void getValue(CGameState &, int32_t &, int32_t &);
+		void getValue(CGameState &, int32_t &, int32_t &, int32_t &);
 
-		void setBranches(std::vector<FCLInstruction *> *thenBranch, std::vector<FCLInstruction *> *elseBranch);
+		void setBranches(FCLInstructionVector thenBranch, FCLInstructionVector elseBranch);
 
 	private:
 		enum Token::Type type;
 
-		union
+		struct
 		{
-			struct
-			{
-				Token *source, *destination, *option;
-			} arguments;
+			Token source, destination, option;
+		} arguments;
 
-			struct
-			{
-				std::vector<FCLInstruction *> *thenInstructions, *elseInstructions;
-			} conditional;
-		};
+		struct
+		{
+			FCLInstructionVector thenInstructions, elseInstructions;
+		} conditional;
 };
 
 

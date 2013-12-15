@@ -9,16 +9,15 @@
 #ifndef Phantasma_Condition_h
 #define Phantasma_Condition_h
 
-#import "GameState.h"
-#import <vector>
+#include "GameState.h"
+#include <vector>
+#include "Instruction.h"
 
-class FCLInstruction;
 
 class CCondition
 {
 	public:
-		CCondition(CGameState *gameState, std::vector<FCLInstruction *> *instructions, bool isAnimator);
-		virtual ~CCondition();
+		CCondition(CGameState &gameState, FCLInstructionVector instructions, bool isAnimator);
 
 /*		void Reset();
 		void SetActive(bool);
@@ -29,7 +28,7 @@ class CCondition
 
 	private:
 
-		std::vector<FCLInstruction *> *instructions;
+		FCLInstructionVector instructions;
 		bool isAnimator;
 		CGameState *gameState;
 
@@ -52,7 +51,7 @@ class CCondition
 		bool QueryCondition(CObject *obj, FCLInstruction *Conditional);
 		void ResetProg();*/
 
-		bool statusOfConditional(FCLInstruction *conditional);
+		bool statusOfConditional(FCLInstruction &conditional);
 };
 
 

@@ -1,32 +1,22 @@
 #include "Condition.h"
 #include "Instruction.h"
 
-CCondition::CCondition(CGameState *_gameState, std::vector<FCLInstruction *> *_instructions, bool _isAnimator)
+CCondition::CCondition(CGameState &_gameState, FCLInstructionVector _instructions, bool _isAnimator)
 {
-	gameState = _gameState;
+	gameState = &_gameState;
 	instructions = _instructions;
 	isAnimator = _isAnimator;
 }
 
-CCondition::~CCondition()
-{
-//	for(std::vector<int>::size_type i = 0; i < instructions->size(); i++)
-//	{
-//		FCLInstruction *instruction = instructions[i];
-//		delete instruction;
-//	}
-	delete instructions;
-}
-
-bool CCondition::statusOfConditional(FCLInstruction *conditional)	//CObject *obj,
+bool CCondition::statusOfConditional(FCLInstruction &conditional)	//CObject *obj,
 {
 	int32_t var1, var2;
 	bool result = false;
 
-	switch(conditional->getType())
+	switch(conditional.getType())
 	{
 		default:
-			std::cerr << "Unknown conditional" << conditional;
+			std::cerr << "Unknown conditional" << &conditional;
 		break;
 
 		/*
@@ -63,26 +53,26 @@ bool CCondition::statusOfConditional(FCLInstruction *conditional)	//CObject *obj
 			Some easy ones — just compare one value to another
 		*/
 		case Token::VAREQ:
-			conditional->getValue(gameState, var1, var2);
+			conditional.getValue(*gameState, var1, var2);
 		return var1 == var2;
 
 		case Token::VARNOTEQ:
-			conditional->getValue(gameState, var1, var2);
+			conditional.getValue(*gameState, var1, var2);
 		return var1 != var2;
 
 		case Token::VARLQ:
-			conditional->getValue(gameState, var1, var2);
+			conditional.getValue(*gameState, var1, var2);
 		return var1 < var2;
 
 		case Token::VARGQ:
-			conditional->getValue(gameState, var1, var2);
+			conditional.getValue(*gameState, var1, var2);
 		return var1 > var2;
 
 		// bit not equal, which this code implements via the reserved word
 		// bit!=?, is added to facilitate running of 8-bit games — syntax is
 		// bit!=? (bit number, value), with the two things treated as Booleans
 		case Token::BITNOTEQ:
-			conditional->getValue(gameState, var1, var2);
+			conditional.getValue(*gameState, var1, var2);
 			bool B = gameState->getBit(var1);
 		return B == (var2 ? true : false);
 

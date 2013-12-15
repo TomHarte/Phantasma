@@ -61,9 +61,8 @@
 		"         WAIT				";
 
 	std::string *sampleProgramString = new std::string(sampleProgram);
-	std::vector<FCLInstruction *> *instructions = getInstructions(sampleProgramString);
+	FCLInstructionVector instructions = getInstructions(sampleProgramString);
 	NSLog(@"%lu instructions", instructions->size());
-	delete instructions;
 
 
 	// Insert code here to read your document from the given data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning NO.

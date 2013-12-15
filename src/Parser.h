@@ -13,6 +13,6 @@
 #include <string>
 #include "Instruction.h"
 
-std::vector<FCLInstruction *> *getInstructions(std::string *sourceCode);
+FCLInstructionVector getInstructions(std::string *sourceCode);
 
 #endif /* defined(__Phantasma__InstructionBuilder__) */
