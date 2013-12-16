@@ -9,10 +9,9 @@
 #include "8bitDetokeniser.h"
 #include <sstream>
 
-#define k8bitVariableShield		256
-#define k8bitVariableEnergy		257
-#define k8bitVariableScore		258
-
+static const int k8bitVariableShield	= 256;
+static const int k8bitVariableEnergy	= 257;
+static const int k8bitVariableScore		= 258;
 
 shared_ptr<string> detokenise8bitCondition(vector <uint8_t> &tokenisedCondition)
 {
