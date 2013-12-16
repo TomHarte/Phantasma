@@ -89,7 +89,11 @@
 
 		{.location = 7838, .length = 100},
 		{.location = 28488, .length = 916},
-		
+		{.location = 10642, .length = 38},
+		{.location = 21554, .length = 230},
+		{.location = 20746, .length = 174},
+		{.location = 23354, .length = 30},
+
 
 		{.location = NSNotFound, .length = 0},
 	};

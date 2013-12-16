@@ -67,10 +67,14 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 
 			case 0x54:	detokenisedStream << "INCLUDE ";		break;
 
+			case 0x55:	detokenisedStream << "WAITTRIG ";		break;
+			case 0x56:	detokenisedStream << "TRIGANIM ";		break;
+
 			case 0x60:	detokenisedStream << "LOOP ";			break;
 			case 0x61:	detokenisedStream << "AGAIN ";			break;
 
 			case 0x70:	detokenisedStream << "SOUND ";			break;
+			case 0x71:	detokenisedStream << "SYNCSND ";		break;
 
 			case 0x80:	detokenisedStream << "WAIT ";			break;
 			case 0x81:	detokenisedStream << "DELAY ";			break;
@@ -80,6 +84,7 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 			case 0x84:	detokenisedStream << "REDRAW ";			break;
 
 			case 0x85:	detokenisedStream << "MODE ";			break;
+			case 0x86:	detokenisedStream << "ENDGAME ";		break;
 
 			case 0x87:	detokenisedStream << "EXECUTE ";		break;
 			case 0x90:	detokenisedStream << "GOTO ";			break;
