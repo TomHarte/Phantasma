@@ -56,7 +56,7 @@
 	NSRange conditionRanges[] =
 	{
 		// global conditions
-		{.location = 658, .length = 158},
+/*		{.location = 658, .length = 158},
 		{.location = 830, .length = 80},
 		{.location = 924, .length = 124},
 		{.location = 1062, .length = 68},
@@ -75,7 +75,7 @@
 		{.location = 2658, .length = 40},
 		{.location = 2720, .length = 14},
 		
-		/* ... */
+		// ...
 
 		{.location = 2854, .length = 20},
 		{.location = 3450, .length = 28},
@@ -92,7 +92,9 @@
 		{.location = 10642, .length = 38},
 		{.location = 21554, .length = 230},
 		{.location = 20746, .length = 174},
-		{.location = 23354, .length = 30},
+		{.location = 23354, .length = 30},*/
+
+		{.location = 576, .length = 178},
 
 
 		{.location = NSNotFound, .length = 0},

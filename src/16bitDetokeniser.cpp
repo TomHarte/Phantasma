@@ -37,9 +37,15 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 			case 0x11:	detokenisedStream << "ADDVAR ";			break;
 			case 0x12:	detokenisedStream << "SUBVAR ";			break;
 
+			case 0x13:	detokenisedStream << "ANDV ";			break;
+			case 0x14:	detokenisedStream << "ORV ";			break;
+			case 0x15:	detokenisedStream << "NOTV ";			break;
+
 			case 0x16:	detokenisedStream << "VAR=? ";			break;
 			case 0x17:	detokenisedStream << "VAR>? ";			break;
 			case 0x18:	detokenisedStream << "VAR<? ";			break;
+			
+			case 0x2f:	detokenisedStream << "DESTROYED? ";		break;
 
 			case 0x30:	detokenisedStream << "INVIS ";			break;
 			case 0x31:	detokenisedStream << "VIS ";			break;
@@ -50,6 +56,11 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 			case 0x35:	detokenisedStream << "VIS? ";			break;
 			
 			case 0x36:	detokenisedStream << "MOVE ";			break;
+
+			case 0x37:	detokenisedStream << "GETXPOS ";		break;
+			case 0x38:	detokenisedStream << "GETYPOS ";		break;
+			case 0x39:	detokenisedStream << "GETZPOS ";		break;
+
 			case 0x3a:	detokenisedStream << "MOVETO ";			break;
 
 			case 0x40:	detokenisedStream << "IF ";				break;
@@ -69,6 +80,7 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 
 			case 0x55:	detokenisedStream << "WAITTRIG ";		break;
 			case 0x56:	detokenisedStream << "TRIGANIM ";		break;
+			case 0x57:	detokenisedStream << "REMOVE ";			break;
 
 			case 0x60:	detokenisedStream << "LOOP ";			break;
 			case 0x61:	detokenisedStream << "AGAIN ";			break;
@@ -90,18 +102,6 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 			case 0x90:	detokenisedStream << "GOTO ";			break;
 
 			case 0xff:	detokenisedStream << "END ";			break;
-
-			/*
-				As yet undecoded:
-				
-					ANDV
-					DESTOYED? (likely to be 0x37?)
-					NOTV
-					ORV
-					GETXPOS, GETYPOS, GETZPOS
-					REMOVE
-					
-			*/
 
 			default:
 				detokenisedStream << "<UNKNOWN: " << std::hex << (int)opcode << "> " << std::dec;
