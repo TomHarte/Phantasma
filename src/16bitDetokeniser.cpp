@@ -91,6 +91,18 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 
 			case 0xff:	detokenisedStream << "END ";			break;
 
+			/*
+				As yet undecoded:
+				
+					ANDV
+					DESTOYED? (likely to be 0x37?)
+					NOTV
+					ORV
+					GETXPOS, GETYPOS, GETZPOS
+					REMOVE
+					
+			*/
+
 			default:
 				detokenisedStream << "<UNKNOWN: " << std::hex << (int)opcode << "> " << std::dec;
 			break;
