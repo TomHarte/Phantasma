@@ -104,7 +104,7 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 			case 0xff:	detokenisedStream << "END ";			break;
 
 			default:
-				detokenisedStream << "<UNKNOWN: " << std::hex << (int)opcode << "> " << std::dec;
+				detokenisedStream << "<UNKNOWN 16 bit: " << std::hex << (int)opcode << "> " << std::dec;
 			break;
 		}
 
