@@ -37,8 +37,7 @@ bool CCondition::statusOfConditional(FCLInstruction &conditional)	//CObject *obj
 //		return Res;
 
 		/*
-			Visibility and, therefore, invisibility, depend on the scene's current state,
-			and we want the scene graph to do the complicated maths anyway...
+			Visibility and invisibility need working objects ...
 		*/
 //		case VISQ:
 //			Var2 = Parent->GetCurrentArea();
