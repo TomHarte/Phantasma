@@ -21,6 +21,7 @@
 		4B2CD342185D19BD0029CDB5 /* Instruction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68B118555553003A9847 /* Instruction.cpp */; };
 		4B2CD343185D1BB30029CDB5 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68BB18555970003A9847 /* Parser.cpp */; };
 		4B355857185D4F7F0023C3C5 /* Condition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68AE18555129003A9847 /* Condition.cpp */; };
+		4B35585A185E91280023C3C5 /* 16bitDetokeniser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B355858185E91280023C3C5 /* 16bitDetokeniser.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,8 @@
 		4B1E68B81855571E003A9847 /* GameState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameState.h; path = ../../GameState.h; sourceTree = "<group>"; };
 		4B1E68BB18555970003A9847 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Parser.cpp; path = ../../Parser.cpp; sourceTree = "<group>"; };
 		4B1E68BC18555970003A9847 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser.h; path = ../../Parser.h; sourceTree = "<group>"; };
+		4B355858185E91280023C3C5 /* 16bitDetokeniser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = 16bitDetokeniser.cpp; path = ../../16bitDetokeniser.cpp; sourceTree = "<group>"; };
+		4B355859185E91280023C3C5 /* 16bitDetokeniser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = 16bitDetokeniser.h; path = ../../16bitDetokeniser.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +155,8 @@
 				4B1E68B218555553003A9847 /* Instruction.h */,
 				4B1E68BB18555970003A9847 /* Parser.cpp */,
 				4B1E68BC18555970003A9847 /* Parser.h */,
+				4B355858185E91280023C3C5 /* 16bitDetokeniser.cpp */,
+				4B355859185E91280023C3C5 /* 16bitDetokeniser.h */,
 			);
 			name = "Command Language";
 			sourceTree = "<group>";
@@ -234,6 +239,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B35585A185E91280023C3C5 /* 16bitDetokeniser.cpp in Sources */,
 				4B1E688618554BFD003A9847 /* PTDocument.mm in Sources */,
 				4B1E68B91855571E003A9847 /* GameState.cpp in Sources */,
 				4B1E68B6185555AA003A9847 /* Token.cpp in Sources */,
