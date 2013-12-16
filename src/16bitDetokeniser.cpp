@@ -44,11 +44,14 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 			case 0x41:	detokenisedStream << "THEN ";			break;
 			case 0x42:	detokenisedStream << "ELSE ";			break;
 			case 0x43:	detokenisedStream << "ENDIF ";			break;
+			case 0x44:	detokenisedStream << "AND ";			break;
 
 			case 0x50:	detokenisedStream << "STARTANIM ";		break;
 
 			case 0x60:	detokenisedStream << "LOOP ";			break;
 			case 0x61:	detokenisedStream << "AGAIN ";			break;
+
+			case 0x70:	detokenisedStream << "SOUND ";			break;
 
 			case 0x80:	detokenisedStream << "WAIT ";			break;
 			case 0x81:	detokenisedStream << "DELAY ";			break;
@@ -96,7 +99,11 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 				}
 				detokenisedStream << "\"";
 				bytePointer += stringLength;
-				numberOfArguments -= stringLength >> 1;
+
+				// strings are rounded up in length to the end
+				// of this two-byte quantity
+				if(stringLength&1) bytePointer++;
+				numberOfArguments -= (stringLength+1) >> 1;
 
 				// that should leave an argument, but you can't be too safe
 				if(numberOfArguments) detokenisedStream << ", ";
@@ -109,8 +116,8 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 				uint8_t indexLowByte		= tokenisedCondition[bytePointer+1];
 				bytePointer += 2;
 
-				// if the first byte is zero then this argument is a constant;
-				// if it's 0x80 then this argument is a variable reference
+				// if the high bit of the first byte is clear then this
+				// argument is a constant; if it's set then this is a variable
 				if(indexHighByte&0x80) detokenisedStream << "V";
 				indexHighByte &= 0x7f;
 

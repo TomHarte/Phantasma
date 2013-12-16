@@ -59,7 +59,7 @@
 		{.location = 830, .length = 80},
 		{.location = 924, .length = 124},
 		{.location = 1062, .length = 68},
-		{.location = 1143, .length = 78},
+		{.location = 1144, .length = 78},
 		{.location = 1236, .length = 82},
 		{.location = 1332, .length = 460},
 		{.location = 1806, .length = 48},
