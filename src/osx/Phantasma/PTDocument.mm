@@ -55,6 +55,7 @@
 	// of some conditions and use those to advance the 16-bit detokeniser
 	NSRange conditionRanges[] =
 	{
+		// global conditions
 		{.location = 658, .length = 158},
 		{.location = 830, .length = 80},
 		{.location = 924, .length = 124},
@@ -64,6 +65,20 @@
 		{.location = 1332, .length = 460},
 		{.location = 1806, .length = 48},
 		{.location = 1868, .length = 182},
+
+		// area 1 condition
+		{.location = 4988, .length = 72},
+
+		// area 1, object 12 condition
+		{.location = 2620, .length = 12},	// observation: this makes it look like 26 bytes
+											// fixed per cuboid + condition length
+		{.location = 2658, .length = 40},
+		{.location = 2720, .length = 14},
+		
+		/* ... */
+
+		{.location = 2854, .length = 20},
+		
 
 		{.location = NSNotFound, .length = 0},
 	};

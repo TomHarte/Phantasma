@@ -28,6 +28,8 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 		// write out the operation
 		switch(opcode)
 		{
+			case 0x02:	detokenisedStream << "COLLIDED? ";		break;
+			case 0x03:	detokenisedStream << "SHOT? ";			break;
 			case 0x04:	detokenisedStream << "TIMER? ";			break;
 
 			case 0x10:	detokenisedStream << "SETVAR ";			break;
@@ -38,6 +40,7 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 			case 0x17:	detokenisedStream << "VAR>? ";			break;
 			case 0x18:	detokenisedStream << "VAR<? ";			break;
 
+			case 0x30:	detokenisedStream << "INVIS ";			break;
 			case 0x31:	detokenisedStream << "VIS ";			break;
 
 			case 0x40:	detokenisedStream << "IF ";				break;
@@ -58,6 +61,8 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 			case 0x82:	detokenisedStream << "UPDATEI ";		break;
 			case 0x83:	detokenisedStream << "PRINT ";			break;
 			case 0x84:	detokenisedStream << "REDRAW ";			break;
+
+			case 0x87:	detokenisedStream << "EXECUTE ";		break;
 
 			case 0x90:	detokenisedStream << "GOTO ";			break;
 
