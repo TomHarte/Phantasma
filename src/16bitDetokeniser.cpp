@@ -7,12 +7,13 @@
 //
 
 #include "16bitDetokeniser.h"
+#include <sstream>
 
 shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition)
 {
-	shared_ptr<string> newString(new string);
-	std::vector<uint8_t>::size_type bytePointer = 0;
-	std::vector<uint8_t>::size_type sizeOfTokenisedContent = tokenisedCondition.size();
+	stringstream detokenisedStream;
+	vector<uint8_t>::size_type bytePointer = 0;
+	vector<uint8_t>::size_type sizeOfTokenisedContent = tokenisedCondition.size();
 
 	while(bytePointer < sizeOfTokenisedContent-1)
 	{
@@ -27,30 +28,40 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 		// write out the operation
 		switch(opcode)
 		{
-			case 0x10:	*newString += "SETVAR ";		break;
-			case 0x11:	*newString += "ADDVAR ";		break;
-			case 0x12:	*newString += "SUBVAR ";		break;
+			case 0x04:	detokenisedStream << "TIMER? ";			break;
 
-			case 0x16:	*newString += "VAR=? ";			break;
-			case 0x17:	*newString += "VAR>? ";			break;
+			case 0x10:	detokenisedStream << "SETVAR ";			break;
+			case 0x11:	detokenisedStream << "ADDVAR ";			break;
+			case 0x12:	detokenisedStream << "SUBVAR ";			break;
 
-			case 0x40:	*newString += "IF ";			break;
-			case 0x41:	*newString += "THEN ";			break;
-			case 0x42:	*newString += "ELSE ";			break;
-			case 0x43:	*newString += "ENDIF ";			break;
+			case 0x16:	detokenisedStream << "VAR=? ";			break;
+			case 0x17:	detokenisedStream << "VAR>? ";			break;
+			case 0x18:	detokenisedStream << "VAR<? ";			break;
 
-			case 0x50:	*newString += "STARTANIM ";		break;
+			case 0x31:	detokenisedStream << "VIS ";			break;
 
-			case 0x81:	*newString += "DELAY ";			break;
-			case 0x82:	*newString += "UPDATEI ";		break;
-			case 0x83:	*newString += "PRINT ";			break;
-			case 0x84:	*newString += "REDRAW ";		break;
-			
-			case 0x90:	*newString += "GOTO ";			break;
-			
+			case 0x40:	detokenisedStream << "IF ";				break;
+			case 0x41:	detokenisedStream << "THEN ";			break;
+			case 0x42:	detokenisedStream << "ELSE ";			break;
+			case 0x43:	detokenisedStream << "ENDIF ";			break;
+
+			case 0x50:	detokenisedStream << "STARTANIM ";		break;
+
+			case 0x60:	detokenisedStream << "LOOP ";			break;
+			case 0x61:	detokenisedStream << "AGAIN ";			break;
+
+			case 0x80:	detokenisedStream << "WAIT ";			break;
+			case 0x81:	detokenisedStream << "DELAY ";			break;
+			case 0x82:	detokenisedStream << "UPDATEI ";		break;
+			case 0x83:	detokenisedStream << "PRINT ";			break;
+			case 0x84:	detokenisedStream << "REDRAW ";			break;
+
+			case 0x90:	detokenisedStream << "GOTO ";			break;
+
+			case 0xff:	detokenisedStream << "END ";			break;
+
 			default:
-				*newString += "<UNKNOWN> ";
-				cerr << "Unknown opcode: " << opcode;
+				detokenisedStream << "<UNKNOWN: " << std::hex << (int)opcode << "> " << std::dec;
 			break;
 		}
 
@@ -59,7 +70,7 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 		if(numberOfArguments)
 		{
 			// arguments are enclosed in brackets
-			*newString += "(";
+			detokenisedStream << "(";
 
 			if(opcode == 0x83)
 			{
@@ -71,8 +82,9 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 						tokenisedCondition[bytePointer+1]
 					);
 				bytePointer += 2;
+				numberOfArguments--;
 
-				*newString += "\"";
+				detokenisedStream << "\"";
 				for(uint16_t stringPosition = 0; stringPosition < stringLength; stringPosition++)
 				{
 					char nextChar = (char)tokenisedCondition[bytePointer + stringPosition];
@@ -80,44 +92,46 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 					// TODO: spot special characters here
 
 					if(nextChar)
-						newString->append(1, nextChar);
+						detokenisedStream << nextChar;
 				}
-				*newString += "\"";
+				detokenisedStream << "\"";
 				bytePointer += stringLength;
 				numberOfArguments -= stringLength >> 1;
 
 				// that should leave an argument, but you can't be too safe
-				if(numberOfArguments) *newString += ", ";
+				if(numberOfArguments) detokenisedStream << ", ";
 			}
 
 			for(uint8_t argumentNumber = 0; argumentNumber < numberOfArguments; argumentNumber++)
 			{
 				// each argument is encoded in two bytes...
-				uint8_t isVariableMarker	= tokenisedCondition[bytePointer];
-				uint8_t index				= tokenisedCondition[bytePointer+1];
+				uint8_t indexHighByte		= tokenisedCondition[bytePointer];
+				uint8_t indexLowByte		= tokenisedCondition[bytePointer+1];
 				bytePointer += 2;
 
 				// if the first byte is zero then this argument is a constant;
 				// if it's 0x80 then this argument is a variable reference
-				if(isVariableMarker) *newString += "v";
+				if(indexHighByte&0x80) detokenisedStream << "V";
+				indexHighByte &= 0x7f;
 
 				// the second byte is either the constant or the index of the
 				// variable
-				char indexString[4];
-				snprintf(indexString, sizeof(indexString), "%d", index);
-				*newString += indexString;
+				detokenisedStream << (int)(indexLowByte | (indexHighByte << 8));
 
 				// ... and arguments are separated by commas, of course
-				if(argumentNumber < numberOfArguments)
-					*newString += ", ";
+				if(argumentNumber+1 < numberOfArguments)
+					detokenisedStream << ", ";
 			}
 
 			// add a closing bracket
-			*newString += ")";
+			detokenisedStream << ")";
 		}
 
-		*newString += "\n";
+		detokenisedStream << endl;
 	}
 
-	return newString;
+	shared_ptr<string> outputString(new string);
+	*outputString = detokenisedStream.str();
+
+	return outputString;
 }

@@ -8,6 +8,7 @@
 
 #import "PTDocument.h"
 #include "Parser.h"
+#include "16bitDetokeniser.h"
 
 @implementation PTDocument
 
@@ -49,7 +50,45 @@
 
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError
 {
-	const char *sampleProgram =
+	// I'm still working the full format of .RUN files;
+	// for right now I'm going to hard code in the ranges
+	// of some conditions and use those to advance the 16-bit detokeniser
+	NSRange conditionRanges[] =
+	{
+		{.location = 658, .length = 158},
+		{.location = 830, .length = 80},
+		{.location = 924, .length = 124},
+		{.location = 1062, .length = 68},
+		{.location = 1143, .length = 78},
+		{.location = 1236, .length = 82},
+		{.location = 1332, .length = 460},
+		{.location = 1806, .length = 48},
+		{.location = 1868, .length = 182},
+
+		{.location = NSNotFound, .length = 0},
+	};
+
+	NSRange *testRange = conditionRanges;
+	while(testRange->location != NSNotFound)
+	{
+		NSData *conditionData = [data subdataWithRange:*testRange];
+
+		// one suspects there's an easier way to fill a std::vector
+		// from an NSData than this, but I'm a C++ novice
+		std::vector<uint8_t> conditionDataVector;
+		const uint8_t *bytes = (uint8_t *)[conditionData bytes];
+		for(NSUInteger index = 0; index < [conditionData length]; index++)
+		{
+			conditionDataVector.push_back(bytes[index]);
+		}
+
+		NSLog(@"Condition %02ld", (testRange - conditionRanges)+1);
+		cout << *detokenise16bitCondition(conditionDataVector);
+
+		testRange++;
+	}
+
+/*	const char *sampleProgram =
 		"         IF				"
 		"         VAR=? (V1,9)		"
 		"         THEN				"
@@ -62,7 +101,7 @@
 
 	std::string *sampleProgramString = new std::string(sampleProgram);
 	FCLInstructionVector instructions = getInstructions(sampleProgramString);
-	NSLog(@"%lu instructions", instructions->size());
+	NSLog(@"%lu instructions", instructions->size());*/
 
 
 	// Insert code here to read your document from the given data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning NO.
