@@ -28,6 +28,7 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 		// write out the operation
 		switch(opcode)
 		{
+			case 0x01:	detokenisedStream << "ACTIVATED? ";		break;
 			case 0x02:	detokenisedStream << "COLLIDED? ";		break;
 			case 0x03:	detokenisedStream << "SHOT? ";			break;
 			case 0x04:	detokenisedStream << "TIMER? ";			break;
@@ -42,14 +43,29 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 
 			case 0x30:	detokenisedStream << "INVIS ";			break;
 			case 0x31:	detokenisedStream << "VIS ";			break;
+			case 0x32:	detokenisedStream << "TOGVIS ";			break;
+			case 0x33:	detokenisedStream << "DESTROY ";		break;
+
+			case 0x34:	detokenisedStream << "INVIS? ";			break;
+			case 0x35:	detokenisedStream << "VIS? ";			break;
+			
+			case 0x36:	detokenisedStream << "MOVE ";			break;
+			case 0x3a:	detokenisedStream << "MOVETO ";			break;
 
 			case 0x40:	detokenisedStream << "IF ";				break;
 			case 0x41:	detokenisedStream << "THEN ";			break;
 			case 0x42:	detokenisedStream << "ELSE ";			break;
 			case 0x43:	detokenisedStream << "ENDIF ";			break;
 			case 0x44:	detokenisedStream << "AND ";			break;
+			case 0x45:	detokenisedStream << "OR ";				break;
 
 			case 0x50:	detokenisedStream << "STARTANIM ";		break;
+			case 0x51:	detokenisedStream << "STOPANIM ";		break;
+
+			case 0x52:	detokenisedStream << "START ";			break;
+			case 0x53:	detokenisedStream << "RESTART ";		break;
+
+			case 0x54:	detokenisedStream << "INCLUDE ";		break;
 
 			case 0x60:	detokenisedStream << "LOOP ";			break;
 			case 0x61:	detokenisedStream << "AGAIN ";			break;
@@ -58,12 +74,14 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 
 			case 0x80:	detokenisedStream << "WAIT ";			break;
 			case 0x81:	detokenisedStream << "DELAY ";			break;
+
 			case 0x82:	detokenisedStream << "UPDATEI ";		break;
 			case 0x83:	detokenisedStream << "PRINT ";			break;
 			case 0x84:	detokenisedStream << "REDRAW ";			break;
 
-			case 0x87:	detokenisedStream << "EXECUTE ";		break;
+			case 0x85:	detokenisedStream << "MODE ";			break;
 
+			case 0x87:	detokenisedStream << "EXECUTE ";		break;
 			case 0x90:	detokenisedStream << "GOTO ";			break;
 
 			case 0xff:	detokenisedStream << "END ";			break;

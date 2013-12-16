@@ -78,6 +78,17 @@
 		/* ... */
 
 		{.location = 2854, .length = 20},
+		{.location = 3450, .length = 28},
+		{.location = 3988, .length = 72},
+		{.location = 4396, .length = 72},
+		{.location = 8118, .length = 60},
+
+		// some animators
+		{.location = 23410, .length = 94},
+		{.location = 26786, .length = 44},
+
+		{.location = 7838, .length = 100},
+		{.location = 28488, .length = 916},
 		
 
 		{.location = NSNotFound, .length = 0},
