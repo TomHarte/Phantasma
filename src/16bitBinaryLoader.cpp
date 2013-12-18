@@ -142,6 +142,10 @@ bool load16bitBinary(vector <uint8_t> &binary)
 	// I haven't figured out what the next 106
 	// bytes mean, so we'll skip them — global objects
 	// maybe? Likely not 106 bytes in every file.
+	//
+	// ADDED: having rediscovered my source for the 8bit
+	// file format, could this be shading information by
+	// analogy with that?
 	streamLoader.skipBytes(106);
 
 	// at this point I should properly load the border/key/mouse
