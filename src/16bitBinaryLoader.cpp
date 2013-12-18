@@ -69,7 +69,60 @@ class StreamLoader
 
 			return returnBuffer;
 		}
+		
+		vector<uint8_t>::size_type getFileOffset()
+		{
+			return bytePointer;
+		}
+		
+		void setFileOffset(vector<uint8_t>::size_type newOffset)
+		{
+			bytePointer = newOffset;
+		}
 };
+
+static void load16bitArea(StreamLoader &stream)
+{
+	// the lowest bit of this value seems to indicate
+	// horizon on or off; this is as much as I currently know
+	uint16_t skippedValue		= stream.get16();
+	cout << "Skipped value " << skippedValue << endl;
+
+	uint16_t numberOfObjects	= stream.get16();
+	uint16_t areaScale			= stream.get16();
+	
+	cout << "Objects: " << numberOfObjects << endl;
+	cout << "Scale: " << areaScale << endl;
+
+	// I've yet to decipher this fully
+	uint16_t horizonColour	= stream.get16();
+	cout << "Horizon colour " << hex << (int)horizonColour << dec << endl;
+
+	// this is just a complete guess
+	for(int paletteEntry = 0; paletteEntry < 22; paletteEntry++)
+	{
+		uint8_t paletteColour		= stream.get8();
+		cout << "Palette colour (?) " << hex << (int)paletteColour << dec << endl;
+	}
+
+	// get the objects or whatever
+	for(uint16_t object = 0; object < numberOfObjects; object++)
+	{
+		uint16_t objectType = stream.get16();
+		uint16_t objectFlags = stream.get16();
+		
+		// location, size here
+		stream.skipBytes(12);
+		uint16_t objectID = stream.get16();
+		uint32_t sizeOfObject = (uint32_t)(stream.get16() << 1) - 20;
+
+		cout << endl;
+		cout << "Object " << objectID << endl;
+		cout << "Type " << hex << objectType << "; flags " << objectFlags << dec << endl;
+
+		stream.skipBytes(sizeOfObject);
+	}
+}
 
 bool load16bitBinary(vector <uint8_t> &binary)
 {
@@ -84,6 +137,11 @@ bool load16bitBinary(vector <uint8_t> &binary)
 
 	// skip bytes with meaning unknown
 	streamLoader.get16();
+
+	// this brings us to the beginning of the embedded
+	// .KIT file, so we'll grab the base offset for
+	// finding areas later
+	vector<uint8_t>::size_type baseOffset = streamLoader.getFileOffset();
 
 	// check that the next two bytes are "PC", then
 	// skip the number that comes after
@@ -191,6 +249,17 @@ bool load16bitBinary(vector <uint8_t> &binary)
 		
 		cout << "Global condition " << globalCondition+1 << endl;
 		cout << *detokenise16bitCondition(*conditionData) << endl;
+	}
+
+	// grab the areas (well, for now, print them)
+	for(uint16_t area = 0; area < numberOfAreas; area++)
+	{
+		cout << "Area " << area+1 << endl;
+
+		streamLoader.setFileOffset(fileOffsetForArea[area] + baseOffset);
+		load16bitArea(streamLoader);
+
+		cout << endl;
 	}
 
 	delete[] fileOffsetForArea;
