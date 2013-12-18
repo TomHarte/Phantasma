@@ -7,6 +7,8 @@
 //
 
 #include "16bitBinaryLoader.h"
+#include "Parser.h"
+#include "16bitDetokeniser.h"
 
 class StreamLoader
 {
@@ -56,6 +58,16 @@ class StreamLoader
 		void skipBytes(vector<uint8_t>::size_type numberOfBytes)
 		{
 			bytePointer += numberOfBytes;
+		}
+		
+		shared_ptr<vector<uint8_t>> nextBytes(vector<uint8_t>::size_type numberOfBytes)
+		{
+			shared_ptr<vector<uint8_t>> returnBuffer(new vector<uint8_t>);
+
+			while(numberOfBytes--)
+				returnBuffer->push_back(get8());
+
+			return returnBuffer;
 		}
 };
 
@@ -128,7 +140,8 @@ bool load16bitBinary(vector <uint8_t> &binary)
 	cout << "Start vehicle " << startVehicle << ", execute global condition " << executeGlobalCondition << endl;
 
 	// I haven't figured out what the next 106
-	// bytes mean, so we'll skip them
+	// bytes mean, so we'll skip them — global objects
+	// maybe? Likely not 106 bytes in every file.
 	streamLoader.skipBytes(106);
 
 	// at this point I should properly load the border/key/mouse
@@ -156,6 +169,25 @@ bool load16bitBinary(vector <uint8_t> &binary)
 	uint32_t *fileOffsetForArea = new uint32_t[numberOfAreas];
 	for(uint16_t area = 0; area < numberOfAreas; area++)
 		fileOffsetForArea[area] = (uint32_t)streamLoader.get32() << 1;
+
+	// now come the global conditions
+	uint16_t numberOfGlobalConditions = streamLoader.get16();
+	for(uint16_t globalCondition = 0; globalCondition < numberOfGlobalConditions; globalCondition++)
+	{
+		// 12 bytes for the name of the condition;
+		// we don't care
+		streamLoader.skipBytes(12);
+
+		// get the length and the data itself, converting from
+		// shorts to bytes
+		uint32_t lengthOfCondition = (uint32_t)streamLoader.get16() << 1;
+
+		// get the condition
+		shared_ptr<vector<uint8_t>> conditionData = streamLoader.nextBytes(lengthOfCondition);
+		
+		cout << "Global condition " << globalCondition+1 << endl;
+		cout << *detokenise16bitCondition(*conditionData) << endl;
+	}
 
 	delete[] fileOffsetForArea;
 	return true;
