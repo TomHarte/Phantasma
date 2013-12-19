@@ -7,8 +7,11 @@
 //
 
 #include "16bitBinaryLoader.h"
+
 #include "Parser.h"
 #include "16bitDetokeniser.h"
+
+#include "Object.h"
 
 class StreamLoader
 {
@@ -81,7 +84,67 @@ class StreamLoader
 		}
 };
 
-static void load16bitArea(StreamLoader &stream)
+static void loadObject(StreamLoader &stream)
+{
+	uint16_t objectType = stream.get16();
+	uint16_t objectFlags = stream.get16();
+	
+	// location, size here
+	uint16_t positionX		= stream.get16();
+	uint16_t positionY		= stream.get16();
+	uint16_t positionZ		= stream.get16();
+	uint16_t sizeX			= stream.get16();
+	uint16_t sizeY			= stream.get16();
+	uint16_t sizeZ			= stream.get16();
+
+	// object ID
+	uint16_t objectID = stream.get16();
+
+	// size of object on disk; we've accounted for 20 bytes
+	// already so we can subtract that to get the remaining
+	// length beyond here
+	uint32_t byteSizeOfObject = (uint32_t)(stream.get16() << 1) - 20;
+
+	cout << endl;
+	cout << "Object " << objectID << endl;
+	cout << "Type " << hex << objectType << "; flags " << objectFlags << dec << endl;
+	cout << "Position " << positionX << ", " << positionY << ", " << positionZ << endl;
+	cout << "Size " << sizeX << ", " << sizeY << ", " << sizeZ << endl;
+	cout << "Bytes: " << byteSizeOfObject << endl;
+	cout << "Colours: (" << Object::numberOfColoursForObjectOfType((Object::Type)(objectType&0xff)) << "): ";
+
+	cout << hex;
+	for(uint8_t colour = 0; colour < Object::numberOfColoursForObjectOfType((Object::Type)(objectType&0xff)); colour++)
+	{
+		cout << (int)stream.get8() << ", ";
+		byteSizeOfObject--;
+	}
+	cout << dec << endl;
+
+	// if this is a pyramid then read four more numbers ...
+	uint16_t apexOriginX, apexOriginY, apexDestinationX, apexDestinationY;
+	if(Object::isPyramidType((Object::Type)(objectType&0xff)))
+	{
+		apexOriginX = stream.get16();
+		apexOriginY = stream.get16();
+		apexDestinationX = stream.get16();
+		apexDestinationY = stream.get16();
+		byteSizeOfObject -= 8;
+	}
+
+	// TODO: vertices for line, quad, etc. And groups.
+
+	// check whether there's a condition attached
+	if(byteSizeOfObject)
+	{
+		shared_ptr<vector<uint8_t>> conditionData = stream.nextBytes(byteSizeOfObject);
+		cout << *detokenise16bitCondition(*conditionData) << endl;
+	}
+
+//	stream.skipBytes(byteSizeOfObject);
+}
+
+static void loadArea(StreamLoader &stream)
 {
 	// the lowest bit of this value seems to indicate
 	// horizon on or off; this is as much as I currently know
@@ -108,19 +171,7 @@ static void load16bitArea(StreamLoader &stream)
 	// get the objects or whatever
 	for(uint16_t object = 0; object < numberOfObjects; object++)
 	{
-		uint16_t objectType = stream.get16();
-		uint16_t objectFlags = stream.get16();
-		
-		// location, size here
-		stream.skipBytes(12);
-		uint16_t objectID = stream.get16();
-		uint32_t sizeOfObject = (uint32_t)(stream.get16() << 1) - 20;
-
-		cout << endl;
-		cout << "Object " << objectID << endl;
-		cout << "Type " << hex << objectType << "; flags " << objectFlags << dec << endl;
-
-		stream.skipBytes(sizeOfObject);
+		loadObject(stream);
 	}
 }
 
@@ -257,7 +308,7 @@ bool load16bitBinary(vector <uint8_t> &binary)
 		cout << "Area " << area+1 << endl;
 
 		streamLoader.setFileOffset(fileOffsetForArea[area] + baseOffset);
-		load16bitArea(streamLoader);
+		loadArea(streamLoader);
 
 		cout << endl;
 	}
