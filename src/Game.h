@@ -11,4 +11,11 @@
 
 #include <iostream>
 
+class Game
+{
+	public:
+
+		void drawWithAspectRatio(float aspectRatio);
+};
+
 #endif /* defined(__Phantasma__Game__) */

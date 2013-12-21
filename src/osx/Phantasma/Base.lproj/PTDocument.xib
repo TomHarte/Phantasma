@@ -7,6 +7,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PTDocument">
             <connections>
+                <outlet property="openGLView" destination="E4p-c9-yu5" id="4Ki-UA-YbF"/>
                 <outlet property="window" destination="5" id="18"/>
             </connections>
         </customObject>

@@ -7,17 +7,50 @@
 //
 
 #import "PTDocument.h"
+#include "Game.h"
 #include "16bitBinaryLoader.h"
 
+@interface PTDocument () <NSWindowDelegate>
+
+@property (weak) IBOutlet NSOpenGLView *openGLView;
+- (void)displayLinkDidCallback;
+
+@end
+
+static CVReturn CVDisplayLinkCallback(
+	CVDisplayLinkRef displayLink,
+	const CVTimeStamp *inNow,
+	const CVTimeStamp *inOutputTime, 
+	CVOptionFlags flagsIn, 
+	CVOptionFlags *flagsOut, 
+	void *displayLinkContext)
+{
+	[(__bridge PTDocument *)displayLinkContext displayLinkDidCallback];
+	return kCVReturnSuccess;
+}
+
 @implementation PTDocument
+{
+	Game *_game;
+	CVDisplayLinkRef _displayLink;
+}
 
 - (id)init
 {
     self = [super init];
-    if (self) {
+    if (self)
+	{
 		// Add your subclass-specific initialization here.
+		CVDisplayLinkCreateWithActiveCGDisplays(&_displayLink);
+		CVDisplayLinkSetOutputCallback(_displayLink, CVDisplayLinkCallback, (__bridge void *)self);
     }
     return self;
+}
+
+- (void)dealloc
+{
+	CVDisplayLinkRelease(_displayLink);
+	_displayLink = NULL;
 }
 
 - (NSString *)windowNibName
@@ -58,7 +91,59 @@
 		dataVector.push_back(bytes[index]);
 	}
 
+	// we'll want to redraw immediately on window resizes
+	self.openGLView.window.delegate = self;
+
+	// configure and start the CV display link
+	CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink,
+		(CGLContextObj)[[self.openGLView openGLContext] CGLContextObj],
+		(CGLPixelFormatObj)[[self.openGLView pixelFormat] CGLPixelFormatObj]);
+	CVDisplayLinkStart(_displayLink);
+
+	_game = new Game;
+
 	return load16bitBinary(dataVector);
+}
+
+- (void)windowDidResize:(NSNotification *)notification
+{
+	[self updateDisplay];
+}
+
+- (void)displayLinkDidCallback
+{
+	if(_game)
+	{
+		dispatch_sync(dispatch_get_main_queue(),
+		^{
+			[self updateDisplay];
+		});
+	}
+}
+
+- (void)updateDisplay
+{
+	// establish the context
+	[[self.openGLView openGLContext] makeCurrentContext];
+
+	// setup the viewport
+	NSPoint farEdge = NSMakePoint(self.openGLView.bounds.size.width, self.openGLView.bounds.size.height);
+	if([self.openGLView respondsToSelector:@selector(convertPointToBacking:)])
+		farEdge = [self.openGLView convertPointToBacking:farEdge];
+	glViewport(0, 0, (GLsizei)farEdge.x, (GLsizei)farEdge.y);
+
+	// draw the current scene
+	_game->drawWithAspectRatio((float)(self.openGLView.bounds.size.width / self.openGLView.bounds.size.height));
+
+	// switch buffers
+	glSwapAPPLE();
+}
+
+- (void)close
+{
+	CVDisplayLinkStop(_displayLink);
+	delete _game;
+	_game = NULL;
 }
 
 @end

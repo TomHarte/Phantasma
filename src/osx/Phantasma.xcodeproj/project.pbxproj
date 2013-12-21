@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F7144FE186631A10090828C /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7144FD186631A10090828C /* OpenGL.framework */; };
+		1F714500186638D80090828C /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7144FF186638D80090828C /* CoreVideo.framework */; };
 		4B1E687318554BFD003A9847 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B1E687218554BFD003A9847 /* Cocoa.framework */; };
 		4B1E687D18554BFD003A9847 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E687B18554BFD003A9847 /* InfoPlist.strings */; };
 		4B1E687F18554BFD003A9847 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E687E18554BFD003A9847 /* main.m */; };
@@ -29,6 +31,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1F7144FD186631A10090828C /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		1F7144FF186638D80090828C /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		4B1E686F18554BFD003A9847 /* Phantasma.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Phantasma.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B1E687218554BFD003A9847 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4B1E687518554BFD003A9847 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -74,6 +78,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F714500186638D80090828C /* CoreVideo.framework in Frameworks */,
+				1F7144FE186631A10090828C /* OpenGL.framework in Frameworks */,
 				4B1E687318554BFD003A9847 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -101,6 +107,8 @@
 		4B1E687118554BFD003A9847 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1F7144FF186638D80090828C /* CoreVideo.framework */,
+				1F7144FD186631A10090828C /* OpenGL.framework */,
 				4B1E687218554BFD003A9847 /* Cocoa.framework */,
 				4B1E689418554BFD003A9847 /* XCTest.framework */,
 				4B1E687418554BFD003A9847 /* Other Frameworks */,
