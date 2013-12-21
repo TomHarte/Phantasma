@@ -9,6 +9,7 @@
 #import "PTDocument.h"
 #include "Game.h"
 #include "16bitBinaryLoader.h"
+#import <libkern/OSAtomic.h>
 
 @interface PTDocument () <NSWindowDelegate>
 
@@ -33,6 +34,7 @@ static CVReturn CVDisplayLinkCallback(
 {
 	Game *_game;
 	CVDisplayLinkRef _displayLink;
+	volatile int32_t _displayLinkRedrawQueueCount;
 }
 
 - (id)init
@@ -112,11 +114,15 @@ static CVReturn CVDisplayLinkCallback(
 
 - (void)displayLinkDidCallback
 {
-	if(_game)
+	if(_game && !_displayLinkRedrawQueueCount)
 	{
-		dispatch_sync(dispatch_get_main_queue(),
+		OSAtomicIncrement32(&_displayLinkRedrawQueueCount);
+
+		dispatch_async(dispatch_get_main_queue(),
 		^{
 			[self updateDisplay];
+
+			OSAtomicDecrement32(&_displayLinkRedrawQueueCount);
 		});
 	}
 }
