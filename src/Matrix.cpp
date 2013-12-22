@@ -95,6 +95,7 @@ Matrix Matrix::rotationMatrix(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 Matrix Matrix::projectionMatrix(GLfloat yFieldOfView, GLfloat aspectRatio, GLfloat zNear, GLfloat zFar)
 {
 	/* compose projection matrix, exactly as per gluPerspective */
+	yFieldOfView = (GLfloat)((yFieldOfView * M_PI) / 180.0f);
 	GLfloat cotangent = 1.0f / tanf(yFieldOfView * 0.5f);
 
 	GLfloat contents[16];
