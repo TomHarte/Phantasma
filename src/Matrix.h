@@ -14,7 +14,9 @@ class Matrix
 	public:
 		Matrix();
 		Matrix(GLfloat *contents);
-		Matrix(GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
+		
+		static Matrix rotationMatrix(GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
+		static Matrix projectionMatrix(GLfloat yFieldOfView, GLfloat aspectRatio, GLfloat zNear, GLfloat zFar);
 
 		void translateLocal(GLfloat x, GLfloat y, GLfloat z);
 		void translateGlobal(GLfloat x, GLfloat y, GLfloat z);

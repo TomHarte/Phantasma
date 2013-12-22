@@ -52,9 +52,9 @@ void Matrix::translateGlobal(GLfloat x, GLfloat y, GLfloat z)
 	contents[14] += z;
 }
 
-Matrix::Matrix(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
+Matrix Matrix::rotationMatrix(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 {
-	/* compose rotation matrix */
+	/* compose rotation matrix, exactly as per glRotatef */
 	GLfloat cosine, sine;
 
 	angle = (GLfloat)((angle * M_PI) / 180.0f);
@@ -68,7 +68,7 @@ Matrix::Matrix(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 		x *= multiplier; y *= multiplier; z *= multiplier;
 	}
 
-	/* formula lifted from man page for glRotatef */
+	GLfloat contents[16];
 	contents[0] = (x*x*(1 - cosine)) + cosine;
 	contents[1] = (y*x*(1 - cosine)) + z*sine;
 	contents[2] = (x*z*(1 - cosine)) - y*sine;
@@ -88,6 +88,33 @@ Matrix::Matrix(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 	contents[13] = 0.0f;
 	contents[14] = 0.0f;
 	contents[15] = 1.0f;
+
+	return Matrix(contents);
+}
+
+Matrix Matrix::projectionMatrix(GLfloat yFieldOfView, GLfloat aspectRatio, GLfloat zNear, GLfloat zFar)
+{
+	/* compose projection matrix, exactly as per gluPerspective */
+	GLfloat cotangent = 1.0f / tanf(yFieldOfView * 0.5f);
+
+	GLfloat contents[16];
+
+	contents[0] = cotangent / aspectRatio;
+	contents[1] = contents[2] = contents[3] = 0.0f;
+
+	contents[4] = 0.0f;
+	contents[5] = cotangent;
+	contents[6] = contents[7] = 0.0f;
+	
+	contents[8] = contents[9] = 0.0f;
+	contents[10] = (zFar + zNear) / (zNear - zFar);
+	contents[11] = -1.0f;
+	
+	contents[12] = contents[13] = 0.0f;
+	contents[14] = (2.0f * zFar * zNear) / (zNear - zFar);
+	contents[15] = 0.0f;
+
+	return Matrix(contents);
 }
 
 Matrix operator *(Matrix &left, Matrix &right)
