@@ -43,6 +43,8 @@ class Object
 		static void setupOpenGL();
 		static void setProjectionMatrix(const GLfloat *projectionMatrix);
 		static void setViewMatrix(const GLfloat *projectionMatrix);
+
+		static void drawTestObject();
 		
 	private:
 		static GLuint openGLProgram;
