@@ -149,13 +149,12 @@ static void loadArea(StreamLoader &stream)
 	// the lowest bit of this value seems to indicate
 	// horizon on or off; this is as much as I currently know
 	uint16_t skippedValue		= stream.get16();
-	cout << "Skipped value " << skippedValue << endl;
-
 	uint16_t numberOfObjects	= stream.get16();
-	uint16_t areaScale			= stream.get16();
-	
+	uint16_t areaNumber			= stream.get16();
+
+	cout << "Area " << areaNumber << endl;
+	cout << "Skipped value " << skippedValue << endl;
 	cout << "Objects: " << numberOfObjects << endl;
-	cout << "Scale: " << areaScale << endl;
 
 	// I've yet to decipher this fully
 	uint16_t horizonColour	= stream.get16();
@@ -305,7 +304,7 @@ bool load16bitBinary(vector <uint8_t> &binary)
 	// grab the areas (well, for now, print them)
 	for(uint16_t area = 0; area < numberOfAreas; area++)
 	{
-		cout << "Area " << area+1 << endl;
+//		cout << "Area " << area+1 << endl;
 
 		streamLoader.setFileOffset(fileOffsetForArea[area] + baseOffset);
 		loadArea(streamLoader);
