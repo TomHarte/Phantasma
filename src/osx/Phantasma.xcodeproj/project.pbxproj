@@ -25,6 +25,7 @@
 		4B2CD343185D1BB30029CDB5 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68BB18555970003A9847 /* Parser.cpp */; };
 		4B355857185D4F7F0023C3C5 /* Condition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68AE18555129003A9847 /* Condition.cpp */; };
 		4B35585A185E91280023C3C5 /* 16bitDetokeniser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B355858185E91280023C3C5 /* 16bitDetokeniser.cpp */; };
+		4B7C9A6D18666CC300CE2603 /* Matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B7C9A6C18666CC300CE2603 /* Matrix.cpp */; };
 		4B8BC74D18614BD4003D9447 /* 16bitBinaryLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B8BC74B18614BD4003D9447 /* 16bitBinaryLoader.cpp */; };
 		4B8BC75118616B01003D9447 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B8BC74F18616B01003D9447 /* Game.cpp */; };
 		4BA2615B185ECC51002D952E /* 8bitDetokeniser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BA26159185ECC51002D952E /* 8bitDetokeniser.cpp */; };
@@ -65,6 +66,8 @@
 		4B2A134A1862A382007B2A44 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Object.h; path = ../../Object.h; sourceTree = "<group>"; };
 		4B355858185E91280023C3C5 /* 16bitDetokeniser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = 16bitDetokeniser.cpp; path = ../../16bitDetokeniser.cpp; sourceTree = "<group>"; };
 		4B355859185E91280023C3C5 /* 16bitDetokeniser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = 16bitDetokeniser.h; path = ../../16bitDetokeniser.h; sourceTree = "<group>"; };
+		4B7C9A6B18666CB300CE2603 /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Matrix.h; path = ../../Matrix.h; sourceTree = "<group>"; };
+		4B7C9A6C18666CC300CE2603 /* Matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Matrix.cpp; path = ../../Matrix.cpp; sourceTree = "<group>"; };
 		4B8BC74B18614BD4003D9447 /* 16bitBinaryLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = 16bitBinaryLoader.cpp; path = ../../16bitBinaryLoader.cpp; sourceTree = "<group>"; };
 		4B8BC74C18614BD4003D9447 /* 16bitBinaryLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = 16bitBinaryLoader.h; path = ../../16bitBinaryLoader.h; sourceTree = "<group>"; };
 		4B8BC74F18616B01003D9447 /* Game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Game.cpp; path = ../../Game.cpp; sourceTree = "<group>"; };
@@ -135,6 +138,7 @@
 				4B8BC75018616B01003D9447 /* Game.h */,
 				4B2A13491862A382007B2A44 /* Object.cpp */,
 				4B2A134A1862A382007B2A44 /* Object.h */,
+				4B7C9A6E18666CC900CE2603 /* Maths */,
 				4B8BC74E18614BD8003D9447 /* Loaders */,
 				4B1E68BA18555724003A9847 /* Command Language */,
 				4B1E68AD18555112003A9847 /* OS X */,
@@ -186,6 +190,15 @@
 				4BA2615A185ECC51002D952E /* 8bitDetokeniser.h */,
 			);
 			name = "Command Language";
+			sourceTree = "<group>";
+		};
+		4B7C9A6E18666CC900CE2603 /* Maths */ = {
+			isa = PBXGroup;
+			children = (
+				4B7C9A6C18666CC300CE2603 /* Matrix.cpp */,
+				4B7C9A6B18666CB300CE2603 /* Matrix.h */,
+			);
+			name = Maths;
 			sourceTree = "<group>";
 		};
 		4B8BC74E18614BD8003D9447 /* Loaders */ = {
@@ -286,6 +299,7 @@
 				4B8BC75118616B01003D9447 /* Game.cpp in Sources */,
 				4B2CD343185D1BB30029CDB5 /* Parser.cpp in Sources */,
 				4B8BC74D18614BD4003D9447 /* 16bitBinaryLoader.cpp in Sources */,
+				4B7C9A6D18666CC300CE2603 /* Matrix.cpp in Sources */,
 				4B2CD342185D19BD0029CDB5 /* Instruction.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
