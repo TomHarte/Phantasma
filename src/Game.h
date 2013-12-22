@@ -15,10 +15,17 @@ class Game
 {
 	public:
 
+		Game();
+
 		void setAspectRatio(float aspectRatio);
 		void draw();
+		void advanceToTime(uint32_t millisecondsSinceArbitraryMoment);
 
 		void setupOpenGL();
+
+	private:
+		uint32_t timeOfLastTick;
+		bool hasReceivedTime;
 };
 
 #endif /* defined(__Phantasma__Game__) */

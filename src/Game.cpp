@@ -10,6 +10,13 @@
 #include "Object.h"
 #include "Matrix.h"
 
+static float angle = 0.0f;
+
+Game::Game()
+{
+	hasReceivedTime = false;
+}
+
 void Game::setAspectRatio(float aspectRatio)
 {
 	// create a projection matrix
@@ -23,9 +30,7 @@ void Game::draw()
 	glClearColor(1.0f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	static float angle = 0.0f;
 	Matrix rotationMatrix = Matrix::rotationMatrix(angle, 0.0f, 1.0f, 0.0f);
-	angle += 1.0f;
 	Object::setViewMatrix(rotationMatrix.contents);
 
 	Object::drawTestObject();
@@ -34,4 +39,29 @@ void Game::draw()
 void Game::setupOpenGL()
 {
 	Object::setupOpenGL();
+}
+
+void Game::advanceToTime(uint32_t millisecondsSinceArbitraryMoment)
+{
+	if(!hasReceivedTime)
+	{
+		timeOfLastTick = millisecondsSinceArbitraryMoment;
+		hasReceivedTime = true;
+		return;
+	}
+
+	// so how many milliseconds is that since we last paid attention?
+	uint32_t timeDifference = millisecondsSinceArbitraryMoment - timeOfLastTick;
+
+	// TODO: player movement updates out here
+	angle += (float)timeDifference / 100.0f;
+
+	// we'll advance at 50hz, which makes for some easy integer arithmetic here
+	while(timeDifference > 20)
+	{
+		timeOfLastTick += 20;
+		timeDifference -= 20;
+
+		// TODO: in-game timed events here
+	}
 }

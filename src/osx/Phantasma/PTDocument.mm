@@ -155,6 +155,9 @@ static CVReturn CVDisplayLinkCallback(
 
 - (void)updateDisplay
 {
+	// ask the game to update to whatever the time is now
+	_game->advanceToTime( (uint32_t)([NSDate timeIntervalSinceReferenceDate] * 1000) );
+
 	// draw the current scene
 	_game->draw();
 
