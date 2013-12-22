@@ -15,8 +15,9 @@ class Game
 {
 	public:
 
-		void drawWithAspectRatio(float aspectRatio);
-		
+		void setAspectRatio(float aspectRatio);
+		void draw();
+
 		void setupOpenGL();
 };
 

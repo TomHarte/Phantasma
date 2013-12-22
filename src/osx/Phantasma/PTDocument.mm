@@ -110,13 +110,32 @@ static CVReturn CVDisplayLinkCallback(
 - (void)setOpenGLView:(NSOpenGLView *)openGLView
 {
 	_openGLView = openGLView;
+
+	// this will be the only context we use, so we can just make it current
+	// here and forget about it
 	[self.openGLView.openGLContext makeCurrentContext];
 	_game->setupOpenGL();
+
+	[self setupViewport];
 }
 
 - (void)windowDidResize:(NSNotification *)notification
 {
+	[self setupViewport];
 	[self updateDisplay];
+}
+
+- (void)setupViewport
+{
+	// setup the projection viewport; allow for possible retina backing
+	NSPoint farEdge = NSMakePoint(self.openGLView.bounds.size.width, self.openGLView.bounds.size.height);
+	if([self.openGLView respondsToSelector:@selector(convertPointToBacking:)])
+		farEdge = [self.openGLView convertPointToBacking:farEdge];
+	glViewport(0, 0, (GLsizei)farEdge.x, (GLsizei)farEdge.y);
+
+	// set the aspect ratio we're now using (in OS X pixels seem always to be square;
+	// unless you can find an API that says otherwise?)
+	_game->setAspectRatio((float)(self.openGLView.bounds.size.width / self.openGLView.bounds.size.height));
 }
 
 - (void)displayLinkDidCallback
@@ -136,17 +155,8 @@ static CVReturn CVDisplayLinkCallback(
 
 - (void)updateDisplay
 {
-	// establish the context
-	[[self.openGLView openGLContext] makeCurrentContext];
-
-	// setup the viewport
-	NSPoint farEdge = NSMakePoint(self.openGLView.bounds.size.width, self.openGLView.bounds.size.height);
-	if([self.openGLView respondsToSelector:@selector(convertPointToBacking:)])
-		farEdge = [self.openGLView convertPointToBacking:farEdge];
-	glViewport(0, 0, (GLsizei)farEdge.x, (GLsizei)farEdge.y);
-
 	// draw the current scene
-	_game->drawWithAspectRatio((float)(self.openGLView.bounds.size.width / self.openGLView.bounds.size.height));
+	_game->draw();
 
 	// switch buffers
 	glSwapAPPLE();
