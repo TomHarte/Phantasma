@@ -13,7 +13,7 @@
 
 @interface PTDocument () <NSWindowDelegate>
 
-@property (weak) IBOutlet NSOpenGLView *openGLView;
+@property (weak, nonatomic) IBOutlet NSOpenGLView *openGLView;
 - (void)displayLinkDidCallback;
 
 @end
@@ -107,6 +107,13 @@ static CVReturn CVDisplayLinkCallback(
 	return load16bitBinary(dataVector);
 }
 
+- (void)setOpenGLView:(NSOpenGLView *)openGLView
+{
+	_openGLView = openGLView;
+	[self.openGLView.openGLContext makeCurrentContext];
+	_game->setupOpenGL();
+}
+
 - (void)windowDidResize:(NSNotification *)notification
 {
 	[self updateDisplay];
@@ -150,6 +157,8 @@ static CVReturn CVDisplayLinkCallback(
 	CVDisplayLinkStop(_displayLink);
 	delete _game;
 	_game = NULL;
+
+	[super close];
 }
 
 @end

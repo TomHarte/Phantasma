@@ -39,6 +39,15 @@ class Object
 	
 		static int numberOfColoursForObjectOfType(Type type);
 		static bool isPyramidType(Type type);
+
+		static void setupOpenGL();
+		static void setProjectionMatrix(const GLfloat *projectionMatrix);
+		static void setViewMatrix(const GLfloat *projectionMatrix);
+		
+	private:
+		static GLuint openGLProgram;
+		static GLuint compileShader(const GLchar *source, GLenum shaderType);
+		static GLint viewMatrixUniform, projectionMatrixUniform;
 };
 
 #endif /* defined(__Phantasma__Object__) */

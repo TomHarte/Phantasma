@@ -16,6 +16,8 @@ class Game
 	public:
 
 		void drawWithAspectRatio(float aspectRatio);
+		
+		void setupOpenGL();
 };
 
 #endif /* defined(__Phantasma__Game__) */
