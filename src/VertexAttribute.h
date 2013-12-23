@@ -17,7 +17,7 @@ class VertexAttribute
 	public:
 		VertexAttribute(GLuint index, GLint size, GLenum type, GLboolean normalised, std::shared_ptr<std::vector <uint8_t>> &targetPool);
 
-		size_t addValue(const void *value);
+		void addValue(const void *value);
 		void bindWithStride(GLsizei stride);
 
 		GLsizei sizeOfValue();
@@ -25,12 +25,11 @@ class VertexAttribute
 	private:
 		std::shared_ptr<std::vector <uint8_t>> targetPool;
 		std::vector<uint8_t>::size_type startOffset;
-		size_t index;
 
 		GLuint attributeIndex;
-		GLint size;
-		GLenum type;
-		GLboolean normalised;
+		GLint attributeSize;
+		GLenum attributeType;
+		GLboolean attributeIsNormalised;
 };
 
 #endif /* defined(__Phantasma__VertexAttribute__) */

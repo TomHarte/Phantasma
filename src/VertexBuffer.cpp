@@ -13,12 +13,17 @@ VertexBuffer *VertexBuffer::boundBuffer;
 
 VertexBuffer::VertexBuffer()
 {
+	// create a vector to write new values to and seed our stride as 0
 	targetPool = std::shared_ptr<std::vector <uint8_t>>(new std::vector <uint8_t>);
 	stride = 0;
+
+	// the first write index will be zero
+	writeIndex = 0;
 }
 
 VertexBuffer::~VertexBuffer()
 {
+	// cleanup is: returning the OpenGL object, deleting all the attributes
 	if(buffer) glDeleteBuffers(1, &buffer);
 
 	for(std::vector <VertexAttribute *>::size_type index = 0; index < attributes.size(); index++)
@@ -64,14 +69,27 @@ void VertexBuffer::bind()
 
 void VertexBuffer::addAttribute(GLuint index, GLint size, GLenum type, GLboolean normalised)
 {
+	// allocate an attribute, add it to our list
 	VertexAttribute *newAttribute = new VertexAttribute(index, size, type, normalised, targetPool);
 	attributes.push_back(newAttribute);
 
+	// stride is the sum of all attribute values, so update it now
 	stride += newAttribute->sizeOfValue();
+
+	// also store the new attribute for lookup by index
 	attributesByIndex[index] = newAttribute;
 }
 
 VertexAttribute *VertexBuffer::attributeForIndex(GLuint index)
 {
+	// trivial, really, just pass the thing along
 	return attributesByIndex[index];
+}
+
+size_t VertexBuffer::getNextWriteIndex()
+{
+	// return the current index and increment it for next time
+	size_t returnIndex = writeIndex;
+	writeIndex++;
+	return returnIndex;
 }
