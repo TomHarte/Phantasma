@@ -128,9 +128,8 @@ static CVReturn CVDisplayLinkCallback(
 - (void)setupViewport
 {
 	// setup the projection viewport; allow for possible retina backing
-	NSPoint farEdge = NSMakePoint(self.openGLView.bounds.size.width, self.openGLView.bounds.size.height);
-	if([self.openGLView respondsToSelector:@selector(convertPointToBacking:)])
-		farEdge = [self.openGLView convertPointToBacking:farEdge];
+	NSPoint farEdge =
+		[self.openGLView convertPointToBacking:NSMakePoint(self.openGLView.bounds.size.width, self.openGLView.bounds.size.height)];
 	glViewport(0, 0, (GLsizei)farEdge.x, (GLsizei)farEdge.y);
 
 	// set the aspect ratio we're now using (in OS X pixels seem always to be square;
