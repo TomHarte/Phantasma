@@ -13,31 +13,29 @@
 #include <stdint.h>
 #include <vector>
 #include <map>
+#include "VertexAttribute.h"
 
 class VertexBuffer
 {
 	public:
-		VertexBuffer(GLint size, GLenum type, GLboolean normalised, GLsizei stride, std::vector<uint8_t>::size_type startOffset, std::shared_ptr<std::vector <uint8_t>> &targetPool);
+		VertexBuffer();
 		virtual ~VertexBuffer();
 
-		size_t addValue(const void *value);
+		void bind();
 
-		void bindAtIndex(GLuint index);
+		void addAttribute(GLuint index, GLint size, GLenum type, GLboolean normalised);
+		VertexAttribute *attributeForIndex(GLuint index);
 
 	private:
 		std::shared_ptr<std::vector <uint8_t>> targetPool;
-		GLint size;
-		GLenum type;
-		GLboolean normalised;
-		GLsizei stride;
-		std::vector<uint8_t>::size_type startOffset;
-
-		bool bufferIsDirty;
-		size_t index;
+		std::vector <VertexAttribute *> attributes;
+		std::map <GLuint, VertexAttribute *> attributesByIndex;
 
 		GLuint buffer;
+		std::vector<uint8_t>::size_type uploadedLength;
+		static VertexBuffer *boundBuffer;
 
-		static std::map <GLuint, VertexBuffer *> boundBuffersMap;
+		GLsizei stride;
 };
 
 #endif /* defined(__Phantasma__VertexArray__) */

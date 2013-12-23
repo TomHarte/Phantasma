@@ -44,8 +44,10 @@ class Object
 		static void setProjectionMatrix(const GLfloat *projectionMatrix);
 		static void setViewMatrix(const GLfloat *projectionMatrix);
 
-		static void drawTestObject(VertexBuffer *areaPositionBuffer, VertexBuffer *areaColourBuffer);
-		
+		static void drawTestObject(VertexBuffer *areaBuffer);
+
+		static VertexBuffer *newVertexBuffer();
+
 	private:
 		static GLuint openGLProgram;
 		static GLuint compileShader(const GLchar *source, GLenum shaderType);

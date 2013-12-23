@@ -9,89 +9,69 @@
 #include "VertexBuffer.h"
 #include <map>
 
-std::map <GLuint, VertexBuffer *> VertexBuffer::boundBuffersMap;
+VertexBuffer *VertexBuffer::boundBuffer;
 
-void VertexBuffer::bindAtIndex(GLuint _index)
+VertexBuffer::VertexBuffer()
 {
-	if(boundBuffersMap[_index] != this)
-	{
-		if(!buffer)
-			glGenBuffers(1, &buffer);
-
-		boundBuffersMap[_index] = this;
-		glBindBuffer(GL_ARRAY_BUFFER, buffer);
-
-		glVertexAttribPointer(_index, size, type, normalised, stride, NULL);
-	}
-
-	if(bufferIsDirty)
-	{
-		bufferIsDirty = false;
-		glBufferData(GL_ARRAY_BUFFER, (GLsizei)stride*index, &(*targetPool)[startOffset], GL_STATIC_DRAW);
-	}
+	targetPool = std::shared_ptr<std::vector <uint8_t>>(new std::vector <uint8_t>);
+	stride = 0;
 }
 
 VertexBuffer::~VertexBuffer()
 {
-	if(buffer)
-		glDeleteBuffers(1, &buffer);
+	if(buffer) glDeleteBuffers(1, &buffer);
 
-/*	std::map <GLuint, VertexBuffer *>::iterator mapIterator = boundBuffersMap.begin();
-	while(mapIterator != boundBuffersMap.end())
-	{
-		if(mapIterator->second == this)
-			boundBuffersMap[mapIterator->first] = NULL;
-
-		mapIterator++;
-	}*/
+	for(std::vector <VertexAttribute *>::size_type index = 0; index < attributes.size(); index++)
+		delete attributes[index];
 }
 
-VertexBuffer::VertexBuffer(GLint _size, GLenum _type, GLboolean _normalised, GLsizei _stride, std::vector<uint8_t>::size_type _startOffset, std::shared_ptr<std::vector <uint8_t>> &_targetPool)
+void VertexBuffer::bind()
 {
-	targetPool = _targetPool;
-	size = _size;
-	type = _type;
-	normalised = _normalised;
-	stride = _stride;
-	startOffset = _startOffset;
+	// make sure this buffer is allocated and bound
+	bool needsBinding = false;
+	if(boundBuffer != this)
+	{
+		boundBuffer = this;
+		needsBinding = true;
 
-	bufferIsDirty = false;
-	index = 0;
+		if(!buffer) glGenBuffers(1, &buffer);
+
+		glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	}
+
+	// make sure we've uploaded the latest data
+	if(uploadedLength != targetPool->size())
+	{
+		if(!uploadedLength)
+		{
+			glBufferData(GL_ARRAY_BUFFER, (GLsizei)targetPool->size(), &(*targetPool)[0], GL_STATIC_DRAW);
+		}
+		else
+		{
+			glBufferSubData(GL_ARRAY_BUFFER, (GLsizei)uploadedLength, (GLsizei)(targetPool->size() - uploadedLength), &(*targetPool)[uploadedLength]);
+		}
+
+		uploadedLength = targetPool->size();
+	}
+
+	// make sure all attributes are bound
+	if(needsBinding)
+	{
+		for(std::vector <VertexAttribute *>::size_type index = 0; index < attributes.size(); index++)
+			attributes[index]->bindWithStride(stride);
+	}
 }
 
-size_t VertexBuffer::addValue(const void *value)
+void VertexBuffer::addAttribute(GLuint index, GLint size, GLenum type, GLboolean normalised)
 {
-	size_t returnIndex = index;
-	index++;
+	VertexAttribute *newAttribute = new VertexAttribute(index, size, type, normalised, targetPool);
+	attributes.push_back(newAttribute);
 
-	size_t numberOfBytes = (size_t)size;
-	switch(type)
-	{
-		default:
-		break;
+	stride += newAttribute->sizeOfValue();
+	attributesByIndex[index] = newAttribute;
+}
 
-		case GL_UNSIGNED_BYTE:
-		case GL_BYTE:				numberOfBytes *= sizeof(GLbyte);	break;
-
-		case GL_UNSIGNED_SHORT:
-		case GL_SHORT:				numberOfBytes *= sizeof(GLshort);	break;
-
-		case GL_UNSIGNED_INT:
-		case GL_INT:				numberOfBytes *= sizeof(GLint);		break;
-
-		case GL_FLOAT:				numberOfBytes *= sizeof(GLfloat);	break;
-		case GL_DOUBLE:				numberOfBytes *= sizeof(GLdouble);	break;
-	}
-
-	const uint8_t *byteValue = (uint8_t *)value;
-	while(numberOfBytes--)
-	{
-		targetPool->push_back(*byteValue);
-		byteValue++;
-	}
-
-	std::cout << "Pool size now: " << targetPool->size() << std::endl;
-
-	bufferIsDirty = true;
-	return returnIndex;
+VertexAttribute *VertexBuffer::attributeForIndex(GLuint index)
+{
+	return attributesByIndex[index];
 }

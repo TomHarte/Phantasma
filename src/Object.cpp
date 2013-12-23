@@ -188,7 +188,7 @@ void Object::setViewMatrix(const GLfloat *projectionMatrix)
 	glUniformMatrix4fv(viewMatrixUniform, 1, GL_FALSE, projectionMatrix);
 }
 
-void Object::drawTestObject(VertexBuffer *areaPositionBuffer, VertexBuffer *areaColourBuffer)
+void Object::drawTestObject(VertexBuffer *areaBuffer)
 {
 /*	const GLfloat billboardVertexData[] =
 	{
@@ -208,8 +208,50 @@ void Object::drawTestObject(VertexBuffer *areaPositionBuffer, VertexBuffer *area
 	};
 	glVertexAttribPointer(ObjectGLAttributeColour, 4, GL_FLOAT, GL_FALSE, 0, (const GLvoid *)billboardColourData);*/
 
-	areaColourBuffer->bindAtIndex(ObjectGLAttributePosition);
-	areaColourBuffer->bindAtIndex(ObjectGLAttributeColour);
+	areaBuffer->bind();
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
+
+VertexBuffer *Object::newVertexBuffer()
+{
+	VertexBuffer *newBuffer = new VertexBuffer;
+	
+	newBuffer->addAttribute(ObjectGLAttributePosition,	4, GL_FLOAT, GL_FALSE);
+	newBuffer->addAttribute(ObjectGLAttributeColour,	3, GL_FLOAT, GL_FALSE);
+
+	// TEST CODE: put some vertices and colours into the buffer
+	const GLfloat billboardVertexData[] =
+	{
+		-1.0f,	-1.0f,	10.0f, 1.0f,
+		1.0f,	-1.0f,	10.0f, 1.0f,
+		-1.0f,	1.0f,	10.0f, 1.0f,
+		1.0f,	1.0f,	10.0f, 1.0f,
+	};
+
+	const GLfloat billboardColourData[] =
+	{
+		1.0f,	0.0f,	0.0f, 1.0f,
+		1.0f,	1.0f,	0.0f, 1.0f,
+		1.0f,	1.0f,	1.0f, 1.0f,
+		0.0f,	1.0f,	1.0f, 1.0f,
+	};
+	
+	VertexAttribute *positionAttribute = newBuffer->attributeForIndex(ObjectGLAttributePosition);
+	VertexAttribute *colourAttribute = newBuffer->attributeForIndex(ObjectGLAttributeColour);
+
+	positionAttribute->addValue(&billboardVertexData[0]);
+	colourAttribute->addValue(&billboardColourData[0]);
+
+	positionAttribute->addValue(&billboardVertexData[4]);
+	colourAttribute->addValue(&billboardColourData[4]);
+
+	positionAttribute->addValue(&billboardVertexData[8]);
+	colourAttribute->addValue(&billboardColourData[8]);
+
+	positionAttribute->addValue(&billboardVertexData[12]);
+	colourAttribute->addValue(&billboardColourData[12]);
+
+	return newBuffer;
+}
+
