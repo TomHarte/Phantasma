@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		1F7144FE186631A10090828C /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7144FD186631A10090828C /* OpenGL.framework */; };
 		1F714500186638D80090828C /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7144FF186638D80090828C /* CoreVideo.framework */; };
-		1F9BD30D1867D927007CDE03 /* VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F9BD30B1867D927007CDE03 /* VertexBuffer.cpp */; };
 		4B1E687318554BFD003A9847 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B1E687218554BFD003A9847 /* Cocoa.framework */; };
 		4B1E687D18554BFD003A9847 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E687B18554BFD003A9847 /* InfoPlist.strings */; };
 		4B1E687F18554BFD003A9847 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E687E18554BFD003A9847 /* main.m */; };
@@ -19,25 +18,24 @@
 		4B1E688C18554BFD003A9847 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E688A18554BFD003A9847 /* MainMenu.xib */; };
 		4B1E688E18554BFD003A9847 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E688D18554BFD003A9847 /* Images.xcassets */; };
 		4B1E68AB18554E7D003A9847 /* FreescapeGL Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E68AA18554E7D003A9847 /* FreescapeGL Icon.icns */; };
-		4B1E68B6185555AA003A9847 /* Token.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68B4185555AA003A9847 /* Token.cpp */; };
 		4B1E68B91855571E003A9847 /* GameState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68B71855571E003A9847 /* GameState.cpp */; };
 		4B2A134B1862A382007B2A44 /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B2A13491862A382007B2A44 /* Object.cpp */; };
-		4B2CD342185D19BD0029CDB5 /* Instruction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68B118555553003A9847 /* Instruction.cpp */; };
-		4B2CD343185D1BB30029CDB5 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68BB18555970003A9847 /* Parser.cpp */; };
-		4B355857185D4F7F0023C3C5 /* Condition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68AE18555129003A9847 /* Condition.cpp */; };
-		4B35585A185E91280023C3C5 /* 16bitDetokeniser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B355858185E91280023C3C5 /* 16bitDetokeniser.cpp */; };
-		4B7C9A6D18666CC300CE2603 /* Matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B7C9A6C18666CC300CE2603 /* Matrix.cpp */; };
-		4B7CB75E186805A200BA093D /* VertexAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B7CB75C186805A200BA093D /* VertexAttribute.cpp */; };
-		4B8BC74D18614BD4003D9447 /* 16bitBinaryLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B8BC74B18614BD4003D9447 /* 16bitBinaryLoader.cpp */; };
+		4B600A5818681BE300A1294E /* Matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B600A5118681BE300A1294E /* Matrix.cpp */; };
+		4B600A5918681BE300A1294E /* VertexAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B600A5418681BE300A1294E /* VertexAttribute.cpp */; };
+		4B600A5A18681BE300A1294E /* VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B600A5618681BE300A1294E /* VertexBuffer.cpp */; };
+		4B600A6818681C2000A1294E /* 16bitDetokeniser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B600A5C18681C2000A1294E /* 16bitDetokeniser.cpp */; };
+		4B600A6918681C2000A1294E /* 8bitDetokeniser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B600A5E18681C2000A1294E /* 8bitDetokeniser.cpp */; };
+		4B600A6A18681C2000A1294E /* Condition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B600A6018681C2000A1294E /* Condition.cpp */; };
+		4B600A6B18681C2000A1294E /* Instruction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B600A6218681C2000A1294E /* Instruction.cpp */; };
+		4B600A6C18681C2000A1294E /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B600A6418681C2000A1294E /* Parser.cpp */; };
+		4B600A6D18681C2000A1294E /* Token.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B600A6618681C2000A1294E /* Token.cpp */; };
+		4B600A7118681C4100A1294E /* 16bitBinaryLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B600A6F18681C4100A1294E /* 16bitBinaryLoader.cpp */; };
 		4B8BC75118616B01003D9447 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B8BC74F18616B01003D9447 /* Game.cpp */; };
-		4BA2615B185ECC51002D952E /* 8bitDetokeniser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BA26159185ECC51002D952E /* 8bitDetokeniser.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1F7144FD186631A10090828C /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		1F7144FF186638D80090828C /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
-		1F9BD30B1867D927007CDE03 /* VertexBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VertexBuffer.cpp; path = ../../VertexBuffer.cpp; sourceTree = "<group>"; };
-		1F9BD30C1867D927007CDE03 /* VertexBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VertexBuffer.h; path = ../../VertexBuffer.h; sourceTree = "<group>"; };
 		4B1E686F18554BFD003A9847 /* Phantasma.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Phantasma.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B1E687218554BFD003A9847 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4B1E687518554BFD003A9847 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -56,30 +54,32 @@
 		4B1E689418554BFD003A9847 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		4B1E68A918554D08003A9847 /* Phantasma.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Phantasma.entitlements; sourceTree = "<group>"; };
 		4B1E68AA18554E7D003A9847 /* FreescapeGL Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "FreescapeGL Icon.icns"; path = "../../../res/FreescapeGL Icon.icns"; sourceTree = "<group>"; };
-		4B1E68AE18555129003A9847 /* Condition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Condition.cpp; path = ../../Condition.cpp; sourceTree = "<group>"; };
-		4B1E68B018555179003A9847 /* Condition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Condition.h; path = ../../Condition.h; sourceTree = "<group>"; };
-		4B1E68B118555553003A9847 /* Instruction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Instruction.cpp; path = ../../Instruction.cpp; sourceTree = "<group>"; };
-		4B1E68B218555553003A9847 /* Instruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Instruction.h; path = ../../Instruction.h; sourceTree = "<group>"; };
-		4B1E68B4185555AA003A9847 /* Token.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Token.cpp; path = ../../Token.cpp; sourceTree = "<group>"; };
-		4B1E68B5185555AA003A9847 /* Token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Token.h; path = ../../Token.h; sourceTree = "<group>"; };
 		4B1E68B71855571E003A9847 /* GameState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameState.cpp; path = ../../GameState.cpp; sourceTree = "<group>"; };
 		4B1E68B81855571E003A9847 /* GameState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameState.h; path = ../../GameState.h; sourceTree = "<group>"; };
-		4B1E68BB18555970003A9847 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Parser.cpp; path = ../../Parser.cpp; sourceTree = "<group>"; };
-		4B1E68BC18555970003A9847 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser.h; path = ../../Parser.h; sourceTree = "<group>"; };
 		4B2A13491862A382007B2A44 /* Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Object.cpp; path = ../../Object.cpp; sourceTree = "<group>"; };
 		4B2A134A1862A382007B2A44 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Object.h; path = ../../Object.h; sourceTree = "<group>"; };
-		4B355858185E91280023C3C5 /* 16bitDetokeniser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = 16bitDetokeniser.cpp; path = ../../16bitDetokeniser.cpp; sourceTree = "<group>"; };
-		4B355859185E91280023C3C5 /* 16bitDetokeniser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = 16bitDetokeniser.h; path = ../../16bitDetokeniser.h; sourceTree = "<group>"; };
-		4B7C9A6B18666CB300CE2603 /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Matrix.h; path = ../../Matrix.h; sourceTree = "<group>"; };
-		4B7C9A6C18666CC300CE2603 /* Matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Matrix.cpp; path = ../../Matrix.cpp; sourceTree = "<group>"; };
-		4B7CB75C186805A200BA093D /* VertexAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VertexAttribute.cpp; path = ../../VertexAttribute.cpp; sourceTree = "<group>"; };
-		4B7CB75D186805A200BA093D /* VertexAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VertexAttribute.h; path = ../../VertexAttribute.h; sourceTree = "<group>"; };
-		4B8BC74B18614BD4003D9447 /* 16bitBinaryLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = 16bitBinaryLoader.cpp; path = ../../16bitBinaryLoader.cpp; sourceTree = "<group>"; };
-		4B8BC74C18614BD4003D9447 /* 16bitBinaryLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = 16bitBinaryLoader.h; path = ../../16bitBinaryLoader.h; sourceTree = "<group>"; };
+		4B600A5118681BE300A1294E /* Matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Matrix.cpp; sourceTree = "<group>"; };
+		4B600A5218681BE300A1294E /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix.h; sourceTree = "<group>"; };
+		4B600A5418681BE300A1294E /* VertexAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VertexAttribute.cpp; sourceTree = "<group>"; };
+		4B600A5518681BE300A1294E /* VertexAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VertexAttribute.h; sourceTree = "<group>"; };
+		4B600A5618681BE300A1294E /* VertexBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VertexBuffer.cpp; sourceTree = "<group>"; };
+		4B600A5718681BE300A1294E /* VertexBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VertexBuffer.h; sourceTree = "<group>"; };
+		4B600A5C18681C2000A1294E /* 16bitDetokeniser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = 16bitDetokeniser.cpp; sourceTree = "<group>"; };
+		4B600A5D18681C2000A1294E /* 16bitDetokeniser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 16bitDetokeniser.h; sourceTree = "<group>"; };
+		4B600A5E18681C2000A1294E /* 8bitDetokeniser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = 8bitDetokeniser.cpp; sourceTree = "<group>"; };
+		4B600A5F18681C2000A1294E /* 8bitDetokeniser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 8bitDetokeniser.h; sourceTree = "<group>"; };
+		4B600A6018681C2000A1294E /* Condition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Condition.cpp; sourceTree = "<group>"; };
+		4B600A6118681C2000A1294E /* Condition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Condition.h; sourceTree = "<group>"; };
+		4B600A6218681C2000A1294E /* Instruction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Instruction.cpp; sourceTree = "<group>"; };
+		4B600A6318681C2000A1294E /* Instruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Instruction.h; sourceTree = "<group>"; };
+		4B600A6418681C2000A1294E /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
+		4B600A6518681C2000A1294E /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
+		4B600A6618681C2000A1294E /* Token.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Token.cpp; sourceTree = "<group>"; };
+		4B600A6718681C2000A1294E /* Token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Token.h; sourceTree = "<group>"; };
+		4B600A6F18681C4100A1294E /* 16bitBinaryLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = 16bitBinaryLoader.cpp; sourceTree = "<group>"; };
+		4B600A7018681C4100A1294E /* 16bitBinaryLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 16bitBinaryLoader.h; sourceTree = "<group>"; };
 		4B8BC74F18616B01003D9447 /* Game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Game.cpp; path = ../../Game.cpp; sourceTree = "<group>"; };
 		4B8BC75018616B01003D9447 /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Game.h; path = ../../Game.h; sourceTree = "<group>"; };
-		4BA26159185ECC51002D952E /* 8bitDetokeniser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = 8bitDetokeniser.cpp; path = ../../8bitDetokeniser.cpp; sourceTree = "<group>"; };
-		4BA2615A185ECC51002D952E /* 8bitDetokeniser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = 8bitDetokeniser.h; path = ../../8bitDetokeniser.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,15 +138,16 @@
 		4B1E687818554BFD003A9847 /* Phantasma */ = {
 			isa = PBXGroup;
 			children = (
+				4B600A6E18681C4100A1294E /* Loaders */,
+				4B600A5B18681C2000A1294E /* Command Language */,
+				4B600A5018681BE300A1294E /* Maths */,
+				4B600A5318681BE300A1294E /* OpenGL */,
 				4B1E68B71855571E003A9847 /* GameState.cpp */,
 				4B1E68B81855571E003A9847 /* GameState.h */,
 				4B8BC74F18616B01003D9447 /* Game.cpp */,
 				4B8BC75018616B01003D9447 /* Game.h */,
 				4B2A13491862A382007B2A44 /* Object.cpp */,
 				4B2A134A1862A382007B2A44 /* Object.h */,
-				4B7C9A6E18666CC900CE2603 /* Maths / OpenGL */,
-				4B8BC74E18614BD8003D9447 /* Loaders */,
-				4B1E68BA18555724003A9847 /* Command Language */,
 				4B1E68AD18555112003A9847 /* OS X */,
 				4B1E687918554BFD003A9847 /* Supporting Files */,
 			);
@@ -179,45 +180,56 @@
 			name = "OS X";
 			sourceTree = "<group>";
 		};
-		4B1E68BA18555724003A9847 /* Command Language */ = {
+		4B600A5018681BE300A1294E /* Maths */ = {
 			isa = PBXGroup;
 			children = (
-				4B1E68B018555179003A9847 /* Condition.h */,
-				4B1E68AE18555129003A9847 /* Condition.cpp */,
-				4B1E68B4185555AA003A9847 /* Token.cpp */,
-				4B1E68B5185555AA003A9847 /* Token.h */,
-				4B1E68B118555553003A9847 /* Instruction.cpp */,
-				4B1E68B218555553003A9847 /* Instruction.h */,
-				4B1E68BB18555970003A9847 /* Parser.cpp */,
-				4B1E68BC18555970003A9847 /* Parser.h */,
-				4B355858185E91280023C3C5 /* 16bitDetokeniser.cpp */,
-				4B355859185E91280023C3C5 /* 16bitDetokeniser.h */,
-				4BA26159185ECC51002D952E /* 8bitDetokeniser.cpp */,
-				4BA2615A185ECC51002D952E /* 8bitDetokeniser.h */,
+				4B600A5118681BE300A1294E /* Matrix.cpp */,
+				4B600A5218681BE300A1294E /* Matrix.h */,
+			);
+			name = Maths;
+			path = ../../Maths;
+			sourceTree = "<group>";
+		};
+		4B600A5318681BE300A1294E /* OpenGL */ = {
+			isa = PBXGroup;
+			children = (
+				4B600A5418681BE300A1294E /* VertexAttribute.cpp */,
+				4B600A5518681BE300A1294E /* VertexAttribute.h */,
+				4B600A5618681BE300A1294E /* VertexBuffer.cpp */,
+				4B600A5718681BE300A1294E /* VertexBuffer.h */,
+			);
+			name = OpenGL;
+			path = ../../OpenGL;
+			sourceTree = "<group>";
+		};
+		4B600A5B18681C2000A1294E /* Command Language */ = {
+			isa = PBXGroup;
+			children = (
+				4B600A5C18681C2000A1294E /* 16bitDetokeniser.cpp */,
+				4B600A5D18681C2000A1294E /* 16bitDetokeniser.h */,
+				4B600A5E18681C2000A1294E /* 8bitDetokeniser.cpp */,
+				4B600A5F18681C2000A1294E /* 8bitDetokeniser.h */,
+				4B600A6018681C2000A1294E /* Condition.cpp */,
+				4B600A6118681C2000A1294E /* Condition.h */,
+				4B600A6218681C2000A1294E /* Instruction.cpp */,
+				4B600A6318681C2000A1294E /* Instruction.h */,
+				4B600A6418681C2000A1294E /* Parser.cpp */,
+				4B600A6518681C2000A1294E /* Parser.h */,
+				4B600A6618681C2000A1294E /* Token.cpp */,
+				4B600A6718681C2000A1294E /* Token.h */,
 			);
 			name = "Command Language";
+			path = ../../CommandLanguage;
 			sourceTree = "<group>";
 		};
-		4B7C9A6E18666CC900CE2603 /* Maths / OpenGL */ = {
+		4B600A6E18681C4100A1294E /* Loaders */ = {
 			isa = PBXGroup;
 			children = (
-				4B7C9A6C18666CC300CE2603 /* Matrix.cpp */,
-				4B7C9A6B18666CB300CE2603 /* Matrix.h */,
-				1F9BD30B1867D927007CDE03 /* VertexBuffer.cpp */,
-				1F9BD30C1867D927007CDE03 /* VertexBuffer.h */,
-				4B7CB75C186805A200BA093D /* VertexAttribute.cpp */,
-				4B7CB75D186805A200BA093D /* VertexAttribute.h */,
-			);
-			name = "Maths / OpenGL";
-			sourceTree = "<group>";
-		};
-		4B8BC74E18614BD8003D9447 /* Loaders */ = {
-			isa = PBXGroup;
-			children = (
-				4B8BC74B18614BD4003D9447 /* 16bitBinaryLoader.cpp */,
-				4B8BC74C18614BD4003D9447 /* 16bitBinaryLoader.h */,
+				4B600A6F18681C4100A1294E /* 16bitBinaryLoader.cpp */,
+				4B600A7018681C4100A1294E /* 16bitBinaryLoader.h */,
 			);
 			name = Loaders;
+			path = ../../Loaders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -298,21 +310,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B35585A185E91280023C3C5 /* 16bitDetokeniser.cpp in Sources */,
+				4B600A5818681BE300A1294E /* Matrix.cpp in Sources */,
+				4B600A6A18681C2000A1294E /* Condition.cpp in Sources */,
+				4B600A6918681C2000A1294E /* 8bitDetokeniser.cpp in Sources */,
+				4B600A6D18681C2000A1294E /* Token.cpp in Sources */,
+				4B600A6B18681C2000A1294E /* Instruction.cpp in Sources */,
 				4B1E688618554BFD003A9847 /* PTDocument.mm in Sources */,
 				4B2A134B1862A382007B2A44 /* Object.cpp in Sources */,
 				4B1E68B91855571E003A9847 /* GameState.cpp in Sources */,
-				4B1E68B6185555AA003A9847 /* Token.cpp in Sources */,
-				4B355857185D4F7F0023C3C5 /* Condition.cpp in Sources */,
-				4BA2615B185ECC51002D952E /* 8bitDetokeniser.cpp in Sources */,
+				4B600A6C18681C2000A1294E /* Parser.cpp in Sources */,
+				4B600A5A18681BE300A1294E /* VertexBuffer.cpp in Sources */,
+				4B600A6818681C2000A1294E /* 16bitDetokeniser.cpp in Sources */,
 				4B1E687F18554BFD003A9847 /* main.m in Sources */,
 				4B8BC75118616B01003D9447 /* Game.cpp in Sources */,
-				4B7CB75E186805A200BA093D /* VertexAttribute.cpp in Sources */,
-				1F9BD30D1867D927007CDE03 /* VertexBuffer.cpp in Sources */,
-				4B2CD343185D1BB30029CDB5 /* Parser.cpp in Sources */,
-				4B8BC74D18614BD4003D9447 /* 16bitBinaryLoader.cpp in Sources */,
-				4B7C9A6D18666CC300CE2603 /* Matrix.cpp in Sources */,
-				4B2CD342185D19BD0029CDB5 /* Instruction.cpp in Sources */,
+				4B600A7118681C4100A1294E /* 16bitBinaryLoader.cpp in Sources */,
+				4B600A5918681BE300A1294E /* VertexAttribute.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
