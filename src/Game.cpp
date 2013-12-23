@@ -12,13 +12,10 @@
 #include "VertexBuffer.h"
 
 static float angle = 0.0f;
-static VertexBuffer *vertexBuffer;
 
 Game::Game()
 {
 	hasReceivedTime = false;
-
-	vertexBuffer = Object::newVertexBuffer();
 }
 
 void Game::setAspectRatio(float aspectRatio)
@@ -43,6 +40,9 @@ void Game::draw()
 void Game::setupOpenGL()
 {
 	Object::setupOpenGL();
+	
+	if(!vertexBuffer)
+		vertexBuffer = Object::newVertexBuffer();
 }
 
 void Game::advanceToTime(uint32_t millisecondsSinceArbitraryMoment)

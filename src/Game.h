@@ -11,6 +11,7 @@
 
 #include <iostream>
 
+class VertexBuffer;
 class Game
 {
 	public:
@@ -26,6 +27,7 @@ class Game
 	private:
 		uint32_t timeOfLastTick;
 		bool hasReceivedTime;
+		VertexBuffer *vertexBuffer;
 };
 
 #endif /* defined(__Phantasma__Game__) */
