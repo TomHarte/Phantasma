@@ -127,6 +127,8 @@ static CVReturn CVDisplayLinkCallback(
 
 - (void)setupViewport
 {
+	[self.openGLView.openGLContext makeCurrentContext];
+
 	// setup the projection viewport; allow for possible retina backing
 	NSPoint farEdge =
 		[self.openGLView convertPointToBacking:NSMakePoint(self.openGLView.bounds.size.width, self.openGLView.bounds.size.height)];
@@ -154,6 +156,8 @@ static CVReturn CVDisplayLinkCallback(
 
 - (void)updateDisplay
 {
+	[self.openGLView.openGLContext makeCurrentContext];
+
 	// ask the game to update to whatever the time is now
 	_game->advanceToTime( (uint32_t)([NSDate timeIntervalSinceReferenceDate] * 1000) );
 
