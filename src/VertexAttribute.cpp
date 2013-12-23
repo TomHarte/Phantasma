@@ -11,11 +11,13 @@
 
 VertexAttribute::VertexAttribute(GLuint _index, GLint _size, GLenum _type, GLboolean _normalised, std::shared_ptr<std::vector <uint8_t>> &_targetPool)
 {
-	index = _index;
+	attributeIndex = _index;
 	size = _size;
 	type = _type;
 	normalised = _normalised;
 	targetPool = _targetPool;
+
+	index = 0;
 }
 
 GLsizei VertexAttribute::sizeOfValue()
@@ -44,7 +46,7 @@ GLsizei VertexAttribute::sizeOfValue()
 
 void VertexAttribute::bindWithStride(GLsizei stride)
 {
-	glVertexAttribPointer(index, size, type, normalised, stride, (void *)startOffset);
+	glVertexAttribPointer(attributeIndex, size, type, normalised, stride, (void *)startOffset);
 }
 
 size_t VertexAttribute::addValue(const void *value)
@@ -53,7 +55,9 @@ size_t VertexAttribute::addValue(const void *value)
 	index++;
 
 	if(!returnIndex)
+	{
 		startOffset = targetPool->size();
+	}
 
 	const uint8_t *byteValue = (uint8_t *)value;
 	GLsizei numberOfBytes = sizeOfValue();

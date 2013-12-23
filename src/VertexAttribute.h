@@ -25,8 +25,9 @@ class VertexAttribute
 	private:
 		std::shared_ptr<std::vector <uint8_t>> targetPool;
 		std::vector<uint8_t>::size_type startOffset;
+		size_t index;
 
-		GLuint index;
+		GLuint attributeIndex;
 		GLint size;
 		GLenum type;
 		GLboolean normalised;
