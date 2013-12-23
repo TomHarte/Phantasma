@@ -190,24 +190,6 @@ void Object::setViewMatrix(const GLfloat *projectionMatrix)
 
 void Object::drawTestObject(VertexBuffer *areaBuffer)
 {
-/*	const GLfloat billboardVertexData[] =
-	{
-		-1.0f,	-1.0f,	10.0f, 1.0f,
-		1.0f,	-1.0f,	10.0f, 1.0f,
-		-1.0f,	1.0f,	10.0f, 1.0f,
-		1.0f,	1.0f,	10.0f, 1.0f,
-	};
-	glVertexAttribPointer(ObjectGLAttributePosition, 4, GL_FLOAT, GL_FALSE, 0, (const GLvoid *)billboardVertexData);
-
-	const GLfloat billboardColourData[] =
-	{
-		1.0f,	0.0f,	0.0f, 1.0f,
-		1.0f,	1.0f,	0.0f, 1.0f,
-		1.0f,	1.0f,	1.0f, 1.0f,
-		0.0f,	1.0f,	1.0f, 1.0f,
-	};
-	glVertexAttribPointer(ObjectGLAttributeColour, 4, GL_FLOAT, GL_FALSE, 0, (const GLvoid *)billboardColourData);*/
-
 	areaBuffer->bind();
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

@@ -19,6 +19,9 @@ VertexBuffer::VertexBuffer()
 
 	// the first write index will be zero
 	writeIndex = 0;
+
+	// we've also so far uploaded nothing
+	uploadedLength = 0;
 }
 
 VertexBuffer::~VertexBuffer()
@@ -28,6 +31,12 @@ VertexBuffer::~VertexBuffer()
 
 	for(std::vector <VertexAttribute *>::size_type index = 0; index < attributes.size(); index++)
 		delete attributes[index];
+
+	// we might as well clear up boundBuffer if it's pointed to us —
+	// that pointer is never dereferenced but a subsequent VertexBuffer
+	// might get this address
+	if(boundBuffer == this)
+		boundBuffer = NULL;
 }
 
 void VertexBuffer::bind()
