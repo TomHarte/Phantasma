@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1F7144FE186631A10090828C /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7144FD186631A10090828C /* OpenGL.framework */; };
 		1F714500186638D80090828C /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7144FF186638D80090828C /* CoreVideo.framework */; };
+		1F9BD30D1867D927007CDE03 /* VertexArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F9BD30B1867D927007CDE03 /* VertexArray.cpp */; };
 		4B1E687318554BFD003A9847 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B1E687218554BFD003A9847 /* Cocoa.framework */; };
 		4B1E687D18554BFD003A9847 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E687B18554BFD003A9847 /* InfoPlist.strings */; };
 		4B1E687F18554BFD003A9847 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E687E18554BFD003A9847 /* main.m */; };
@@ -34,6 +35,8 @@
 /* Begin PBXFileReference section */
 		1F7144FD186631A10090828C /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		1F7144FF186638D80090828C /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		1F9BD30B1867D927007CDE03 /* VertexArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VertexArray.cpp; path = ../../VertexArray.cpp; sourceTree = "<group>"; };
+		1F9BD30C1867D927007CDE03 /* VertexArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VertexArray.h; path = ../../VertexArray.h; sourceTree = "<group>"; };
 		4B1E686F18554BFD003A9847 /* Phantasma.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Phantasma.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B1E687218554BFD003A9847 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4B1E687518554BFD003A9847 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -138,7 +141,7 @@
 				4B8BC75018616B01003D9447 /* Game.h */,
 				4B2A13491862A382007B2A44 /* Object.cpp */,
 				4B2A134A1862A382007B2A44 /* Object.h */,
-				4B7C9A6E18666CC900CE2603 /* Maths */,
+				4B7C9A6E18666CC900CE2603 /* Maths / OpenGL */,
 				4B8BC74E18614BD8003D9447 /* Loaders */,
 				4B1E68BA18555724003A9847 /* Command Language */,
 				4B1E68AD18555112003A9847 /* OS X */,
@@ -192,13 +195,15 @@
 			name = "Command Language";
 			sourceTree = "<group>";
 		};
-		4B7C9A6E18666CC900CE2603 /* Maths */ = {
+		4B7C9A6E18666CC900CE2603 /* Maths / OpenGL */ = {
 			isa = PBXGroup;
 			children = (
 				4B7C9A6C18666CC300CE2603 /* Matrix.cpp */,
 				4B7C9A6B18666CB300CE2603 /* Matrix.h */,
+				1F9BD30B1867D927007CDE03 /* VertexArray.cpp */,
+				1F9BD30C1867D927007CDE03 /* VertexArray.h */,
 			);
-			name = Maths;
+			name = "Maths / OpenGL";
 			sourceTree = "<group>";
 		};
 		4B8BC74E18614BD8003D9447 /* Loaders */ = {
@@ -297,6 +302,7 @@
 				4BA2615B185ECC51002D952E /* 8bitDetokeniser.cpp in Sources */,
 				4B1E687F18554BFD003A9847 /* main.m in Sources */,
 				4B8BC75118616B01003D9447 /* Game.cpp in Sources */,
+				1F9BD30D1867D927007CDE03 /* VertexArray.cpp in Sources */,
 				4B2CD343185D1BB30029CDB5 /* Parser.cpp in Sources */,
 				4B8BC74D18614BD4003D9447 /* 16bitBinaryLoader.cpp in Sources */,
 				4B7C9A6D18666CC300CE2603 /* Matrix.cpp in Sources */,
