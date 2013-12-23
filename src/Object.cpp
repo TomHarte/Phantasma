@@ -174,8 +174,6 @@ void Object::setupOpenGL()
 	// similarly, we'll enable both arrays, since we'll always be supplying both
 	glEnableVertexAttribArray(ObjectGLAttributePosition);
 	glEnableVertexAttribArray(ObjectGLAttributeColour);
-
-	std::cout << openGLProgram << " " << vertexShader << " " << fragmentShader << " " << viewMatrixUniform << " " << projectionMatrixUniform;
 }
 
 void Object::setProjectionMatrix(const GLfloat *projectionMatrix)
