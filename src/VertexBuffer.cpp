@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Thomas Harte. All rights reserved.
 //
 
-#include "VertexArray.h"
+#include "VertexBuffer.h"
 #include <map>
 
 std::map <GLuint, VertexBuffer *> VertexBuffer::boundBuffersMap;
@@ -15,6 +15,9 @@ void VertexBuffer::bindAtIndex(GLuint _index)
 {
 	if(boundBuffersMap[_index] != this)
 	{
+		if(!buffer)
+			glGenBuffers(1, &buffer);
+
 		boundBuffersMap[_index] = this;
 		glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
@@ -52,11 +55,9 @@ VertexBuffer::VertexBuffer(GLint _size, GLenum _type, GLboolean _normalised, GLs
 
 	bufferIsDirty = false;
 	index = 0;
-
-	glGenBuffers(1, &buffer);
 }
 
-size_t VertexBuffer::addValue(uint8_t *value)
+size_t VertexBuffer::addValue(const void *value)
 {
 	size_t returnIndex = index;
 	index++;
@@ -80,10 +81,11 @@ size_t VertexBuffer::addValue(uint8_t *value)
 		case GL_DOUBLE:				numberOfBytes *= sizeof(GLdouble);	break;
 	}
 
+	const uint8_t *byteValue = (uint8_t *)value;
 	while(numberOfBytes--)
 	{
-		targetPool->push_back(*value);
-		value++;
+		targetPool->push_back(*byteValue);
+		byteValue++;
 	}
 
 	bufferIsDirty = true;

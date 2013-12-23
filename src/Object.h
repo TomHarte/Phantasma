@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-
+class VertexBuffer;
 class Object
 {
 	public:
@@ -44,7 +44,7 @@ class Object
 		static void setProjectionMatrix(const GLfloat *projectionMatrix);
 		static void setViewMatrix(const GLfloat *projectionMatrix);
 
-		static void drawTestObject();
+		static void drawTestObject(VertexBuffer *areaPositionBuffer, VertexBuffer *areaColourBuffer);
 		
 	private:
 		static GLuint openGLProgram;

@@ -8,6 +8,7 @@
 
 #include "Object.h"
 #include <string.h>
+#include "VertexBuffer.h"
 
 #pragma mark -
 #pragma mark Static Getters
@@ -187,9 +188,9 @@ void Object::setViewMatrix(const GLfloat *projectionMatrix)
 	glUniformMatrix4fv(viewMatrixUniform, 1, GL_FALSE, projectionMatrix);
 }
 
-void Object::drawTestObject()
+void Object::drawTestObject(VertexBuffer *areaPositionBuffer, VertexBuffer *areaColourBuffer)
 {
-	const GLfloat billboardVertexData[] =
+/*	const GLfloat billboardVertexData[] =
 	{
 		-1.0f,	-1.0f,	10.0f, 1.0f,
 		1.0f,	-1.0f,	10.0f, 1.0f,
@@ -205,7 +206,10 @@ void Object::drawTestObject()
 		1.0f,	1.0f,	1.0f, 1.0f,
 		0.0f,	1.0f,	1.0f, 1.0f,
 	};
-	glVertexAttribPointer(ObjectGLAttributeColour, 4, GL_FLOAT, GL_FALSE, 0, (const GLvoid *)billboardColourData);
+	glVertexAttribPointer(ObjectGLAttributeColour, 4, GL_FLOAT, GL_FALSE, 0, (const GLvoid *)billboardColourData);*/
+
+	areaColourBuffer->bindAtIndex(ObjectGLAttributePosition);
+	areaColourBuffer->bindAtIndex(ObjectGLAttributeColour);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }

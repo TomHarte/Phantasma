@@ -20,7 +20,7 @@ class VertexBuffer
 		VertexBuffer(GLint size, GLenum type, GLboolean normalised, GLsizei stride, std::vector<uint8_t>::size_type startOffset, std::shared_ptr<std::vector <uint8_t>> &targetPool);
 		virtual ~VertexBuffer();
 
-		size_t addValue(uint8_t *value);
+		size_t addValue(const void *value);
 
 		void bindAtIndex(GLuint index);
 
