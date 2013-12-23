@@ -12,6 +12,7 @@
 #include <iostream>
 #include <stdint.h>
 #include <vector>
+#include <map>
 
 class VertexBuffer
 {
@@ -35,6 +36,8 @@ class VertexBuffer
 		size_t index;
 
 		GLuint buffer;
+
+		static std::map <GLuint, VertexBuffer *> boundBuffersMap;
 };
 
 #endif /* defined(__Phantasma__VertexArray__) */

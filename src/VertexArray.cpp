@@ -9,7 +9,7 @@
 #include "VertexArray.h"
 #include <map>
 
-static std::map <GLuint, VertexBuffer *> boundBuffersMap;
+std::map <GLuint, VertexBuffer *> VertexBuffer::boundBuffersMap;
 
 void VertexBuffer::bindAtIndex(GLuint _index)
 {
@@ -30,6 +30,15 @@ void VertexBuffer::bindAtIndex(GLuint _index)
 VertexBuffer::~VertexBuffer()
 {
 	glDeleteBuffers(1, &buffer);
+
+/*	std::map <GLuint, VertexBuffer *>::iterator mapIterator = boundBuffersMap.begin();
+	while(mapIterator != boundBuffersMap.end())
+	{
+		if(mapIterator->second == this)
+			boundBuffersMap[mapIterator->first] = NULL;
+
+		mapIterator++;
+	}*/
 }
 
 VertexBuffer::VertexBuffer(GLint _size, GLenum _type, GLboolean _normalised, GLsizei _stride, std::vector<uint8_t>::size_type _startOffset, std::shared_ptr<std::vector <uint8_t>> &_targetPool)
