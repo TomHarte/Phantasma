@@ -21,18 +21,20 @@ void VertexBuffer::bindAtIndex(GLuint _index)
 		boundBuffersMap[_index] = this;
 		glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
-		if(bufferIsDirty)
-		{
-			glBufferData(GL_ARRAY_BUFFER, size, &(*targetPool)[startOffset], GL_STATIC_DRAW);
-		}
-
 		glVertexAttribPointer(_index, size, type, normalised, stride, NULL);
+	}
+
+	if(bufferIsDirty)
+	{
+		bufferIsDirty = false;
+		glBufferData(GL_ARRAY_BUFFER, (GLsizei)stride*index, &(*targetPool)[startOffset], GL_STATIC_DRAW);
 	}
 }
 
 VertexBuffer::~VertexBuffer()
 {
-	glDeleteBuffers(1, &buffer);
+	if(buffer)
+		glDeleteBuffers(1, &buffer);
 
 /*	std::map <GLuint, VertexBuffer *>::iterator mapIterator = boundBuffersMap.begin();
 	while(mapIterator != boundBuffersMap.end())
@@ -87,6 +89,8 @@ size_t VertexBuffer::addValue(const void *value)
 		targetPool->push_back(*byteValue);
 		byteValue++;
 	}
+
+	std::cout << "Pool size now: " << targetPool->size() << std::endl;
 
 	bufferIsDirty = true;
 	return returnIndex;

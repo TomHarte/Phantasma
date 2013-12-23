@@ -20,23 +20,38 @@ Game::Game()
 
 	std::shared_ptr<std::vector <uint8_t>> targetPool(new std::vector <uint8_t>);
 
-	positionBuffer	= new VertexBuffer(3, GL_SHORT,	GL_FALSE, 9, 0, targetPool);
-	colourBuffer	= new VertexBuffer(3, GL_UNSIGNED_BYTE,		GL_FALSE, 9, 6, targetPool);
+	positionBuffer	= new VertexBuffer(4, GL_FLOAT,	GL_FALSE,	32, 0, targetPool);
+	colourBuffer	= new VertexBuffer(4, GL_FLOAT,	GL_FALSE,	32, 16, targetPool);
 
-	GLshort vertices[] =
+	const GLfloat vertices[] =
 	{
-		-1, -1, 10,
-		1, -1, 10,
-		-1, 1, 10,
-		1, 1, 10
+		-1.0f,	-1.0f,	10.0f, 1.0f,
+		1.0f,	-1.0f,	10.0f, 1.0f,
+		-1.0f,	1.0f,	10.0f, 1.0f,
+		1.0f,	1.0f,	10.0f, 1.0f,
 	};
-	GLubyte colours[] =
+	const GLfloat colours[] =
 	{
-		255, 0, 0,
-		255, 255, 0,
-		255, 255, 255,
-		0, 255, 255
+		1.0f,	0.0f,	0.0f, 1.0f,
+		1.0f,	1.0f,	0.0f, 1.0f,
+		1.0f,	1.0f,	1.0f, 1.0f,
+		0.0f,	1.0f,	1.0f, 1.0f,
 	};
+//	glVertexAttribPointer(ObjectGLAttributeColour, 4, GL_FLOAT, GL_FALSE, 0, (const GLvoid *)billboardColourData);
+//	GLshort vertices[] =
+//	{
+//		-1, -1, 10,
+//		1, -1, 10,
+//		-1, 1, 10,
+//		1, 1, 10
+//	};
+//	GLubyte colours[] =
+//	{
+//		255, 0, 0,
+//		255, 255, 0,
+//		255, 255, 255,
+//		0, 255, 255
+//	};
 
 	positionBuffer->addValue(&vertices[0]);
 	colourBuffer->addValue(&colours[0]);
