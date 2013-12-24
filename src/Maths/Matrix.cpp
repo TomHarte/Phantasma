@@ -38,20 +38,6 @@ Matrix Matrix::getRightOrthogonalInverse()
 	return Matrix(inverse);
 }
 
-void Matrix::translateLocal(GLfloat x, GLfloat y, GLfloat z)
-{
-	contents[12] += x*contents[0] + y*contents[4] + z*contents[8];
-	contents[13] += x*contents[1] + y*contents[5] + z*contents[9];
-	contents[14] += x*contents[2] + y*contents[6] + z*contents[10];
-}
-
-void Matrix::translateGlobal(GLfloat x, GLfloat y, GLfloat z)
-{
-	contents[12] += x;
-	contents[13] += y;
-	contents[14] += z;
-}
-
 Matrix Matrix::rotationMatrix(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 {
 	/* compose rotation matrix, exactly as per glRotatef */
@@ -88,6 +74,26 @@ Matrix Matrix::rotationMatrix(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 	contents[13] = 0.0f;
 	contents[14] = 0.0f;
 	contents[15] = 1.0f;
+
+	return Matrix(contents);
+}
+
+Matrix Matrix::translationMatrix(GLfloat x, GLfloat y, GLfloat z)
+{
+	GLfloat contents[16];
+
+	// the main diagonal is all 1s
+	contents[0] = contents[5] = contents[10] = contents[15] = 1.0f;
+
+	// the translation vector goes in the rightmost column
+	contents[12] = x;
+	contents[13] = y;
+	contents[14] = z;
+
+	// the rest are 0s
+	contents[1] = contents[2] = contents[3] =
+	contents[4] = contents[6] = contents[7] =
+	contents[8] = contents[9] = contents[11] = 0.0f;
 
 	return Matrix(contents);
 }
