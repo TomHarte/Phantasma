@@ -197,24 +197,24 @@ VertexBuffer *Object::newVertexBuffer()
 {
 	VertexBuffer *newBuffer = new VertexBuffer;
 
-	newBuffer->addAttribute(ObjectGLAttributePosition,	4, GL_FLOAT, GL_FALSE);
-	newBuffer->addAttribute(ObjectGLAttributeColour,	3, GL_FLOAT, GL_FALSE);
+	newBuffer->addAttribute(ObjectGLAttributePosition,	3,	GL_SHORT,			GL_FALSE);
+	newBuffer->addAttribute(ObjectGLAttributeColour,	3,	GL_UNSIGNED_BYTE,	GL_TRUE);
 
 	// TEST CODE: put some vertices and colours into the buffer
-	const GLfloat billboardVertexData[] =
+	const GLshort billboardVertexData[] =
 	{
-		-1.0f,	-1.0f,	10.0f, 1.0f,
-		1.0f,	-1.0f,	10.0f, 1.0f,
-		-1.0f,	1.0f,	10.0f, 1.0f,
-		1.0f,	1.0f,	10.0f, 1.0f,
+		-1,	-1,	10,
+		1,	-1,	10,
+		-1,	1,	10,
+		1,	1,	10,
 	};
 
-	const GLfloat billboardColourData[] =
+	const GLubyte billboardColourData[] =
 	{
-		1.0f,	0.0f,	0.0f, 1.0f,
-		1.0f,	1.0f,	0.0f, 1.0f,
-		1.0f,	1.0f,	1.0f, 1.0f,
-		0.0f,	1.0f,	1.0f, 1.0f,
+		255,	0,		0,
+		255,	255,	0,
+		255,	255,	255,
+		0,		255,	255,
 	};
 
 	VertexAttribute *positionAttribute = newBuffer->attributeForIndex(ObjectGLAttributePosition);
@@ -224,16 +224,16 @@ VertexBuffer *Object::newVertexBuffer()
 	colourAttribute->setValue(&billboardColourData[0]);
 	newBuffer->commitVertex();
 
-	positionAttribute->setValue(&billboardVertexData[4]);
-	colourAttribute->setValue(&billboardColourData[4]);
+	positionAttribute->setValue(&billboardVertexData[3]);
+	colourAttribute->setValue(&billboardColourData[3]);
 	newBuffer->commitVertex();
 
-	positionAttribute->setValue(&billboardVertexData[8]);
-	colourAttribute->setValue(&billboardColourData[8]);
+	positionAttribute->setValue(&billboardVertexData[6]);
+	colourAttribute->setValue(&billboardColourData[6]);
 	newBuffer->commitVertex();
 
-	positionAttribute->setValue(&billboardVertexData[12]);
-	colourAttribute->setValue(&billboardColourData[12]);
+	positionAttribute->setValue(&billboardVertexData[9]);
+	colourAttribute->setValue(&billboardColourData[9]);
 	newBuffer->commitVertex();
 
 	return newBuffer;
