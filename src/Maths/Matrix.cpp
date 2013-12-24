@@ -22,11 +22,11 @@ Matrix Matrix::getRightOrthogonalInverse()
 	/* invert matrix and multiply by that - good for positioning cameras */
 	GLfloat inverse[16];
 
-	/* transpost 3x3 */
+	/* transpose 3x3 */
 	inverse[0] = contents[0]; inverse[1] = contents[4]; inverse[2] = contents[8];
 	inverse[4] = contents[1]; inverse[5] = contents[5]; inverse[6] = contents[9];
 	inverse[8] = contents[2]; inverse[9] = contents[6]; inverse[10] = contents[10];
-	
+
 	/* bottom = 0, 0, 0, 1 */
 	inverse[3] = inverse[7] = inverse[11] = 0.0f; inverse[15] = 1.0f;
 
@@ -83,7 +83,7 @@ Matrix Matrix::rotationMatrix(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 	contents[9] = (y*z*(1 - cosine)) - x*sine;
 	contents[10] = (z*z*(1 - cosine)) + cosine;
 	contents[11] = 0.0f;
-	
+
 	contents[12] = 0.0f;
 	contents[13] = 0.0f;
 	contents[14] = 0.0f;
@@ -106,11 +106,11 @@ Matrix Matrix::projectionMatrix(GLfloat yFieldOfView, GLfloat aspectRatio, GLflo
 	contents[4] = 0.0f;
 	contents[5] = cotangent;
 	contents[6] = contents[7] = 0.0f;
-	
+
 	contents[8] = contents[9] = 0.0f;
 	contents[10] = (zFar + zNear) / (zNear - zFar);
 	contents[11] = -1.0f;
-	
+
 	contents[12] = contents[13] = 0.0f;
 	contents[14] = (2.0f * zFar * zNear) / (zNear - zFar);
 	contents[15] = 0.0f;
@@ -138,6 +138,6 @@ Matrix operator *(Matrix &left, Matrix &right)
 	result[3] = result[7] = result[11] =
 	result[12] = result[13] = result[14] = 0.0f;
 	result[15] = 1.0f;
-	
+
 	return Matrix(result);
 }

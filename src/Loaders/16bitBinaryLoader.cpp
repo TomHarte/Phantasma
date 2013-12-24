@@ -62,7 +62,7 @@ class StreamLoader
 		{
 			bytePointer += numberOfBytes;
 		}
-		
+
 		shared_ptr<vector<uint8_t>> nextBytes(vector<uint8_t>::size_type numberOfBytes)
 		{
 			shared_ptr<vector<uint8_t>> returnBuffer(new vector<uint8_t>);
@@ -72,12 +72,12 @@ class StreamLoader
 
 			return returnBuffer;
 		}
-		
+
 		vector<uint8_t>::size_type getFileOffset()
 		{
 			return bytePointer;
 		}
-		
+
 		void setFileOffset(vector<uint8_t>::size_type newOffset)
 		{
 			bytePointer = newOffset;
@@ -88,7 +88,7 @@ static void loadObject(StreamLoader &stream)
 {
 	uint16_t objectType = stream.get16();
 	uint16_t objectFlags = stream.get16();
-	
+
 	// location, size here
 	uint16_t positionX		= stream.get16();
 	uint16_t positionY		= stream.get16();
@@ -296,7 +296,7 @@ bool load16bitBinary(vector <uint8_t> &binary)
 
 		// get the condition
 		shared_ptr<vector<uint8_t>> conditionData = streamLoader.nextBytes(lengthOfCondition);
-		
+
 		cout << "Global condition " << globalCondition+1 << endl;
 		cout << *detokenise16bitCondition(*conditionData) << endl;
 	}

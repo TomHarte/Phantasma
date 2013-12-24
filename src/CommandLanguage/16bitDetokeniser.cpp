@@ -44,7 +44,7 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 			case 0x16:	detokenisedStream << "VAR=? ";			break;
 			case 0x17:	detokenisedStream << "VAR>? ";			break;
 			case 0x18:	detokenisedStream << "VAR<? ";			break;
-			
+
 			case 0x2f:	detokenisedStream << "DESTROYED? ";		break;
 
 			case 0x30:	detokenisedStream << "INVIS ";			break;
@@ -54,7 +54,7 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 
 			case 0x34:	detokenisedStream << "INVIS? ";			break;
 			case 0x35:	detokenisedStream << "VIS? ";			break;
-			
+
 			case 0x36:	detokenisedStream << "MOVE ";			break;
 
 			case 0x37:	detokenisedStream << "GETXPOS ";		break;
@@ -161,8 +161,8 @@ shared_ptr<string> detokenise16bitCondition(vector <uint8_t> &tokenisedCondition
 				if(indexHighByte&0x80) detokenisedStream << "V";
 				indexHighByte &= 0x7f;
 
-				// the second byte is either the constant or the index of the
-				// variable
+				// the second byte is either the constant or the index of
+				// the variable
 				detokenisedStream << (int)(indexLowByte | (indexHighByte << 8));
 
 				// ... and arguments are separated by commas, of course

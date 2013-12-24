@@ -6,6 +6,11 @@
 //  Copyright (c) 2013 Thomas Harte. All rights reserved.
 //
 
+/*
+	This has been implemented based on John Elliott's 2001
+	reverse engineering of Driller; see http://www.seasip.demon.co.uk/ZX/Driller/
+*/
+
 #include "8bitDetokeniser.h"
 #include <sstream>
 
@@ -67,7 +72,7 @@ shared_ptr<string> detokenise8bitCondition(vector <uint8_t> &tokenisedCondition)
 			default:
 				detokenisedStream << "<UNKNOWN 8 bit: " << std::hex << (int)opcode << "> " << std::dec;
 			break;
-			
+
 			case 0: break;			// NOP
 			case 1:					// add three-byte value to score
 			{
@@ -143,7 +148,7 @@ shared_ptr<string> detokenise8bitCondition(vector <uint8_t> &tokenisedCondition)
 				numberOfArguments = 0;
 			}
 			break;
-			
+
 			case 20:
 				detokenisedStream	<< "SETVAR (" << (int)tokenisedCondition[bytePointer] << ", v" << (int)tokenisedCondition[bytePointer+1] << ") ";
 				bytePointer += 2;
@@ -158,7 +163,7 @@ shared_ptr<string> detokenise8bitCondition(vector <uint8_t> &tokenisedCondition)
 			{
 				detokenisedStream << (int)tokenisedCondition[bytePointer];
 				bytePointer++;
-				
+
 				if(argumentNumber < numberOfArguments-1)
 					detokenisedStream << ", ";
 			}

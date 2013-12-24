@@ -196,7 +196,7 @@ void Object::drawTestObject(VertexBuffer *areaBuffer)
 VertexBuffer *Object::newVertexBuffer()
 {
 	VertexBuffer *newBuffer = new VertexBuffer;
-	
+
 	newBuffer->addAttribute(ObjectGLAttributePosition,	4, GL_FLOAT, GL_FALSE);
 	newBuffer->addAttribute(ObjectGLAttributeColour,	3, GL_FLOAT, GL_FALSE);
 
@@ -216,7 +216,7 @@ VertexBuffer *Object::newVertexBuffer()
 		1.0f,	1.0f,	1.0f, 1.0f,
 		0.0f,	1.0f,	1.0f, 1.0f,
 	};
-	
+
 	VertexAttribute *positionAttribute = newBuffer->attributeForIndex(ObjectGLAttributePosition);
 	VertexAttribute *colourAttribute = newBuffer->attributeForIndex(ObjectGLAttributeColour);
 

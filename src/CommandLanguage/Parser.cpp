@@ -21,7 +21,7 @@ class Parser
 
 		size_t codePointer;
 		std::string *sourceCode;
-	
+
 		// we implement a single token pushback; this is
 		// achieved by just keeping the value of lastToken
 		// that we already have

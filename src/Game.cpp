@@ -40,7 +40,7 @@ void Game::draw()
 void Game::setupOpenGL()
 {
 	Object::setupOpenGL();
-	
+
 	if(!vertexBuffer)
 		vertexBuffer = Object::newVertexBuffer();
 }
