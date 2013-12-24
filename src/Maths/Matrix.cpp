@@ -129,21 +129,25 @@ Matrix operator *(Matrix &left, Matrix &right)
 	GLfloat result[16];
 
 	/* do multiplication */
-	result[0] = left.contents[0] * right.contents[0] +	left.contents[4] * right.contents[1] +	left.contents[8] * right.contents[2];
-	result[4] = left.contents[0] * right.contents[4] +	left.contents[4] * right.contents[5] +	left.contents[8] * right.contents[6];
-	result[8] = left.contents[0] * right.contents[8] +	left.contents[4] * right.contents[9] +	left.contents[8] * right.contents[10];
+	result[0]	= left.contents[0] * right.contents[0]	+	left.contents[4] * right.contents[1]	+	left.contents[8] * right.contents[2]	+	left.contents[12] * right.contents[3];
+	result[4]	= left.contents[0] * right.contents[4]	+	left.contents[4] * right.contents[5]	+	left.contents[8] * right.contents[6]	+	left.contents[12] * right.contents[7];
+	result[8]	= left.contents[0] * right.contents[8]	+	left.contents[4] * right.contents[9]	+	left.contents[8] * right.contents[10]	+	left.contents[12] * right.contents[11];
+	result[12]	= left.contents[0] * right.contents[12]	+	left.contents[4] * right.contents[13]	+	left.contents[8] * right.contents[14]	+	left.contents[12] * right.contents[15];
 
-	result[1] = left.contents[1] * right.contents[0] +	left.contents[5] * right.contents[1] +	left.contents[9] * right.contents[2];
-	result[5] = left.contents[1] * right.contents[4] +	left.contents[5] * right.contents[5] +	left.contents[9] * right.contents[6];
-	result[9] = left.contents[1] * right.contents[8] +	left.contents[5] * right.contents[9] +	left.contents[9] * right.contents[10];
+	result[1]	= left.contents[1] * right.contents[0]	+	left.contents[5] * right.contents[1]	+	left.contents[9] * right.contents[2]	+	left.contents[13] * right.contents[3];
+	result[5]	= left.contents[1] * right.contents[4]	+	left.contents[5] * right.contents[5]	+	left.contents[9] * right.contents[6]	+	left.contents[13] * right.contents[7];
+	result[9]	= left.contents[1] * right.contents[8]	+	left.contents[5] * right.contents[9]	+	left.contents[9] * right.contents[10]	+	left.contents[13] * right.contents[11];
+	result[13]	= left.contents[1] * right.contents[12]	+	left.contents[5] * right.contents[13]	+	left.contents[9] * right.contents[14]	+	left.contents[13] * right.contents[15];
 
-	result[2] = left.contents[2] * right.contents[0] +	left.contents[6] * right.contents[1] +	left.contents[10] * right.contents[2];
-	result[6] = left.contents[2] * right.contents[4] +	left.contents[6] * right.contents[5] +	left.contents[10] * right.contents[6];
-	result[10] = left.contents[2] * right.contents[8] +	left.contents[6] * right.contents[9] +	left.contents[10] * right.contents[10];
+	result[2]	= left.contents[2] * right.contents[0]	+	left.contents[6] * right.contents[1]	+	left.contents[10] * right.contents[2]	+	left.contents[14] * right.contents[3];
+	result[6]	= left.contents[2] * right.contents[4]	+	left.contents[6] * right.contents[5]	+	left.contents[10] * right.contents[6]	+	left.contents[14] * right.contents[7];
+	result[10]	= left.contents[2] * right.contents[8]	+	left.contents[6] * right.contents[9]	+	left.contents[10] * right.contents[10]	+	left.contents[14] * right.contents[11];
+	result[14]	= left.contents[2] * right.contents[12]	+	left.contents[6] * right.contents[13]	+	left.contents[10] * right.contents[14]	+	left.contents[14] * right.contents[15];
 
-	result[3] = result[7] = result[11] =
-	result[12] = result[13] = result[14] = 0.0f;
-	result[15] = 1.0f;
+	result[3]	= left.contents[3] * right.contents[0]	+	left.contents[7] * right.contents[1]	+	left.contents[11] * right.contents[2]	+	left.contents[15] * right.contents[3];
+	result[7]	= left.contents[3] * right.contents[4]	+	left.contents[7] * right.contents[5]	+	left.contents[11] * right.contents[6]	+	left.contents[15] * right.contents[7];
+	result[11]	= left.contents[3] * right.contents[8]	+	left.contents[7] * right.contents[9]	+	left.contents[11] * right.contents[10]	+	left.contents[15] * right.contents[11];
+	result[15]	= left.contents[3] * right.contents[12]	+	left.contents[7] * right.contents[13]	+	left.contents[11] * right.contents[14]	+	left.contents[15] * right.contents[15];
 
 	return Matrix(result);
 }
