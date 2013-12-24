@@ -174,6 +174,9 @@ void Object::setupOpenGL()
 	// similarly, we'll enable both arrays, since we'll always be supplying both
 	glEnableVertexAttribArray(ObjectGLAttributePosition);
 	glEnableVertexAttribArray(ObjectGLAttributeColour);
+
+	// we'll want reverse face removal
+	glEnable(GL_CULL_FACE);
 }
 
 void Object::setProjectionMatrix(const GLfloat *projectionMatrix)
@@ -190,7 +193,33 @@ void Object::drawTestObject(VertexBuffer *areaBuffer)
 {
 	areaBuffer->bind();
 
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	GLushort indices[] =
+	{
+		0, 1, 2,
+		2, 1, 3,
+
+		2, 3, 4,
+		4, 3, 5,
+
+		4, 5, 6,
+		6, 5, 7,
+
+		6, 7, 0,
+		0, 7, 1,
+
+		5, 3, 1,
+		7, 5, 1,
+
+		0, 2, 4,
+		0, 4, 6,
+	};
+	
+	// a triangle strip isn't a helpful option, despite the pure geometrics, because each
+	// face may be coloured differently and therefore each vertex may have a different
+	// colour depending which face it belongs to — if you stripped and joined with degenerate
+	// triangles you'd end up with an array of indices exactly as long as just supplying the
+	// triangles directly — four per face plus two two transition to the next face
+	glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLushort), GL_UNSIGNED_SHORT, indices);
 }
 
 VertexBuffer *Object::newVertexBuffer()
@@ -203,14 +232,25 @@ VertexBuffer *Object::newVertexBuffer()
 	// TEST CODE: put some vertices and colours into the buffer
 	const GLshort billboardVertexData[] =
 	{
-		-1,	-1,	0,
-		1,	-1,	0,
-		-1,	1,	0,
-		1,	1,	0,
+		-1,	-1,	1,
+		1,	-1,	1,
+
+		-1,	1,	1,
+		1,	1,	1,
+
+		-1,	1,	-1,
+		1,	1,	-1,
+
+		-1,	-1,	-1,
+		1,	-1,	-1,
 	};
 
 	const GLubyte billboardColourData[] =
 	{
+		255,	0,		0,
+		255,	255,	0,
+		255,	255,	255,
+		0,		255,	255,
 		255,	0,		0,
 		255,	255,	0,
 		255,	255,	255,
@@ -220,21 +260,12 @@ VertexBuffer *Object::newVertexBuffer()
 	VertexAttribute *positionAttribute = newBuffer->attributeForIndex(ObjectGLAttributePosition);
 	VertexAttribute *colourAttribute = newBuffer->attributeForIndex(ObjectGLAttributeColour);
 
-	positionAttribute->setValue(&billboardVertexData[0]);
-	colourAttribute->setValue(&billboardColourData[0]);
-	newBuffer->commitVertex();
-
-	positionAttribute->setValue(&billboardVertexData[3]);
-	colourAttribute->setValue(&billboardColourData[3]);
-	newBuffer->commitVertex();
-
-	positionAttribute->setValue(&billboardVertexData[6]);
-	colourAttribute->setValue(&billboardColourData[6]);
-	newBuffer->commitVertex();
-
-	positionAttribute->setValue(&billboardVertexData[9]);
-	colourAttribute->setValue(&billboardColourData[9]);
-	newBuffer->commitVertex();
+	for(int c = 0; c < 8; c++)
+	{
+		positionAttribute->setValue(&billboardVertexData[c*3]);
+		colourAttribute->setValue(&billboardColourData[c*3]);
+		newBuffer->commitVertex();
+	}
 
 	return newBuffer;
 }

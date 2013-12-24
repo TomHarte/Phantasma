@@ -32,7 +32,7 @@ void Game::draw()
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	Matrix rotationMatrix = Matrix::rotationMatrix(angle, 1.0f, 1.0f, 0.0f);
-	Matrix translationMatrix = Matrix::translationMatrix(0.0f, 0.0f, -10.0f);
+	Matrix translationMatrix = Matrix::translationMatrix(0.0f, 0.0f, -5.0f);
 	Object::setViewMatrix((translationMatrix * rotationMatrix).contents);
 
 	Object::drawTestObject(vertexBuffer);
