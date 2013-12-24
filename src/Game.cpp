@@ -58,7 +58,7 @@ void Game::advanceToTime(uint32_t millisecondsSinceArbitraryMoment)
 	uint32_t timeDifference = millisecondsSinceArbitraryMoment - timeOfLastTick;
 
 	// TODO: player movement updates out here
-	angle += (float)timeDifference / 100.0f;
+	angle += (float)timeDifference / 1000.0f;
 
 	// we'll advance at 50hz, which makes for some easy integer arithmetic here
 	while(timeDifference > 20)
