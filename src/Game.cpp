@@ -11,7 +11,7 @@
 #include "Matrix.h"
 #include "VertexBuffer.h"
 
-static float angle = 0.0f;
+static float angle = 135.0f;
 
 Game::Game()
 {

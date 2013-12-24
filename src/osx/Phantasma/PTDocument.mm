@@ -145,11 +145,20 @@ static CVReturn CVDisplayLinkCallback(
 	{
 		OSAtomicIncrement32(&_displayLinkRedrawQueueCount);
 
+		// ensure we retain only a weak reference to self, as this
+		// instance may be closed and deallocated before the block
+		// gets dispatched
+		__weak PTDocument *weakSelf = self;
 		dispatch_async(dispatch_get_main_queue(),
 		^{
-			[self updateDisplay];
+			// if strong self is now nil, just return — the direct instance storage
+			// access below won't be safe besides anything else
+			PTDocument *strongSelf = weakSelf;
+			if(!strongSelf) return;
 
-			OSAtomicDecrement32(&_displayLinkRedrawQueueCount);
+			[strongSelf updateDisplay];
+
+			OSAtomicDecrement32(&strongSelf->_displayLinkRedrawQueueCount);
 		});
 	}
 }
