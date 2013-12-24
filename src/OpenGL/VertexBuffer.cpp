@@ -53,7 +53,8 @@ void VertexBuffer::bind()
 		glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	}
 
-	// make sure we've uploaded the latest data
+	// make sure we've uploaded the latest data; if we've gained anything
+	// new then add it to the pile
 	if(uploadedLength != targetPool->size())
 	{
 		if(!uploadedLength)
@@ -66,6 +67,10 @@ void VertexBuffer::bind()
 		}
 
 		uploadedLength = targetPool->size();
+
+		// use this opportunity to release temporary storage
+		for(std::vector <VertexAttribute *>::size_type index = 0; index < attributes.size(); index++)
+			attributes[index]->deleteTemporaryStorage();
 	}
 
 	// make sure all attributes are bound
@@ -78,8 +83,9 @@ void VertexBuffer::bind()
 
 void VertexBuffer::addAttribute(GLuint index, GLint size, GLenum type, GLboolean normalised)
 {
-	// allocate an attribute, add it to our list
-	VertexAttribute *newAttribute = new VertexAttribute(index, size, type, normalised, targetPool);
+	// allocate an attribute, add it to our list; we can figure out its start offset
+	// from our current idea of stride
+	VertexAttribute *newAttribute = new VertexAttribute(index, size, type, normalised, targetPool, (std::vector<uint8_t>::size_type)stride);
 	attributes.push_back(newAttribute);
 
 	// stride is the sum of all attribute values, so update it now
@@ -95,10 +101,16 @@ VertexAttribute *VertexBuffer::attributeForIndex(GLuint index)
 	return attributesByIndex[index];
 }
 
-size_t VertexBuffer::getNextWriteIndex()
+size_t VertexBuffer::commitVertex()
 {
-	// return the current index and increment it for next time
+	// store the current index for return and increment it for next time
 	size_t returnIndex = writeIndex;
 	writeIndex++;
+
+	// make sure all attributes write their values in the correct sequence
+	for(std::vector <VertexAttribute *>::size_type index = 0; index < attributes.size(); index++)
+		attributes[index]->commitValue();
+
+	// return the index we just wrote to
 	return returnIndex;
 }

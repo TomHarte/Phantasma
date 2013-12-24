@@ -220,17 +220,21 @@ VertexBuffer *Object::newVertexBuffer()
 	VertexAttribute *positionAttribute = newBuffer->attributeForIndex(ObjectGLAttributePosition);
 	VertexAttribute *colourAttribute = newBuffer->attributeForIndex(ObjectGLAttributeColour);
 
-	positionAttribute->addValue(&billboardVertexData[0]);
-	colourAttribute->addValue(&billboardColourData[0]);
+	positionAttribute->setValue(&billboardVertexData[0]);
+	colourAttribute->setValue(&billboardColourData[0]);
+	newBuffer->commitVertex();
 
-	positionAttribute->addValue(&billboardVertexData[4]);
-	colourAttribute->addValue(&billboardColourData[4]);
+	positionAttribute->setValue(&billboardVertexData[4]);
+	colourAttribute->setValue(&billboardColourData[4]);
+	newBuffer->commitVertex();
 
-	positionAttribute->addValue(&billboardVertexData[8]);
-	colourAttribute->addValue(&billboardColourData[8]);
+	positionAttribute->setValue(&billboardVertexData[8]);
+	colourAttribute->setValue(&billboardColourData[8]);
+	newBuffer->commitVertex();
 
-	positionAttribute->addValue(&billboardVertexData[12]);
-	colourAttribute->addValue(&billboardColourData[12]);
+	positionAttribute->setValue(&billboardVertexData[12]);
+	colourAttribute->setValue(&billboardColourData[12]);
+	newBuffer->commitVertex();
 
 	return newBuffer;
 }

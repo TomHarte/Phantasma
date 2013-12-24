@@ -8,7 +8,7 @@
 
 #include "VertexAttribute.h"
 
-VertexAttribute::VertexAttribute(GLuint _index, GLint _size, GLenum _type, GLboolean _normalised, std::shared_ptr<std::vector <uint8_t>> &_targetPool)
+VertexAttribute::VertexAttribute(GLuint _index, GLint _size, GLenum _type, GLboolean _normalised, std::shared_ptr<std::vector <uint8_t>> &_targetPool, std::vector<uint8_t>::size_type _startOffset)
 {
 	// store the properties that describe this attribute
 	attributeIndex = _index;
@@ -19,8 +19,16 @@ VertexAttribute::VertexAttribute(GLuint _index, GLint _size, GLenum _type, GLboo
 	// store our reference to the target vector
 	targetPool = _targetPool;
 
-	// set start offset as uninitalised
-	startOffset = (unsigned)-1;
+	// set start offset as required
+	startOffset = _startOffset;
+
+	// nominate that we haven't got a buffer for prepared values yet
+	preparedValue = NULL;
+}
+
+VertexAttribute::~VertexAttribute()
+{
+	deleteTemporaryStorage();
 }
 
 GLsizei VertexAttribute::sizeOfValue()
@@ -55,22 +63,37 @@ void VertexAttribute::bindWithStride(GLsizei stride)
 	glVertexAttribPointer(attributeIndex, attributeSize, attributeType, attributeIsNormalised, stride, (void *)startOffset);
 }
 
-void VertexAttribute::addValue(const void *value)
+void VertexAttribute::setValue(const void *value)
 {
-	// if we haven't cribbed the start offset yet, grab it now
-	// by checking out how many bytes have already been written
-	if(startOffset == (unsigned)-1)
+	GLsizei numberOfBytes = sizeOfValue();
+
+	if(!preparedValue)
 	{
-		startOffset = targetPool->size();
+		preparedValue = new uint8_t[numberOfBytes];
 	}
 
+	memcpy(preparedValue, value, (size_t)numberOfBytes);
+}
+
+void VertexAttribute::commitValue()
+{
 	// copy in as many bytes as make one item; as elsewhere
 	// I'm sure this is demonstrating thicky usage of vector
-	const uint8_t *byteValue = (uint8_t *)value;
 	GLsizei numberOfBytes = sizeOfValue();
-	while(numberOfBytes--)
+	if(preparedValue)
 	{
-		targetPool->push_back(*byteValue);
-		byteValue++;
+		for(GLsizei byte = 0; byte < numberOfBytes; byte++)
+			targetPool->push_back(preparedValue[byte]);
 	}
+	else
+	{
+		for(GLsizei byte = 0; byte < numberOfBytes; byte++)
+			targetPool->push_back(0);
+	}
+}
+
+void VertexAttribute::deleteTemporaryStorage()
+{
+	delete[] preparedValue;
+	preparedValue = NULL;
 }

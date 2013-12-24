@@ -16,7 +16,6 @@
 #include "VertexAttribute.h"
 
 /*
-	Warning! Semantics are a little odd here.
 
 	To create an interleaved vertex buffer you need to:
 
@@ -25,13 +24,11 @@
 
 	To add new values to the buffer you need to:
 
-		-	go through every one of the attributes, storing a new value,
-			making sure you go through them in exactly the same order as
-			everyone else does.
+		(1)	set values for each of the attributes that you care about;
+		(2) commit the vertex, receiving its committed index in return.
 
-	You should use getNextWriteIndex to find out which index in the
-	buffer you're about to write to but, again, that works only if it
-	is used every single time.
+	Attributes for which you don't specify a value for any given vertex
+	will have an undefined value.
 
 */
 
@@ -46,7 +43,7 @@ class VertexBuffer
 		void addAttribute(GLuint index, GLint size, GLenum type, GLboolean normalised);
 		VertexAttribute *attributeForIndex(GLuint index);
 
-		size_t getNextWriteIndex();
+		size_t commitVertex();
 
 	private:
 		std::shared_ptr<std::vector <uint8_t>> targetPool;
