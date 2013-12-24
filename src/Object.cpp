@@ -203,10 +203,10 @@ VertexBuffer *Object::newVertexBuffer()
 	// TEST CODE: put some vertices and colours into the buffer
 	const GLshort billboardVertexData[] =
 	{
-		-1,	-1,	10,
-		1,	-1,	10,
-		-1,	1,	10,
-		1,	1,	10,
+		-1,	-1,	0,
+		1,	-1,	0,
+		-1,	1,	0,
+		1,	1,	0,
 	};
 
 	const GLubyte billboardColourData[] =
