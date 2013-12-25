@@ -123,10 +123,10 @@ static void loadObject(StreamLoader &stream)
 	cout << "Position " << positionX << ", " << positionY << ", " << positionZ << endl;
 	cout << "Size " << sizeX << ", " << sizeY << ", " << sizeZ << endl;
 	cout << "Bytes: " << byteSizeOfObject << endl;
-	cout << "Colours: (" << Object::numberOfColoursForObjectOfType((Object::Type)(objectType&0xff)) << "): ";
+	cout << "Colours: (" << GeometricObject::numberOfColoursForObjectOfType((Object::Type)(objectType&0xff)) << "): ";
 
 	cout << hex;
-	for(uint8_t colour = 0; colour < Object::numberOfColoursForObjectOfType((Object::Type)(objectType&0xff)); colour++)
+	for(uint8_t colour = 0; colour < GeometricObject::numberOfColoursForObjectOfType((Object::Type)(objectType&0xff)); colour++)
 	{
 		cout << (int)stream.get8() << ", ";
 		byteSizeOfObject--;
@@ -135,7 +135,7 @@ static void loadObject(StreamLoader &stream)
 
 	// read extra vertices if required...
 	vector<uint16_t> extraVertices;
-	int numberOfExtraVertices = Object::numberOfVerticesForType(objectType);
+	int numberOfExtraVertices = GeometricObject::numberOfVerticesForType(objectType);
 	cout << numberOfExtraVertices << " extra vertices" << endl;
 	for(int extraVertex = 0; extraVertex < numberOfExtraVertices; extraVertex++)
 	{

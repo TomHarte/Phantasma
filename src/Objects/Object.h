@@ -9,7 +9,13 @@
 #ifndef __Phantasma__Object__
 #define __Phantasma__Object__
 
-#include <iostream>
+#include <vector>
+#include "Instruction.h"
+
+typedef struct
+{
+	uint16_t x, y, z;
+} Vector3d;
 
 class VertexBuffer;
 class Object
@@ -30,31 +36,24 @@ class Object
 			SouthPyramid = 9,
 
 			Line = 10,
-
 			Triangle = 11,
 			Quadrilateral = 12,
 			Pentagon = 13,
 			Hexagon = 14,
-			
+
 			Group = 15
 		} Type;
 
-		// getters to query data expectations
-		static int numberOfColoursForObjectOfType(Type type);
-		static int numberOfVerticesForType(Type type);
+		Type getType();
 
-		static void setupOpenGL();
-		static void setProjectionMatrix(const GLfloat *projectionMatrix);
-		static void setViewMatrix(const GLfloat *projectionMatrix);
-
-		static void drawTestObject(VertexBuffer *areaBuffer);
-
-		static VertexBuffer *newVertexBuffer();
-
-	private:
-		static GLuint openGLProgram;
-		static GLuint compileShader(const GLchar *source, GLenum shaderType);
-		static GLint viewMatrixUniform, projectionMatrixUniform;
+	protected:
+		Type type;
+		Vector3d origin, size;
 };
+
+#include "GeometricObject.h"
+#include "Entrance.h"
+#include "Sensor.h"
+#include "Group.h"
 
 #endif /* defined(__Phantasma__Object__) */

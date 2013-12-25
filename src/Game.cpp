@@ -7,7 +7,7 @@
 //
 
 #include "Game.h"
-#include "Object.h"
+#include "GeometricObject.h"
 #include "Matrix.h"
 #include "VertexBuffer.h"
 
@@ -22,7 +22,7 @@ void Game::setAspectRatio(float aspectRatio)
 {
 	// create a projection matrix
 	Matrix projectionMatrix = Matrix::projectionMatrix(60.0f, aspectRatio, 1.0f, 1000.0f);
-	Object::setProjectionMatrix(projectionMatrix.contents);
+	GeometricObject::setProjectionMatrix(projectionMatrix.contents);
 }
 
 void Game::draw()
@@ -33,17 +33,17 @@ void Game::draw()
 
 	Matrix rotationMatrix = Matrix::rotationMatrix(angle, 1.0f, 1.0f, 0.0f);
 	Matrix translationMatrix = Matrix::translationMatrix(0.0f, 0.0f, -5.0f);
-	Object::setViewMatrix((translationMatrix * rotationMatrix).contents);
+	GeometricObject::setViewMatrix((translationMatrix * rotationMatrix).contents);
 
-	Object::drawTestObject(vertexBuffer);
+	GeometricObject::drawTestObject(vertexBuffer);
 }
 
 void Game::setupOpenGL()
 {
-	Object::setupOpenGL();
+	GeometricObject::setupOpenGL();
 
 	if(!vertexBuffer)
-		vertexBuffer = Object::newVertexBuffer();
+		vertexBuffer = GeometricObject::newVertexBuffer();
 }
 
 void Game::advanceToTime(uint32_t millisecondsSinceArbitraryMoment)

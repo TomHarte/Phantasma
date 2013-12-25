@@ -1,19 +1,20 @@
 //
-//  Object.cpp
+//  GeometricObject.cpp
 //  Phantasma
 //
-//  Created by Thomas Harte on 18/12/2013.
+//  Created by Thomas Harte on 25/12/2013.
 //  Copyright (c) 2013 Thomas Harte. All rights reserved.
 //
 
-#include "Object.h"
+#include "GeometricObject.h"
+
 #include <string.h>
 #include "VertexBuffer.h"
 
 #pragma mark -
 #pragma mark Static Getters
 
-int Object::numberOfColoursForObjectOfType(Type type)
+int GeometricObject::numberOfColoursForObjectOfType(Type type)
 {
 	switch(type)
 	{
@@ -39,7 +40,7 @@ int Object::numberOfColoursForObjectOfType(Type type)
 	}
 }
 
-int Object::numberOfVerticesForType(Type type)
+int GeometricObject::numberOfVerticesForType(Type type)
 {
 	switch(type)
 	{
@@ -71,10 +72,10 @@ typedef enum
 	ObjectGLAttributeColour
 } ObjectGLAttribute;
 
-GLuint Object::openGLProgram;
-GLint Object::viewMatrixUniform, Object::projectionMatrixUniform;
+GLuint GeometricObject::openGLProgram;
+GLint GeometricObject::viewMatrixUniform, GeometricObject::projectionMatrixUniform;
 
-GLuint Object::compileShader(const GLchar *source, GLenum shaderType)
+GLuint GeometricObject::compileShader(const GLchar *source, GLenum shaderType)
 {
 	GLuint shader = glCreateShader(shaderType);
 	glShaderSource(shader, 1, &source, NULL);
@@ -98,7 +99,7 @@ GLuint Object::compileShader(const GLchar *source, GLenum shaderType)
 	return shader;
 }
 
-void Object::setupOpenGL()
+void GeometricObject::setupOpenGL()
 {
 	// use the shading language version string to decide
 	// whether we're on ES or full-fat OpenGL
@@ -187,17 +188,20 @@ void Object::setupOpenGL()
 	glEnable(GL_CULL_FACE);
 }
 
-void Object::setProjectionMatrix(const GLfloat *projectionMatrix)
+void GeometricObject::setProjectionMatrix(const GLfloat *projectionMatrix)
 {
 	glUniformMatrix4fv(projectionMatrixUniform, 1, GL_FALSE, projectionMatrix);
 }
 
-void Object::setViewMatrix(const GLfloat *projectionMatrix)
+void GeometricObject::setViewMatrix(const GLfloat *projectionMatrix)
 {
 	glUniformMatrix4fv(viewMatrixUniform, 1, GL_FALSE, projectionMatrix);
 }
 
-void Object::drawTestObject(VertexBuffer *areaBuffer)
+#pragma mark -
+#pragma mark Temporary Test Code
+
+void GeometricObject::drawTestObject(VertexBuffer *areaBuffer)
 {
 	areaBuffer->bind();
 
@@ -230,7 +234,7 @@ void Object::drawTestObject(VertexBuffer *areaBuffer)
 	glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLushort), GL_UNSIGNED_SHORT, indices);
 }
 
-VertexBuffer *Object::newVertexBuffer()
+VertexBuffer *GeometricObject::newVertexBuffer()
 {
 	VertexBuffer *newBuffer = new VertexBuffer;
 
@@ -278,3 +282,22 @@ VertexBuffer *Object::newVertexBuffer()
 	return newBuffer;
 }
 
+#pragma mark -
+#pragma mark Construction/Destruction
+
+GeometricObject::GeometricObject(
+	Type _type,
+	const Vector3d &_origin,
+	const Vector3d &_size,
+	const std::shared_ptr<std::vector<uint8_t>> *_colours,
+	const std::shared_ptr<std::vector<uint16_t>> *_vertices,
+	FCLInstructionVector *_condition)
+{
+	type = _type;
+	origin = _origin;
+	size = _size;
+	
+	if(_colours) colours = *_colours;
+	if(_vertices) vertices = *_vertices;
+	if(_condition) condition = *_condition;
+}
