@@ -19,8 +19,9 @@ int GeometricObject::numberOfColoursForObjectOfType(Type type)
 	switch(type)
 	{
 		default:
-		case Entrance:			return 0;
-		case Sensor:			return 2;
+		case Entrance:
+		case Group:
+		case Sensor:			return 0;
 
 		case Line:				return 2;
 
@@ -40,26 +41,27 @@ int GeometricObject::numberOfColoursForObjectOfType(Type type)
 	}
 }
 
-int GeometricObject::numberOfVerticesForType(Type type)
+int GeometricObject::numberOfOrdinatesForType(Type type)
 {
 	switch(type)
 	{
-		default:				return 0;
-
-		case Sensor:			return 2;
+		default:
+		case Entrance:
+		case Group:
+		case Sensor:			return 0;
 
 		case EastPyramid:
 		case WestPyramid:
 		case UpPyramid:
 		case DownPyramid:
 		case NorthPyramid:
-		case SouthPyramid:		return 2;
+		case SouthPyramid:		return 4;
 
 		case Line:
 		case Triangle:
 		case Quadrilateral:
 		case Pentagon:
-		case Hexagon:			return 2 + type - Line;
+		case Hexagon:			return 3*(2 + type - Line);
 	}
 }
 
@@ -285,7 +287,7 @@ VertexBuffer *GeometricObject::newVertexBuffer()
 #pragma mark -
 #pragma mark Construction/Destruction
 
-GeometricObject::GeometricObject(
+/*GeometricObject::GeometricObject(
 	Type _type,
 	const Vector3d &_origin,
 	const Vector3d &_size,
@@ -300,4 +302,4 @@ GeometricObject::GeometricObject(
 	if(_colours) colours = *_colours;
 	if(_vertices) vertices = *_vertices;
 	if(_condition) condition = *_condition;
-}
+}*/

@@ -23,25 +23,25 @@ class Object
 	public:
 		typedef enum
 		{
-			Entrance = 0,
-			Cube = 1,
-			Sensor = 2,
-			Rectangle = 3,
+			Entrance		= 0,
+			Cube			= 1,
+			Sensor			= 2,
+			Rectangle		= 3,
 
-			EastPyramid = 4,
-			WestPyramid = 5,
-			UpPyramid = 6,
-			DownPyramid = 7,
-			NorthPyramid = 8,
-			SouthPyramid = 9,
+			EastPyramid		= 4,
+			WestPyramid		= 5,
+			UpPyramid		= 6,
+			DownPyramid		= 7,
+			NorthPyramid	= 8,
+			SouthPyramid	= 9,
 
-			Line = 10,
-			Triangle = 11,
-			Quadrilateral = 12,
-			Pentagon = 13,
-			Hexagon = 14,
+			Line			= 10,
+			Triangle		= 11,
+			Quadrilateral	= 12,
+			Pentagon		= 13,
+			Hexagon			= 14,
 
-			Group = 15
+			Group			= 15
 		} Type;
 
 		Type getType();

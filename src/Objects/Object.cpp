@@ -7,3 +7,8 @@
 //
 
 #include "Object.h"
+
+Object::Type Object::getType()
+{
+	return type;
+}

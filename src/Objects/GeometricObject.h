@@ -16,7 +16,7 @@ class GeometricObject: public Object
 	public:
 
 		static int numberOfColoursForObjectOfType(Type type);
-		static int numberOfVerticesForType(Type type);
+		static int numberOfOrdinatesForType(Type type);
 
 		static void setupOpenGL();
 		static void setProjectionMatrix(const GLfloat *projectionMatrix);
@@ -30,8 +30,8 @@ class GeometricObject: public Object
 			Type type,
 			const Vector3d &origin,
 			const Vector3d &size,
-			const std::shared_ptr<std::vector<uint8_t>> *colours,
-			const std::shared_ptr<std::vector<uint16_t>> *vertices,
+			const std::vector<uint8_t> *colours,
+			const std::vector<uint16_t> *ordinates,
 			FCLInstructionVector *condition);
 
 	private:

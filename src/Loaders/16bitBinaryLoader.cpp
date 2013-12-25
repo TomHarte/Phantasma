@@ -86,21 +86,21 @@ class StreamLoader
 
 static void loadObject(StreamLoader &stream)
 {
-	cout << endl;
-	cout << "[" << stream.getFileOffset() << "]" << endl;
-
+	// get object flags and type
 	uint8_t objectFlags = stream.get8();
 	Object::Type objectType = (Object::Type)stream.get8();
 
+	// get unknown value
 	uint16_t skippedShort = stream.get16();
 
-	// location, size here
-	uint16_t positionX		= stream.get16();
-	uint16_t positionY		= stream.get16();
-	uint16_t positionZ		= stream.get16();
-	uint16_t sizeX			= stream.get16();
-	uint16_t sizeY			= stream.get16();
-	uint16_t sizeZ			= stream.get16();
+	// grab location, size
+	Vector3d position, size;
+	position.x		= stream.get16();
+	position.y		= stream.get16();
+	position.z		= stream.get16();
+	size.x			= stream.get16();
+	size.y			= stream.get16();
+	size.z			= stream.get16();
 
 	// object ID
 	uint16_t objectID = stream.get16();
@@ -110,48 +110,57 @@ static void loadObject(StreamLoader &stream)
 	// length beyond here
 	uint32_t byteSizeOfObject = (uint32_t)(stream.get16() << 1) - 20;
 
-	if(objectID&0x8000)
-	{
-		cout << "Entrance " << (objectID&0x7fff) << endl;
-	}
-	else
-	{
-		cout << "Object " << objectID << endl;
-	}
-	cout << "Type " << hex << objectType << "; flags " << (int)objectFlags << dec << endl;
-	cout << "Unknown  " << skippedShort << endl;
-	cout << "Position " << positionX << ", " << positionY << ", " << positionZ << endl;
-	cout << "Size " << sizeX << ", " << sizeY << ", " << sizeZ << endl;
-	cout << "Bytes: " << byteSizeOfObject << endl;
-	cout << "Colours: (" << GeometricObject::numberOfColoursForObjectOfType((Object::Type)(objectType&0xff)) << "): ";
+	std::cout << "Object " << objectID << "; type " << (int)objectType << std::endl;
 
-	cout << hex;
-	for(uint8_t colour = 0; colour < GeometricObject::numberOfColoursForObjectOfType((Object::Type)(objectType&0xff)); colour++)
+	switch(objectType)
 	{
-		cout << (int)stream.get8() << ", ";
-		byteSizeOfObject--;
-	}
-	cout << dec << endl;
+		default:
+		{
+			// read the appropriate number of colours
+			int numberOfColours = GeometricObject::numberOfColoursForObjectOfType(objectType);
+			std::vector<uint8_t> *colours = new std::vector<uint8_t>;
+			for(uint8_t colour = 0; colour < numberOfColours; colour++)
+			{
+				colours->push_back(stream.get8());
+				byteSizeOfObject--;
+			}
 
-	// read extra vertices if required...
-	vector<uint16_t> extraVertices;
-	int numberOfExtraVertices = GeometricObject::numberOfVerticesForType(objectType);
-	cout << numberOfExtraVertices << " extra vertices" << endl;
-	for(int extraVertex = 0; extraVertex < numberOfExtraVertices; extraVertex++)
-	{
-		extraVertices.push_back(stream.get16());
-		extraVertices.push_back(stream.get16());
-		extraVertices.push_back(stream.get16());
-		byteSizeOfObject -= 6;
+			// read extra vertices if required...
+			int numberOfOrdinates = GeometricObject::numberOfOrdinatesForType(objectType);
+			std::vector<uint16_t> *ordinates = NULL;
+
+			if(numberOfOrdinates)
+			{
+				ordinates = new std::vector<uint16_t>;
+
+				for(int ordinate = 0; ordinate < numberOfOrdinates; ordinate++)
+				{
+					ordinates->push_back(stream.get16());
+					byteSizeOfObject -= 2;
+				}
+			}
+
+			// grab the object condition, if there is one
+			FCLInstructionVector instructions;
+			if(byteSizeOfObject)
+			{
+				shared_ptr<vector<uint8_t>> conditionData = stream.nextBytes(byteSizeOfObject);
+
+				shared_ptr<string> conditionSource = detokenise16bitCondition(*conditionData);
+				instructions = getInstructions(conditionSource.get());
+			}
+			byteSizeOfObject = 0;
+		}
+		break;
+
+		case Object::Entrance:
+		case Object::Sensor:
+		case Object::Group:
+		break;
 	}
 
-	// check whether there's a condition attached
-	cout << byteSizeOfObject << " bytes left for condition" << endl;
-	if(byteSizeOfObject)
-	{
-		shared_ptr<vector<uint8_t>> conditionData = stream.nextBytes(byteSizeOfObject);
-		cout << *detokenise16bitCondition(*conditionData) << endl;
-	}
+	// skip whatever we didn't understand
+	stream.skipBytes(byteSizeOfObject);
 }
 
 static void loadArea(StreamLoader &stream)
