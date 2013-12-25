@@ -86,8 +86,13 @@ class StreamLoader
 
 static void loadObject(StreamLoader &stream)
 {
-	uint16_t objectType = stream.get16();
-	uint16_t objectFlags = stream.get16();
+	cout << endl;
+	cout << "[" << stream.getFileOffset() << "]" << endl;
+
+	uint8_t objectFlags = stream.get8();
+	Object::Type objectType = (Object::Type)stream.get8();
+
+	uint16_t skippedShort = stream.get16();
 
 	// location, size here
 	uint16_t positionX		= stream.get16();
@@ -105,9 +110,16 @@ static void loadObject(StreamLoader &stream)
 	// length beyond here
 	uint32_t byteSizeOfObject = (uint32_t)(stream.get16() << 1) - 20;
 
-	cout << endl;
-	cout << "Object " << objectID << endl;
+	if(objectID&0x8000)
+	{
+		cout << "Group (start?) " << (objectID&0x7fff) << endl;
+	}
+	else
+	{
+		cout << "Object " << objectID << endl;
+	}
 	cout << "Type " << hex << objectType << "; flags " << objectFlags << dec << endl;
+	cout << "Unknown  " << skippedShort << endl;
 	cout << "Position " << positionX << ", " << positionY << ", " << positionZ << endl;
 	cout << "Size " << sizeX << ", " << sizeY << ", " << sizeZ << endl;
 	cout << "Bytes: " << byteSizeOfObject << endl;
@@ -121,27 +133,24 @@ static void loadObject(StreamLoader &stream)
 	}
 	cout << dec << endl;
 
-	// if this is a pyramid then read four more numbers ...
-	uint16_t apexOriginX, apexOriginY, apexDestinationX, apexDestinationY;
-	if(Object::isPyramidType((Object::Type)(objectType&0xff)))
+	// read extra vertices if required...
+	vector<uint16_t> extraVertices;
+	int numberOfExtraVertices = Object::numberOfVerticesForType(objectType);
+	cout << numberOfExtraVertices << " extra vertices" << endl;
+	for(int extraVertex = 0; extraVertex < numberOfExtraVertices; extraVertex++)
 	{
-		apexOriginX = stream.get16();
-		apexOriginY = stream.get16();
-		apexDestinationX = stream.get16();
-		apexDestinationY = stream.get16();
-		byteSizeOfObject -= 8;
+		extraVertices.push_back(stream.get16());
+		extraVertices.push_back(stream.get16());
+		byteSizeOfObject -= 4;
 	}
 
-	// TODO: vertices for line, quad, etc. And groups.
-
 	// check whether there's a condition attached
+	cout << byteSizeOfObject << " bytes left for condition" << endl;
 	if(byteSizeOfObject)
 	{
 		shared_ptr<vector<uint8_t>> conditionData = stream.nextBytes(byteSizeOfObject);
 		cout << *detokenise16bitCondition(*conditionData) << endl;
 	}
-
-//	stream.skipBytes(byteSizeOfObject);
 }
 
 static void loadArea(StreamLoader &stream)

@@ -104,7 +104,7 @@ static CVReturn CVDisplayLinkCallback(
 
 	_game = new Game;
 
-	return true;//load16bitBinary(dataVector);
+	return load16bitBinary(dataVector);
 }
 
 - (void)setOpenGLView:(NSOpenGLView *)openGLView

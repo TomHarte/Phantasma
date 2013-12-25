@@ -18,10 +18,10 @@ int Object::numberOfColoursForObjectOfType(Type type)
 	switch(type)
 	{
 		default:
-		case Entrance:
-		case Sensor:			return 0;
+		case Entrance:			return 0;
+		case Sensor:			return 2;
 
-		case Line:				return 1;
+		case Line:				return 2;
 
 		case Rectangle:
 		case Triangle:
@@ -39,18 +39,26 @@ int Object::numberOfColoursForObjectOfType(Type type)
 	}
 }
 
-bool Object::isPyramidType(Type type)
+int Object::numberOfVerticesForType(Type type)
 {
 	switch(type)
 	{
-		default:				return false;
+		default:				return 0;
+
+		case Sensor:			return 2;
 
 		case EastPyramid:
 		case WestPyramid:
 		case UpPyramid:
 		case DownPyramid:
 		case NorthPyramid:
-		case SouthPyramid:		return true;
+		case SouthPyramid:		return 2;
+
+		case Line:
+		case Triangle:
+		case Quadrilateral:
+		case Pentagon:
+		case Hexagon:			return type - Line;
 	}
 }
 

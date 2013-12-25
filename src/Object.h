@@ -36,9 +36,10 @@ class Object
 			Pentagon = 13,
 			Hexagon = 14
 		} Type;
-	
+
+		// getters to query data expectations
 		static int numberOfColoursForObjectOfType(Type type);
-		static bool isPyramidType(Type type);
+		static int numberOfVerticesForType(Type type);
 
 		static void setupOpenGL();
 		static void setProjectionMatrix(const GLfloat *projectionMatrix);
