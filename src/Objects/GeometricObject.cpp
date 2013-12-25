@@ -287,19 +287,21 @@ VertexBuffer *GeometricObject::newVertexBuffer()
 #pragma mark -
 #pragma mark Construction/Destruction
 
-/*GeometricObject::GeometricObject(
+GeometricObject::GeometricObject(
 	Type _type,
+	uint16_t _objectID,
 	const Vector3d &_origin,
 	const Vector3d &_size,
-	const std::shared_ptr<std::vector<uint8_t>> *_colours,
-	const std::shared_ptr<std::vector<uint16_t>> *_vertices,
-	FCLInstructionVector *_condition)
+	std::vector<uint8_t> *_colours,
+	std::vector<uint16_t> *_ordinates,
+	FCLInstructionVector _condition)
 {
 	type = _type;
+	objectID = _objectID;
 	origin = _origin;
 	size = _size;
-	
-	if(_colours) colours = *_colours;
-	if(_vertices) vertices = *_vertices;
-	if(_condition) condition = *_condition;
-}*/
+
+	if(_colours)	colours		= std::shared_ptr<std::vector<uint8_t>>(_colours);
+	if(_ordinates)	ordinates	= std::shared_ptr<std::vector<uint16_t>>(_ordinates);
+	condition = _condition;
+}

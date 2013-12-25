@@ -44,10 +44,14 @@ class Object
 			Group			= 15
 		} Type;
 
-		Type getType();
+		Type		getType();
+		uint16_t	getObjectID();
+		Vector3d	getOrigin();
+		Vector3d	getSize();
 
 	protected:
 		Type type;
+		uint16_t objectID;
 		Vector3d origin, size;
 };
 

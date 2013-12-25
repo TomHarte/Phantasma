@@ -13,6 +13,8 @@
 
 #include "Object.h"
 
+#include <map>
+
 class StreamLoader
 {
 	private:
@@ -84,7 +86,7 @@ class StreamLoader
 		}
 };
 
-static void loadObject(StreamLoader &stream)
+static shared_ptr<Object> loadObject(StreamLoader &stream)
 {
 	// get object flags and type
 	uint8_t objectFlags = stream.get8();
@@ -110,6 +112,7 @@ static void loadObject(StreamLoader &stream)
 	// length beyond here
 	uint32_t byteSizeOfObject = (uint32_t)(stream.get16() << 1) - 20;
 
+	shared_ptr<Object> returnObject;
 	std::cout << "Object " << objectID << "; type " << (int)objectType << std::endl;
 
 	switch(objectType)
@@ -150,6 +153,17 @@ static void loadObject(StreamLoader &stream)
 				instructions = getInstructions(conditionSource.get());
 			}
 			byteSizeOfObject = 0;
+
+			// create an object
+			returnObject = shared_ptr<Object>(
+				new GeometricObject(
+					objectType,
+					objectID,
+					position,
+					size,
+					colours,
+					ordinates,
+					instructions));
 		}
 		break;
 
@@ -161,6 +175,8 @@ static void loadObject(StreamLoader &stream)
 
 	// skip whatever we didn't understand
 	stream.skipBytes(byteSizeOfObject);
+
+	return returnObject;
 }
 
 static void loadArea(StreamLoader &stream)
@@ -186,11 +202,33 @@ static void loadArea(StreamLoader &stream)
 		cout << "Palette colour (?) " << hex << (int)paletteColour << dec << endl;
 	}
 
-	// get the objects or whatever
+	// we'll need to collate all objects and entrances; it's likely a
+	// plain C array would do but maps are safer and the total application
+	// cost is going to be negligible regardless
+	std::map<uint16_t, shared_ptr<Object>> objectsByID;
+	std::map<uint16_t, shared_ptr<Object>> entrancesByID;
+
+	// get the objects or whatever; entrances use a unique numbering
+	// system and have the high bit of their IDs set in the original file
 	for(uint16_t object = 0; object < numberOfObjects; object++)
 	{
-		loadObject(stream);
+		shared_ptr<Object> newObject = loadObject(stream);
+
+		if(newObject.get())
+		{
+			if(newObject->getType() == Object::Entrance)
+			{
+				entrancesByID[newObject->getObjectID() & 0x7fff] = newObject;
+			}
+			else
+			{
+				objectsByID[newObject->getObjectID()] = newObject;
+			}
+		}
 	}
+
+	cout << objectsByID.size() << " Objects" << endl;
+	cout << entrancesByID.size() << " Entrances" << endl;
 }
 
 bool load16bitBinary(vector <uint8_t> &binary)

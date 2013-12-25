@@ -28,11 +28,12 @@ class GeometricObject: public Object
 
 		GeometricObject(
 			Type type,
+			uint16_t objectID,
 			const Vector3d &origin,
 			const Vector3d &size,
-			const std::vector<uint8_t> *colours,
-			const std::vector<uint16_t> *ordinates,
-			FCLInstructionVector *condition);
+			std::vector<uint8_t> *colours,
+			std::vector<uint16_t> *ordinates,
+			FCLInstructionVector condition);
 
 	private:
 		static GLuint openGLProgram;
@@ -40,10 +41,8 @@ class GeometricObject: public Object
 		static GLint viewMatrixUniform, projectionMatrixUniform;
 
 		FCLInstructionVector condition;
-		Type type;
-		Vector3d origin, size;
 		std::shared_ptr<std::vector<uint8_t>> colours;
-		std::shared_ptr<std::vector<uint16_t>> vertices;
+		std::shared_ptr<std::vector<uint16_t>> ordinates;
 };
 
 #endif /* defined(__Phantasma__GeometricObject__) */
