@@ -112,13 +112,13 @@ static void loadObject(StreamLoader &stream)
 
 	if(objectID&0x8000)
 	{
-		cout << "Group (start?) " << (objectID&0x7fff) << endl;
+		cout << "Entrance " << (objectID&0x7fff) << endl;
 	}
 	else
 	{
 		cout << "Object " << objectID << endl;
 	}
-	cout << "Type " << hex << objectType << "; flags " << objectFlags << dec << endl;
+	cout << "Type " << hex << objectType << "; flags " << (int)objectFlags << dec << endl;
 	cout << "Unknown  " << skippedShort << endl;
 	cout << "Position " << positionX << ", " << positionY << ", " << positionZ << endl;
 	cout << "Size " << sizeX << ", " << sizeY << ", " << sizeZ << endl;
@@ -141,7 +141,8 @@ static void loadObject(StreamLoader &stream)
 	{
 		extraVertices.push_back(stream.get16());
 		extraVertices.push_back(stream.get16());
-		byteSizeOfObject -= 4;
+		extraVertices.push_back(stream.get16());
+		byteSizeOfObject -= 6;
 	}
 
 	// check whether there's a condition attached

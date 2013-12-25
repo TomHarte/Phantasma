@@ -34,7 +34,9 @@ class Object
 			Triangle = 11,
 			Quadrilateral = 12,
 			Pentagon = 13,
-			Hexagon = 14
+			Hexagon = 14,
+			
+			Group = 15
 		} Type;
 
 		// getters to query data expectations

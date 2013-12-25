@@ -58,7 +58,7 @@ int Object::numberOfVerticesForType(Type type)
 		case Triangle:
 		case Quadrilateral:
 		case Pentagon:
-		case Hexagon:			return type - Line;
+		case Hexagon:			return 2 + type - Line;
 	}
 }
 
