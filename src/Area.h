@@ -13,7 +13,7 @@
 #include <map>
 
 class Object;
-typedef std::map<uint16_t, std::shared_ptr<Object>> ObjectMap;
+typedef std::map<uint16_t, Object *> ObjectMap;
 
 class Area
 {

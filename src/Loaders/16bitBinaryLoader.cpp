@@ -87,7 +87,7 @@ class StreamLoader
 		}
 };
 
-static shared_ptr<Object> loadObject(StreamLoader &stream)
+static Object *loadObject(StreamLoader &stream)
 {
 	// get object flags and type
 	uint8_t objectFlags = stream.get8();
@@ -113,7 +113,6 @@ static shared_ptr<Object> loadObject(StreamLoader &stream)
 	// length beyond here
 	uint32_t byteSizeOfObject = (uint32_t)(stream.get16() << 1) - 20;
 
-	shared_ptr<Object> returnObject;
 	std::cout << "Object " << objectID << "; type " << (int)objectType << std::endl;
 
 	switch(objectType)
@@ -156,7 +155,7 @@ static shared_ptr<Object> loadObject(StreamLoader &stream)
 			byteSizeOfObject = 0;
 
 			// create an object
-			returnObject = shared_ptr<Object>(
+			return
 				new GeometricObject(
 					objectType,
 					objectID,
@@ -164,7 +163,7 @@ static shared_ptr<Object> loadObject(StreamLoader &stream)
 					size,
 					colours,
 					ordinates,
-					instructions));
+					instructions);
 		}
 		break;
 
@@ -177,7 +176,7 @@ static shared_ptr<Object> loadObject(StreamLoader &stream)
 	// skip whatever we didn't understand
 	stream.skipBytes(byteSizeOfObject);
 
-	return returnObject;
+	return NULL;
 }
 
 static shared_ptr<Area> loadArea(StreamLoader &stream)
@@ -213,9 +212,9 @@ static shared_ptr<Area> loadArea(StreamLoader &stream)
 	// system and have the high bit of their IDs set in the original file
 	for(uint16_t object = 0; object < numberOfObjects; object++)
 	{
-		shared_ptr<Object> newObject = loadObject(stream);
+		Object *newObject = loadObject(stream);
 
-		if(newObject.get())
+		if(newObject)
 		{
 			if(newObject->getType() == Object::Entrance)
 			{

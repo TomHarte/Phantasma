@@ -12,7 +12,7 @@ Object *Area::objectWithIDFromMap(ObjectMap *map, uint16_t objectID)
 {
 	if(!map) return NULL;
 	if(!map->count(objectID)) return NULL;
-	return (*map)[objectID].get();
+	return (*map)[objectID];
 }
 
 Object *Area::objectWithID(uint16_t objectID)
@@ -42,6 +42,6 @@ Area::Area(
 
 Area::~Area()
 {
-	delete objectsByID;
 	delete entrancesByID;
+	delete objectsByID;
 }
