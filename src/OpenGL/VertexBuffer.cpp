@@ -22,6 +22,9 @@ VertexBuffer::VertexBuffer()
 
 	// we've also so far uploaded nothing
 	uploadedLength = 0;
+
+	// flag the buffer as not yet generated
+	buffer = 0;
 }
 
 VertexBuffer::~VertexBuffer()
@@ -48,7 +51,8 @@ void VertexBuffer::bind()
 		boundBuffer = this;
 		needsBinding = true;
 
-		if(!buffer) glGenBuffers(1, &buffer);
+		if(!buffer)
+			glGenBuffers(1, &buffer);
 
 		glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	}
