@@ -14,6 +14,7 @@
 		4B1CB752186B6ADB00067310 /* Entrance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1CB750186B6ADB00067310 /* Entrance.cpp */; };
 		4B1CB755186B6BC900067310 /* Sensor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1CB753186B6BC900067310 /* Sensor.cpp */; };
 		4B1CB758186B6BD300067310 /* Group.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1CB756186B6BD300067310 /* Group.cpp */; };
+		4B1CB75B186BB59200067310 /* Area.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1CB759186BB59200067310 /* Area.cpp */; };
 		4B1E687318554BFD003A9847 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B1E687218554BFD003A9847 /* Cocoa.framework */; };
 		4B1E687D18554BFD003A9847 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E687B18554BFD003A9847 /* InfoPlist.strings */; };
 		4B1E687F18554BFD003A9847 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E687E18554BFD003A9847 /* main.m */; };
@@ -50,6 +51,8 @@
 		4B1CB754186B6BC900067310 /* Sensor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sensor.h; sourceTree = "<group>"; };
 		4B1CB756186B6BD300067310 /* Group.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Group.cpp; sourceTree = "<group>"; };
 		4B1CB757186B6BD300067310 /* Group.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Group.h; sourceTree = "<group>"; };
+		4B1CB759186BB59200067310 /* Area.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Area.cpp; path = ../../Area.cpp; sourceTree = "<group>"; };
+		4B1CB75A186BB59200067310 /* Area.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Area.h; path = ../../Area.h; sourceTree = "<group>"; };
 		4B1E686F18554BFD003A9847 /* Phantasma.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Phantasma.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B1E687218554BFD003A9847 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4B1E687518554BFD003A9847 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -177,6 +180,8 @@
 				4B1E68B81855571E003A9847 /* GameState.h */,
 				4B8BC74F18616B01003D9447 /* Game.cpp */,
 				4B8BC75018616B01003D9447 /* Game.h */,
+				4B1CB759186BB59200067310 /* Area.cpp */,
+				4B1CB75A186BB59200067310 /* Area.h */,
 				4B1E68AD18555112003A9847 /* OS X */,
 				4B1E687918554BFD003A9847 /* Supporting Files */,
 			);
@@ -353,6 +358,7 @@
 				4B600A5A18681BE300A1294E /* VertexBuffer.cpp in Sources */,
 				4B1CB755186B6BC900067310 /* Sensor.cpp in Sources */,
 				4B1CB74F186B6AD000067310 /* GeometricObject.cpp in Sources */,
+				4B1CB75B186BB59200067310 /* Area.cpp in Sources */,
 				4B600A6818681C2000A1294E /* 16bitDetokeniser.cpp in Sources */,
 				4B1E687F18554BFD003A9847 /* main.m in Sources */,
 				4B8BC75118616B01003D9447 /* Game.cpp in Sources */,
