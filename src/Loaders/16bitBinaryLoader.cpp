@@ -12,6 +12,7 @@
 #include "16bitDetokeniser.h"
 
 #include "Object.h"
+#include "Area.h"
 
 #include <map>
 
@@ -179,7 +180,7 @@ static shared_ptr<Object> loadObject(StreamLoader &stream)
 	return returnObject;
 }
 
-static void loadArea(StreamLoader &stream)
+static shared_ptr<Area> loadArea(StreamLoader &stream)
 {
 	// the lowest bit of this value seems to indicate
 	// horizon on or off; this is as much as I currently know
@@ -205,8 +206,8 @@ static void loadArea(StreamLoader &stream)
 	// we'll need to collate all objects and entrances; it's likely a
 	// plain C array would do but maps are safer and the total application
 	// cost is going to be negligible regardless
-	std::map<uint16_t, shared_ptr<Object>> objectsByID;
-	std::map<uint16_t, shared_ptr<Object>> entrancesByID;
+	ObjectMap *objectsByID = new ObjectMap;
+	ObjectMap *entrancesByID = new ObjectMap;
 
 	// get the objects or whatever; entrances use a unique numbering
 	// system and have the high bit of their IDs set in the original file
@@ -218,20 +219,19 @@ static void loadArea(StreamLoader &stream)
 		{
 			if(newObject->getType() == Object::Entrance)
 			{
-				entrancesByID[newObject->getObjectID() & 0x7fff] = newObject;
+				(*entrancesByID)[newObject->getObjectID() & 0x7fff] = newObject;
 			}
 			else
 			{
-				objectsByID[newObject->getObjectID()] = newObject;
+				(*objectsByID)[newObject->getObjectID()] = newObject;
 			}
 		}
 	}
 
-	cout << objectsByID.size() << " Objects" << endl;
-	cout << entrancesByID.size() << " Entrances" << endl;
+	return shared_ptr<Area>(new Area(areaNumber, objectsByID, entrancesByID));
 }
 
-bool load16bitBinary(vector <uint8_t> &binary)
+Game *load16bitBinary(vector <uint8_t> &binary)
 {
 	StreamLoader streamLoader(binary);
 
@@ -252,7 +252,7 @@ bool load16bitBinary(vector <uint8_t> &binary)
 
 	// check that the next two bytes are "PC", then
 	// skip the number that comes after
-	if(streamLoader.get8() != 'C' || streamLoader.get8() != 'P') return false;
+	if(streamLoader.get8() != 'C' || streamLoader.get8() != 'P') return NULL;
 	streamLoader.get16();
 
 	// start grabbing some of the basics...
@@ -358,17 +358,23 @@ bool load16bitBinary(vector <uint8_t> &binary)
 		cout << *detokenise16bitCondition(*conditionData) << endl;
 	}
 
-	// grab the areas (well, for now, print them)
+	// grab the areas
+	AreaMap *areaMap = new AreaMap;
 	for(uint16_t area = 0; area < numberOfAreas; area++)
 	{
 //		cout << "Area " << area+1 << endl;
 
 		streamLoader.setFileOffset(fileOffsetForArea[area] + baseOffset);
-		loadArea(streamLoader);
+		shared_ptr<Area> newArea = loadArea(streamLoader);
+		
+		if(newArea.get())
+		{
+			(*areaMap)[newArea->getAreaID()] = newArea;
+		}
 
 		cout << endl;
 	}
 
 	delete[] fileOffsetForArea;
-	return true;
+	return new Game(areaMap);
 }

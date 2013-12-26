@@ -10,13 +10,18 @@
 #define __Phantasma__Game__
 
 #include <iostream>
+#include <map>
+
+class Area;
+typedef std::map<uint16_t, std::shared_ptr<Area>> AreaMap;
 
 class VertexBuffer;
 class Game
 {
 	public:
 
-		Game();
+		Game(AreaMap *areasByAreaID);
+		virtual ~Game();
 
 		void setAspectRatio(float aspectRatio);
 		void draw();
@@ -28,6 +33,8 @@ class Game
 		uint32_t timeOfLastTick;
 		bool hasReceivedTime;
 		VertexBuffer *vertexBuffer;
+
+		AreaMap *areasByAreaID;
 };
 
 #endif /* defined(__Phantasma__Game__) */

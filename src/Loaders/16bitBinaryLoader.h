@@ -12,12 +12,10 @@
 #include <iostream>
 #include <vector>
 #include <stdint.h>
+#include "Game.h"
 
 using namespace std;
 
-/*
-	TODO: this should return a game object, obviously
-*/
-bool load16bitBinary(vector <uint8_t> &tokenisedCondition);
+Game *load16bitBinary(vector <uint8_t> &);
 
 #endif /* defined(__Phantasma___6bitBinaryLoader__) */

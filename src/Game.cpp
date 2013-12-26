@@ -13,9 +13,15 @@
 
 static float angle = 180.0f;
 
-Game::Game()
+Game::Game(AreaMap *_areasByAreaID)
 {
 	hasReceivedTime = false;
+	areasByAreaID = _areasByAreaID;
+}
+
+Game::~Game()
+{
+	delete areasByAreaID;
 }
 
 void Game::setAspectRatio(float aspectRatio)

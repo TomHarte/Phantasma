@@ -102,9 +102,9 @@ static CVReturn CVDisplayLinkCallback(
 		(CGLPixelFormatObj)[[self.openGLView pixelFormat] CGLPixelFormatObj]);
 	CVDisplayLinkStart(_displayLink);
 
-	_game = new Game;
+	_game = load16bitBinary(dataVector);
 
-	return load16bitBinary(dataVector);
+	return !!_game;
 }
 
 - (void)setOpenGLView:(NSOpenGLView *)openGLView
