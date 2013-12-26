@@ -7,6 +7,7 @@
 //
 
 #include "Area.h"
+#include "Object.h"
 
 Object *Area::objectWithIDFromMap(ObjectMap *map, uint16_t objectID)
 {
@@ -36,12 +37,18 @@ Area::Area(
 	ObjectMap *_entrancesByID)
 {
 	areaID = _areaID;
-	_objectsByID = objectsByID;
-	_entrancesByID = entrancesByID;
+	objectsByID = _objectsByID;
+	entrancesByID = _entrancesByID;
 }
 
 Area::~Area()
 {
+	for(ObjectMap::iterator iterator = entrancesByID->begin(); iterator != entrancesByID->end(); iterator++)
+		delete iterator->second;
+
+	for(ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++)
+		delete iterator->second;
+
 	delete entrancesByID;
 	delete objectsByID;
 }
