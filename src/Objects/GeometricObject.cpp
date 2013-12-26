@@ -207,7 +207,7 @@ VertexBuffer *GeometricObject::newVertexBuffer()
 {
 	VertexBuffer *newBuffer = new VertexBuffer;
 
-	newBuffer->addAttribute(ObjectGLAttributePosition,	3,	GL_UNSIGNED_SHORT,		GL_FALSE);
+	newBuffer->addAttribute(ObjectGLAttributePosition,	3,	GL_UNSIGNED_SHORT,	GL_FALSE);
 	newBuffer->addAttribute(ObjectGLAttributeColour,	3,	GL_UNSIGNED_BYTE,	GL_TRUE);
 
 	return newBuffer;
@@ -291,7 +291,7 @@ void GeometricObject::draw(VertexBuffer *areaBuffer)
 	// colour depending which face it belongs to — if you stripped and joined with degenerate
 	// triangles you'd end up with an array of indices exactly as long as just supplying the
 	// triangles directly — four per face plus two two transition to the next face
-	glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLushort), GL_UNSIGNED_SHORT, drawindices);
+	glDrawElements(GL_TRIANGLES, sizeof(drawindices) / sizeof(GLushort), GL_UNSIGNED_SHORT, drawindices);
 }
 
 #pragma mark -

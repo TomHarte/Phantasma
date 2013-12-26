@@ -11,7 +11,7 @@
 #include "Matrix.h"
 #include "VertexBuffer.h"
 
-static float angle = 180.0f;
+static float angle = 45.0f;
 
 Game::Game(AreaMap *_areasByAreaID)
 {
@@ -27,7 +27,7 @@ Game::~Game()
 void Game::setAspectRatio(float aspectRatio)
 {
 	// create a projection matrix
-	Matrix projectionMatrix = Matrix::projectionMatrix(60.0f, aspectRatio, 1.0f, 1000.0f);
+	Matrix projectionMatrix = Matrix::projectionMatrix(60.0f, aspectRatio, 1.0f, 10000.0f);
 	GeometricObject::setProjectionMatrix(projectionMatrix.contents);
 }
 
@@ -37,9 +37,9 @@ void Game::draw()
 	glClearColor(1.0f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	Matrix rotationMatrix = Matrix::rotationMatrix(angle, 1.0f, 1.0f, 0.0f);
-	Matrix translationMatrix = Matrix::translationMatrix(0.0f, 0.0f, -5.0f);
-	GeometricObject::setViewMatrix((translationMatrix * rotationMatrix).contents);
+	Matrix rotationMatrix = Matrix::rotationMatrix(angle, 0.0f, 1.0f, 0.0f);
+	Matrix translationMatrix = Matrix::translationMatrix(-1000.0f, -300.0f, -1000.0f);
+	GeometricObject::setViewMatrix((rotationMatrix * translationMatrix).contents);
 
 	(*areasByAreaID)[1]->draw();
 //	GeometricObject::drawTestObject(vertexBuffer);
@@ -66,7 +66,7 @@ void Game::advanceToTime(uint32_t millisecondsSinceArbitraryMoment)
 	uint32_t timeDifference = millisecondsSinceArbitraryMoment - timeOfLastTick;
 
 	// TODO: player movement updates out here
-	angle += (float)timeDifference / 10.0f;
+	angle += (float)timeDifference / 200.0f;
 
 	// we'll advance at 50hz, which makes for some easy integer arithmetic here
 	while(timeDifference > 20)
