@@ -257,19 +257,21 @@ Game *load16bitBinary(vector <uint8_t> &binary)
 	vector<uint8_t>::size_type baseOffset = 0;
 
 	// check whether this looks like an Amiga game; if so it'll start with AM
-	// XOR'd with the repeating byte pattern 0x71, 0xc1
-	streamLoader.setReadMask(0x71, 0xc1);
+	// XOR'd with the repeating byte pattern 0x71, 0xc1 or with the pattern
+	// 0x88 0x2c if it's on the ST (though the signature will still be AM)
 	uint16_t platformID = streamLoader.get16();
-	if((platformID&0xff) == 'M' && (platformID >> 8) == 'A')
+
+	if(
+		(platformID == 12428) || (platformID == 51553)
+	)
 	{
 		// TODO: record original platform type, so we can decode the palette
 		// and possibly the border properly
+
+		streamLoader.setReadMask((platformID >> 8) ^ 'A', (platformID & 0xff) ^ 'M');
 	}
 	else
 	{
-		// reset the stream mask
-		streamLoader.setReadMask(0, 0);
-
 		// find DOS end of file and consume it
 		while(!streamLoader.eof() && streamLoader.get8() != 0x1a);
 		streamLoader.get8();
