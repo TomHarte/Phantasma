@@ -49,6 +49,9 @@ class Object
 		Vector3d	getOrigin();
 		Vector3d	getSize();
 
+		virtual void setupOpenGL(VertexBuffer *areaBuffer);
+		virtual void draw(VertexBuffer *areaBuffer);
+
 	protected:
 		Type type;
 		uint16_t objectID;

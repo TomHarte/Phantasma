@@ -11,11 +11,10 @@
 
 #include <iostream>
 #include <map>
+#include "Area.h"
 
-class Area;
+
 typedef std::map<uint16_t, std::shared_ptr<Area>> AreaMap;
-
-class VertexBuffer;
 class Game
 {
 	public:
@@ -32,7 +31,6 @@ class Game
 	private:
 		uint32_t timeOfLastTick;
 		bool hasReceivedTime;
-		VertexBuffer *vertexBuffer;
 
 		AreaMap *areasByAreaID;
 };

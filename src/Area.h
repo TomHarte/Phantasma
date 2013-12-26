@@ -11,8 +11,9 @@
 
 #include <iostream>
 #include <map>
+#include "Object.h"
+#include "VertexBuffer.h"
 
-class Object;
 typedef std::map<uint16_t, Object *> ObjectMap;
 
 class Area
@@ -28,12 +29,17 @@ class Area
 		Object *entranceWithID(uint16_t objectID);
 		uint16_t getAreaID();
 
+		void setupOpenGL();
+		void draw();
+
 	private:
 		uint16_t areaID;
 		ObjectMap *objectsByID;
 		ObjectMap *entrancesByID;
 
 		Object *objectWithIDFromMap(ObjectMap *map, uint16_t objectID);
+
+		VertexBuffer *areaBuffer;
 };
 
 #endif /* defined(__Phantasma__Area__) */

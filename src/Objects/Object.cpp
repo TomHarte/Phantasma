@@ -12,3 +12,6 @@ Object::Type Object::getType()	{	return type;		}
 uint16_t Object::getObjectID()	{	return objectID;	}
 Vector3d Object::getOrigin()	{	return origin;		}
 Vector3d Object::getSize()		{	return size;		}
+
+void Object::setupOpenGL(VertexBuffer *areaBuffer)		{}
+void Object::draw(VertexBuffer *areaBuffer)				{}

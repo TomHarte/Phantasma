@@ -17,7 +17,6 @@ Game::Game(AreaMap *_areasByAreaID)
 {
 	hasReceivedTime = false;
 	areasByAreaID = _areasByAreaID;
-	vertexBuffer = nullptr;
 }
 
 Game::~Game()
@@ -42,15 +41,16 @@ void Game::draw()
 	Matrix translationMatrix = Matrix::translationMatrix(0.0f, 0.0f, -5.0f);
 	GeometricObject::setViewMatrix((translationMatrix * rotationMatrix).contents);
 
-	GeometricObject::drawTestObject(vertexBuffer);
+	(*areasByAreaID)[1]->draw();
+//	GeometricObject::drawTestObject(vertexBuffer);
 }
 
 void Game::setupOpenGL()
 {
 	GeometricObject::setupOpenGL();
 
-	if(!vertexBuffer)
-		vertexBuffer = GeometricObject::newVertexBuffer();
+	for(AreaMap::iterator iterator = areasByAreaID->begin(); iterator != areasByAreaID->end(); iterator++)
+		iterator->second->setupOpenGL();
 }
 
 void Game::advanceToTime(uint32_t millisecondsSinceArbitraryMoment)

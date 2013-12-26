@@ -203,85 +203,95 @@ void GeometricObject::setViewMatrix(const GLfloat *projectionMatrix)
 #pragma mark -
 #pragma mark Temporary Test Code
 
-void GeometricObject::drawTestObject(VertexBuffer *areaBuffer)
+VertexBuffer *GeometricObject::newVertexBuffer()
+{
+	VertexBuffer *newBuffer = new VertexBuffer;
+
+	newBuffer->addAttribute(ObjectGLAttributePosition,	3,	GL_UNSIGNED_SHORT,		GL_FALSE);
+	newBuffer->addAttribute(ObjectGLAttributeColour,	3,	GL_UNSIGNED_BYTE,	GL_TRUE);
+
+	return newBuffer;
+}
+
+#pragma mark -
+#pragma mark Rendering
+
+void GeometricObject::setupOpenGL(VertexBuffer *areaBuffer)
+{
+	// get the two attributes
+	VertexAttribute *positionAttribute = areaBuffer->attributeForIndex(ObjectGLAttributePosition);
+	VertexAttribute *colourAttribute = areaBuffer->attributeForIndex(ObjectGLAttributeColour);
+
+	// populate with a cube of the bounding box; TODO: shape and colour properly
+	const GLushort cubeVertexData[] =
+	{
+		(GLushort)origin.x,				(GLushort)origin.y,				(GLushort)(origin.z + size.z),
+		(GLushort)(origin.x + size.x),	(GLushort)origin.y,				(GLushort)(origin.z + size.z),
+
+		(GLushort)origin.x,				(GLushort)(origin.y + size.y),	(GLushort)(origin.z + size.z),
+		(GLushort)(origin.x + size.x),	(GLushort)(origin.y + size.y),	(GLushort)(origin.z + size.z),
+
+		(GLushort)origin.x,				(GLushort)(origin.y + size.y),	(GLushort)origin.z,
+		(GLushort)(origin.x + size.x),	(GLushort)(origin.y + size.y),	(GLushort)origin.z,
+
+		(GLushort)origin.x,				(GLushort)origin.y,				(GLushort)origin.z,
+		(GLushort)(origin.x + size.x),	(GLushort)origin.y,				(GLushort)origin.z,
+	};
+
+	const GLubyte cubeColourData[] =
+	{
+		255,	0,		0,
+		255,	255,	0,
+		255,	255,	255,
+		0,		255,	255,
+		255,	0,		0,
+		255,	255,	0,
+		255,	255,	255,
+		0,		255,	255,
+	};
+
+	delete[] indices;
+	indices = new GLushort[8];
+
+	for(int c = 0; c < 8; c++)
+	{
+		positionAttribute->setValue(&cubeVertexData[c*3]);
+		colourAttribute->setValue(&cubeColourData[c*3]);
+		indices[c] = (GLushort)areaBuffer->commitVertex();
+	}
+}
+
+void GeometricObject::draw(VertexBuffer *areaBuffer)
 {
 	areaBuffer->bind();
 
-	GLushort indices[] =
+	GLushort drawindices[] =
 	{
-		0, 1, 2,
-		2, 1, 3,
+		indices[0], indices[1], indices[2],
+		indices[2], indices[1], indices[3],
 
-		2, 3, 4,
-		4, 3, 5,
+		indices[2], indices[3], indices[4],
+		indices[4], indices[3], indices[5],
 
-		4, 5, 6,
-		6, 5, 7,
+		indices[4], indices[5], indices[6],
+		indices[6], indices[5], indices[7],
 
-		6, 7, 0,
-		0, 7, 1,
+		indices[6], indices[7], indices[0],
+		indices[0], indices[7], indices[1],
 
-		5, 3, 1,
-		7, 5, 1,
+		indices[5], indices[3], indices[1],
+		indices[7], indices[5], indices[1],
 
-		0, 2, 4,
-		0, 4, 6,
+		indices[0], indices[2], indices[4],
+		indices[0], indices[4], indices[6],
 	};
-	
+
 	// a triangle strip isn't a helpful option, despite the pure geometrics, because each
 	// face may be coloured differently and therefore each vertex may have a different
 	// colour depending which face it belongs to — if you stripped and joined with degenerate
 	// triangles you'd end up with an array of indices exactly as long as just supplying the
 	// triangles directly — four per face plus two two transition to the next face
-	glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLushort), GL_UNSIGNED_SHORT, indices);
-}
-
-VertexBuffer *GeometricObject::newVertexBuffer()
-{
-	VertexBuffer *newBuffer = new VertexBuffer;
-
-	newBuffer->addAttribute(ObjectGLAttributePosition,	3,	GL_SHORT,			GL_FALSE);
-	newBuffer->addAttribute(ObjectGLAttributeColour,	3,	GL_UNSIGNED_BYTE,	GL_TRUE);
-
-	// TEST CODE: put some vertices and colours into the buffer
-	const GLshort billboardVertexData[] =
-	{
-		-1,	-1,	1,
-		1,	-1,	1,
-
-		-1,	1,	1,
-		1,	1,	1,
-
-		-1,	1,	-1,
-		1,	1,	-1,
-
-		-1,	-1,	-1,
-		1,	-1,	-1,
-	};
-
-	const GLubyte billboardColourData[] =
-	{
-		255,	0,		0,
-		255,	255,	0,
-		255,	255,	255,
-		0,		255,	255,
-		255,	0,		0,
-		255,	255,	0,
-		255,	255,	255,
-		0,		255,	255,
-	};
-
-	VertexAttribute *positionAttribute = newBuffer->attributeForIndex(ObjectGLAttributePosition);
-	VertexAttribute *colourAttribute = newBuffer->attributeForIndex(ObjectGLAttributeColour);
-
-	for(int c = 0; c < 8; c++)
-	{
-		positionAttribute->setValue(&billboardVertexData[c*3]);
-		colourAttribute->setValue(&billboardColourData[c*3]);
-		newBuffer->commitVertex();
-	}
-
-	return newBuffer;
+	glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLushort), GL_UNSIGNED_SHORT, drawindices);
 }
 
 #pragma mark -
@@ -304,4 +314,11 @@ GeometricObject::GeometricObject(
 	if(_colours)	colours		= std::shared_ptr<std::vector<uint8_t>>(_colours);
 	if(_ordinates)	ordinates	= std::shared_ptr<std::vector<uint16_t>>(_ordinates);
 	condition = _condition;
+
+	indices = nullptr;
+}
+
+GeometricObject::~GeometricObject()
+{
+	delete[] indices;
 }

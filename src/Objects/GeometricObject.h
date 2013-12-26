@@ -22,8 +22,6 @@ class GeometricObject: public Object
 		static void setProjectionMatrix(const GLfloat *projectionMatrix);
 		static void setViewMatrix(const GLfloat *projectionMatrix);
 
-		static void drawTestObject(VertexBuffer *areaBuffer);
-
 		static VertexBuffer *newVertexBuffer();
 
 		GeometricObject(
@@ -34,6 +32,10 @@ class GeometricObject: public Object
 			std::vector<uint8_t> *colours,
 			std::vector<uint16_t> *ordinates,
 			FCLInstructionVector condition);
+		virtual ~GeometricObject();
+
+		void setupOpenGL(VertexBuffer *areaBuffer);
+		void draw(VertexBuffer *areaBuffer);
 
 	private:
 		static GLuint openGLProgram;
@@ -43,6 +45,8 @@ class GeometricObject: public Object
 		FCLInstructionVector condition;
 		std::shared_ptr<std::vector<uint8_t>> colours;
 		std::shared_ptr<std::vector<uint16_t>> ordinates;
+
+		GLushort *indices;
 };
 
 #endif /* defined(__Phantasma__GeometricObject__) */

@@ -39,6 +39,7 @@ Area::Area(
 	areaID = _areaID;
 	objectsByID = _objectsByID;
 	entrancesByID = _entrancesByID;
+	areaBuffer = nullptr;
 }
 
 Area::~Area()
@@ -51,4 +52,19 @@ Area::~Area()
 
 	delete entrancesByID;
 	delete objectsByID;
+}
+
+void Area::setupOpenGL()
+{
+	delete areaBuffer;
+	areaBuffer = GeometricObject::newVertexBuffer();
+
+	for(ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++)
+		iterator->second->setupOpenGL(areaBuffer);
+}
+
+void Area::draw()
+{
+	for(ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++)
+		iterator->second->draw(areaBuffer);
 }
