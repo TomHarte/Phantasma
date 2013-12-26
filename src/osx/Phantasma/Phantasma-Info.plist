@@ -11,8 +11,30 @@
 			<array>
 				<string>run</string>
 			</array>
+			<key>CFBundleTypeMIMETypes</key>
+			<array>
+				<string>application/octet-stream</string>
+			</array>
 			<key>CFBundleTypeName</key>
-			<string>3d Construction Kit Project</string>
+			<string>3d Construction Kit Game (PC)</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
+			<key>NSDocumentClass</key>
+			<string>PTDocument</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>dat</string>
+			</array>
+			<key>CFBundleTypeMIMETypes</key>
+			<array>
+				<string>application/octet-stream</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>3d Construction Kit Game (Amiga)</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>

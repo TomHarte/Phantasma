@@ -21,18 +21,32 @@ class StreamLoader
 	private:
 		vector<uint8_t>::size_type bytePointer;
 		vector <uint8_t> binary;
+		uint8_t readMaskByte1;
+		uint8_t readMaskByte2;
 
 	public:
 		StreamLoader(vector <uint8_t> &_binary)
 		{
 			binary = _binary;
 			bytePointer = 0;
+			readMaskByte1 = 0;
+			readMaskByte2 = 0;
 		}
 
 		uint8_t get8()
 		{
 			if(!eof())
-				return binary[bytePointer++];
+			{
+				uint8_t sourceByte = binary[bytePointer];
+				
+				if(bytePointer&1)
+					sourceByte ^= readMaskByte2;
+				else
+					sourceByte ^= readMaskByte1;
+
+				bytePointer++;
+				return sourceByte;
+			}
 
 			return 0;
 		}
@@ -84,6 +98,12 @@ class StreamLoader
 		void setFileOffset(vector<uint8_t>::size_type newOffset)
 		{
 			bytePointer = newOffset;
+		}
+		
+		void setReadMask(uint8_t byte1, uint8_t byte2)
+		{
+			readMaskByte1 = byte1;
+			readMaskByte2 = byte2;
 		}
 };
 
@@ -234,24 +254,43 @@ Game *load16bitBinary(vector <uint8_t> &binary)
 {
 	StreamLoader streamLoader(binary);
 
-	// find DOS end of file and consume it
-	while(!streamLoader.eof() && streamLoader.get8() != 0x1a);
-	streamLoader.get8();
+	vector<uint8_t>::size_type baseOffset = 0;
 
-	// advance to the next two-byte boundary if necessary
-	streamLoader.alignPointer();
+	// check whether this looks like an Amiga game; if so it'll start with AM
+	// XOR'd with the repeating byte pattern 0x71, 0xc1
+	streamLoader.setReadMask(0x71, 0xc1);
+	uint16_t platformID = streamLoader.get16();
+	if((platformID&0xff) == 'M' && (platformID >> 8) == 'A')
+	{
+		// TODO: record original platform type, so we can decode the palette
+		// and possibly the border properly
+	}
+	else
+	{
+		// reset the stream mask
+		streamLoader.setReadMask(0, 0);
 
-	// skip bytes with meaning unknown
-	streamLoader.get16();
+		// find DOS end of file and consume it
+		while(!streamLoader.eof() && streamLoader.get8() != 0x1a);
+		streamLoader.get8();
 
-	// this brings us to the beginning of the embedded
-	// .KIT file, so we'll grab the base offset for
-	// finding areas later
-	vector<uint8_t>::size_type baseOffset = streamLoader.getFileOffset();
+		// advance to the next two-byte boundary if necessary
+		streamLoader.alignPointer();
 
-	// check that the next two bytes are "PC", then
-	// skip the number that comes after
-	if(streamLoader.get8() != 'C' || streamLoader.get8() != 'P') return NULL;
+		// skip bytes with meaning unknown
+		streamLoader.get16();
+
+		// this brings us to the beginning of the embedded
+		// .KIT file, so we'll grab the base offset for
+		// finding areas later
+		baseOffset = streamLoader.getFileOffset();
+
+		// check that the next two bytes are "PC", then
+		// skip the number that comes after
+		if(streamLoader.get8() != 'C' || streamLoader.get8() != 'P') return NULL;
+	}
+
+	// skip an unknown meaning
 	streamLoader.get16();
 
 	// start grabbing some of the basics...
