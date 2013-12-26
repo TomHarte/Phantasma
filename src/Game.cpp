@@ -17,6 +17,7 @@ Game::Game(AreaMap *_areasByAreaID)
 {
 	hasReceivedTime = false;
 	areasByAreaID = _areasByAreaID;
+	vertexBuffer = nullptr;
 }
 
 Game::~Game()
