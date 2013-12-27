@@ -23,7 +23,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="507" height="413"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <openGLView samplingRate="" useAuxiliaryDepthBufferStencil="NO" useDoubleBufferingEnabled="YES" allowOffline="YES" wantsBestResolutionOpenGLSurface="YES" id="E4p-c9-yu5">
+                    <openGLView useAuxiliaryDepthBufferStencil="NO" useDoubleBufferingEnabled="YES" allowOffline="YES" wantsBestResolutionOpenGLSurface="YES" id="E4p-c9-yu5" customClass="PTOpenGLView">
                         <rect key="frame" x="0.0" y="0.0" width="507" height="413"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     </openGLView>
@@ -31,6 +31,7 @@
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="17"/>
+                <outlet property="initialFirstResponder" destination="E4p-c9-yu5" id="SP6-Ug-zlk"/>
             </connections>
         </window>
         <customObject id="-3" userLabel="Application"/>

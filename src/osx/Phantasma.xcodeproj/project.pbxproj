@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1F7144FE186631A10090828C /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7144FD186631A10090828C /* OpenGL.framework */; };
 		1F714500186638D80090828C /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7144FF186638D80090828C /* CoreVideo.framework */; };
+		4B1A5C54186D241D004F3708 /* PTOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B1A5C53186D241D004F3708 /* PTOpenGLView.m */; };
 		4B1CB74C186B6AB800067310 /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1CB74A186B6AB800067310 /* Object.cpp */; };
 		4B1CB74F186B6AD000067310 /* GeometricObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1CB74D186B6AD000067310 /* GeometricObject.cpp */; };
 		4B1CB752186B6ADB00067310 /* Entrance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1CB750186B6ADB00067310 /* Entrance.cpp */; };
@@ -41,6 +42,8 @@
 /* Begin PBXFileReference section */
 		1F7144FD186631A10090828C /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		1F7144FF186638D80090828C /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		4B1A5C52186D241D004F3708 /* PTOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTOpenGLView.h; sourceTree = "<group>"; };
+		4B1A5C53186D241D004F3708 /* PTOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PTOpenGLView.m; sourceTree = "<group>"; };
 		4B1CB74A186B6AB800067310 /* Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object.cpp; sourceTree = "<group>"; };
 		4B1CB74B186B6AB800067310 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
 		4B1CB74D186B6AD000067310 /* GeometricObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeometricObject.cpp; sourceTree = "<group>"; };
@@ -210,6 +213,8 @@
 				4B1E688718554BFD003A9847 /* PTDocument.xib */,
 				4B1E688A18554BFD003A9847 /* MainMenu.xib */,
 				4B1E688D18554BFD003A9847 /* Images.xcassets */,
+				4B1A5C52186D241D004F3708 /* PTOpenGLView.h */,
+				4B1A5C53186D241D004F3708 /* PTOpenGLView.m */,
 			);
 			name = "OS X";
 			sourceTree = "<group>";
@@ -351,6 +356,7 @@
 				4B600A6D18681C2000A1294E /* Token.cpp in Sources */,
 				4B600A6B18681C2000A1294E /* Instruction.cpp in Sources */,
 				4B1E688618554BFD003A9847 /* PTDocument.mm in Sources */,
+				4B1A5C54186D241D004F3708 /* PTOpenGLView.m in Sources */,
 				4B1E68B91855571E003A9847 /* GameState.cpp in Sources */,
 				4B1CB758186B6BD300067310 /* Group.cpp in Sources */,
 				4B600A6C18681C2000A1294E /* Parser.cpp in Sources */,

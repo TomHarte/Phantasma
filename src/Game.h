@@ -28,11 +28,15 @@ class Game
 
 		void setupOpenGL();
 
+		void rotateView(float x, float y, float z);
+
 	private:
 		uint32_t timeOfLastTick;
 		bool hasReceivedTime;
 
 		AreaMap *areasByAreaID;
+
+		float rotation[3];
 };
 
 #endif /* defined(__Phantasma__Game__) */

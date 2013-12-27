@@ -9,11 +9,12 @@
 #import "PTDocument.h"
 #include "Game.h"
 #include "16bitBinaryLoader.h"
+#include "PTOpenGLView.h"
 #import <libkern/OSAtomic.h>
 
-@interface PTDocument () <NSWindowDelegate>
+@interface PTDocument () <NSWindowDelegate, PTOpenGLViewDelegate>
 
-@property (weak, nonatomic) IBOutlet NSOpenGLView *openGLView;
+@property (weak, nonatomic) IBOutlet PTOpenGLView *openGLView;
 - (void)displayLinkDidCallback;
 
 @end
@@ -96,20 +97,17 @@ static CVReturn CVDisplayLinkCallback(
 	// we'll want to redraw immediately on window resizes
 	self.openGLView.window.delegate = self;
 
-	// configure and start the CV display link
-	CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink,
-		(CGLContextObj)[[self.openGLView openGLContext] CGLContextObj],
-		(CGLPixelFormatObj)[[self.openGLView pixelFormat] CGLPixelFormatObj]);
-	CVDisplayLinkStart(_displayLink);
+//	CVDisplayLinkStart(_displayLink);
 
 	_game = load16bitBinary(dataVector);
 
 	return !!_game;
 }
 
-- (void)setOpenGLView:(NSOpenGLView *)openGLView
+- (void)setOpenGLView:(PTOpenGLView *)openGLView
 {
 	_openGLView = openGLView;
+	self.openGLView.delegate = self;
 
 	// this will be the only context we use, so we can just make it current
 	// here and forget about it
@@ -117,12 +115,33 @@ static CVReturn CVDisplayLinkCallback(
 	_game->setupOpenGL();
 
 	[self setupViewport];
+
+	// configure the CV display link
+	CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink,
+		(CGLContextObj)[[self.openGLView openGLContext] CGLContextObj],
+		(CGLPixelFormatObj)[[self.openGLView pixelFormat] CGLPixelFormatObj]);
+}
+
+- (void)scrollWheel:(NSEvent *)theEvent
+{
+	_game->rotateView((float)theEvent.deltaY, (float)theEvent.deltaX, 0.0f);
+	[self.openGLView setNeedsDisplay:YES];
+}
+
+- (void)keyUp:(NSEvent *)theEvent
+{
+//	NSLog(@"up");
+}
+
+- (void)keyDown:(NSEvent *)theEvent
+{
+//	NSLog(@"down");
 }
 
 - (void)windowDidResize:(NSNotification *)notification
 {
 	[self setupViewport];
-	[self updateDisplay];
+//	[self updateDisplay];
 }
 
 - (void)setupViewport
@@ -163,6 +182,11 @@ static CVReturn CVDisplayLinkCallback(
 	}
 }
 
+- (void)drawOpenGLView:(PTOpenGLView *)openGLView
+{
+	[self updateDisplay];
+}
+
 - (void)updateDisplay
 {
 	[self.openGLView.openGLContext makeCurrentContext];
@@ -179,7 +203,7 @@ static CVReturn CVDisplayLinkCallback(
 
 - (void)close
 {
-	CVDisplayLinkStop(_displayLink);
+//	CVDisplayLinkStop(_displayLink);
 	delete _game;
 	_game = NULL;
 

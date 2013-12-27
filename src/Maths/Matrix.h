@@ -24,6 +24,6 @@ class Matrix
 		GLfloat contents[16];
 };
 
-Matrix operator *(Matrix &, Matrix &);
+Matrix operator *(Matrix, Matrix);
 
 #endif

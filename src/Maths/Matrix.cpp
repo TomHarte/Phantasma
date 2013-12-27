@@ -124,7 +124,7 @@ Matrix Matrix::projectionMatrix(GLfloat yFieldOfView, GLfloat aspectRatio, GLflo
 	return Matrix(contents);
 }
 
-Matrix operator *(Matrix &left, Matrix &right)
+Matrix operator *(Matrix left, Matrix right)
 {
 	GLfloat result[16];
 
