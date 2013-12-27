@@ -15,3 +15,4 @@ Vector3d Object::getSize()		{	return size;		}
 
 void Object::setupOpenGL(VertexBuffer *areaBuffer)		{}
 void Object::draw(VertexBuffer *areaBuffer)				{}
+bool Object::isDrawable()								{	return false;	}

@@ -36,6 +36,7 @@ class GeometricObject: public Object
 
 		void setupOpenGL(VertexBuffer *areaBuffer);
 		void draw(VertexBuffer *areaBuffer);
+		bool isDrawable();
 
 	private:
 		static GLuint openGLProgram;

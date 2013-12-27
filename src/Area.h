@@ -30,12 +30,13 @@ class Area
 		uint16_t getAreaID();
 
 		void setupOpenGL();
-		void draw();
+		void draw(float *playerPosition);
 
 	private:
 		uint16_t areaID;
 		ObjectMap *objectsByID;
 		ObjectMap *entrancesByID;
+		std::vector<Object *> drawableObjects;
 
 		Object *objectWithIDFromMap(ObjectMap *map, uint16_t objectID);
 

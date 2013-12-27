@@ -51,6 +51,7 @@ class Object
 
 		virtual void setupOpenGL(VertexBuffer *areaBuffer);
 		virtual void draw(VertexBuffer *areaBuffer);
+		virtual bool isDrawable();
 
 	protected:
 		Type type;

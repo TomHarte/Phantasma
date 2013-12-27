@@ -20,9 +20,9 @@ Game::Game(AreaMap *_areasByAreaID)
 	rotation[1] =
 	rotation[2] = 0.0f;
 
-	position[0] = -1000.0f;
-	position[1] = -300.0f;
-	position[2] = -1000.0f;
+	position[0] = 1000.0f;
+	position[1] = 300.0f;
+	position[2] = 1000.0f;
 
 	velocity[0] =
 	velocity[1] =
@@ -49,7 +49,7 @@ void Game::draw()
 
 	GeometricObject::setViewMatrix((rotationMatrix * translationMatrix).contents);
 
-	(*areasByAreaID)[1]->draw();
+	(*areasByAreaID)[1]->draw(position);
 }
 
 void Game::setupOpenGL()
@@ -74,15 +74,15 @@ void Game::advanceToTime(uint32_t millisecondsSinceArbitraryMoment)
 
 	// TODO: player movement updates out here
 	float velocityMultiplier = (float)timeDifference;
-	position[0] += velocityMultiplier * (velocity[0] * rotationMatrix.contents[0] + velocity[2] * rotationMatrix.contents[2]);
-	position[1] += velocityMultiplier * velocity[1];
-	position[2] += velocityMultiplier * (velocity[0] * rotationMatrix.contents[8] + velocity[2] * rotationMatrix.contents[10]);
+	position[0] -= velocityMultiplier * (velocity[0] * rotationMatrix.contents[0] + velocity[2] * rotationMatrix.contents[2]);
+	position[1] -= velocityMultiplier * velocity[1];
+	position[2] -= velocityMultiplier * (velocity[0] * rotationMatrix.contents[8] + velocity[2] * rotationMatrix.contents[10]);
 
 //	position[0] += velocityMultiplier * (velocity[0] * rotationMatrix.contents[0] + velocity[1] * rotationMatrix.contents[1] + velocity[2] * rotationMatrix.contents[2]);
 //	position[1] += velocityMultiplier * (velocity[0] * rotationMatrix.contents[4] + velocity[1] * rotationMatrix.contents[5] + velocity[2] * rotationMatrix.contents[6]);
 //	position[2] += velocityMultiplier * (velocity[0] * rotationMatrix.contents[8] + velocity[1] * rotationMatrix.contents[9] + velocity[2] * rotationMatrix.contents[10]);
 
-	translationMatrix = Matrix::translationMatrix(position[0], position[1], position[2]);
+	translationMatrix = Matrix::translationMatrix(-position[0], -position[1], -position[2]);
 
 	// we'll advance at 50hz, which makes for some easy integer arithmetic here
 	while(timeDifference > 20)

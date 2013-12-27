@@ -322,3 +322,5 @@ GeometricObject::~GeometricObject()
 {
 	delete[] indices;
 }
+
+bool GeometricObject::isDrawable()								{	return true;	}
