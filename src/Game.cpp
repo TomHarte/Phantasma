@@ -47,12 +47,6 @@ void Game::draw()
 	glClearColor(1.0f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	Matrix xRotationMatrix = Matrix::rotationMatrix(rotation[0], 1.0f, 0.0f, 0.0f);
-	Matrix yRotationMatrix = Matrix::rotationMatrix(rotation[1], 0.0f, 1.0f, 0.0f);
-	Matrix zRotationMatrix = Matrix::rotationMatrix(rotation[2], 0.0f, 0.0f, 1.0f);
-	Matrix rotationMatrix = xRotationMatrix * yRotationMatrix * zRotationMatrix;
-
-	Matrix translationMatrix = Matrix::translationMatrix(position[0], position[1], position[2]);
 	GeometricObject::setViewMatrix((rotationMatrix * translationMatrix).contents);
 
 	(*areasByAreaID)[1]->draw();
@@ -80,9 +74,15 @@ void Game::advanceToTime(uint32_t millisecondsSinceArbitraryMoment)
 
 	// TODO: player movement updates out here
 	float velocityMultiplier = (float)timeDifference;
-	position[0] += velocityMultiplier * velocity[0];
+	position[0] += velocityMultiplier * (velocity[0] * rotationMatrix.contents[0] + velocity[2] * rotationMatrix.contents[2]);
 	position[1] += velocityMultiplier * velocity[1];
-	position[2] += velocityMultiplier * velocity[2];
+	position[2] += velocityMultiplier * (velocity[0] * rotationMatrix.contents[8] + velocity[2] * rotationMatrix.contents[10]);
+
+//	position[0] += velocityMultiplier * (velocity[0] * rotationMatrix.contents[0] + velocity[1] * rotationMatrix.contents[1] + velocity[2] * rotationMatrix.contents[2]);
+//	position[1] += velocityMultiplier * (velocity[0] * rotationMatrix.contents[4] + velocity[1] * rotationMatrix.contents[5] + velocity[2] * rotationMatrix.contents[6]);
+//	position[2] += velocityMultiplier * (velocity[0] * rotationMatrix.contents[8] + velocity[1] * rotationMatrix.contents[9] + velocity[2] * rotationMatrix.contents[10]);
+
+	translationMatrix = Matrix::translationMatrix(position[0], position[1], position[2]);
 
 	// we'll advance at 50hz, which makes for some easy integer arithmetic here
 	while(timeDifference > 20)
@@ -99,6 +99,11 @@ void Game::rotateView(float x, float y, float z)
 	rotation[0] -= x;
 	rotation[1] -= y;
 	rotation[2] -= z;
+
+	Matrix xRotationMatrix = Matrix::rotationMatrix(rotation[0], 1.0f, 0.0f, 0.0f);
+	Matrix yRotationMatrix = Matrix::rotationMatrix(rotation[1], 0.0f, 1.0f, 0.0f);
+	Matrix zRotationMatrix = Matrix::rotationMatrix(rotation[2], 0.0f, 0.0f, 1.0f);
+	rotationMatrix = xRotationMatrix * yRotationMatrix * zRotationMatrix;
 }
 
 void Game::setMovementVelocity(float x, float y, float z)

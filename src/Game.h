@@ -12,7 +12,7 @@
 #include <iostream>
 #include <map>
 #include "Area.h"
-
+#include "Matrix.h"
 
 typedef std::map<uint16_t, std::shared_ptr<Area>> AreaMap;
 class Game
@@ -38,6 +38,8 @@ class Game
 		AreaMap *areasByAreaID;
 
 		float rotation[3], velocity[3], position[3];
+		Matrix rotationMatrix;
+		Matrix translationMatrix;
 };
 
 #endif /* defined(__Phantasma__Game__) */
