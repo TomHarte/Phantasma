@@ -19,6 +19,21 @@
 
 @end
 
+typedef enum
+{
+	PTKeyStateNone	= 0x00,
+
+	PTKeyStateW		= 0x01,
+	PTKeyStateS		= 0x02,
+	PTKeyStateA		= 0x04,
+	PTKeyStateD		= 0x08,
+
+	PTKeyStateUp	= 0x10,
+	PTKeyStateDown	= 0x20,
+	PTKeyStateLeft	= 0x40,
+	PTKeyStateRight = 0x80,
+} PTKeyState;
+
 static CVReturn CVDisplayLinkCallback(
 	CVDisplayLinkRef displayLink,
 	const CVTimeStamp *inNow,
@@ -36,6 +51,7 @@ static CVReturn CVDisplayLinkCallback(
 	Game *_game;
 	CVDisplayLinkRef _displayLink;
 	volatile int32_t _displayLinkRedrawQueueCount;
+	uint8_t _keyState;
 }
 
 - (id)init
@@ -128,20 +144,67 @@ static CVReturn CVDisplayLinkCallback(
 	[self.openGLView setNeedsDisplay:YES];
 }
 
+- (PTKeyState)maskForKeyEvent:(NSEvent *)theEvent
+{
+	switch(theEvent.keyCode)
+	{
+		default:	return PTKeyStateNone;
+		
+		case 13:	return PTKeyStateW;
+		case 1:		return PTKeyStateS;
+		case 0:		return PTKeyStateA;
+		case 2:		return PTKeyStateD;
+		
+		case 123:	return PTKeyStateLeft;
+		case 124:	return PTKeyStateRight;
+		case 125:	return PTKeyStateDown;
+		case 126:	return PTKeyStateUp;
+	}
+}
+
 - (void)keyUp:(NSEvent *)theEvent
 {
-//	NSLog(@"up");
+	_keyState &= ~[self maskForKeyEvent:theEvent];
+	[self updateKeyState];
 }
 
 - (void)keyDown:(NSEvent *)theEvent
 {
-//	NSLog(@"down");
+	_keyState |= [self maskForKeyEvent:theEvent];
+	[self updateKeyState];
+}
+
+- (void)updateKeyState
+{
+	if(_keyState)
+	{
+		if(!CVDisplayLinkIsRunning(_displayLink))
+		{
+			_game->advanceToTime( (uint32_t)([NSDate timeIntervalSinceReferenceDate] * 1000) );
+			CVDisplayLinkStart(_displayLink);
+		}
+	}
+	else
+	{
+		if(CVDisplayLinkIsRunning(_displayLink))
+			CVDisplayLinkStop(_displayLink);
+	}
+
+	float sidewaysVelocity = 0.0f;
+	float forwardsVelocity = 0.0f;
+
+	if(_keyState&(PTKeyStateW | PTKeyStateUp))		forwardsVelocity = 1.0f;
+	if(_keyState&(PTKeyStateS | PTKeyStateDown))	forwardsVelocity = -1.0f;
+
+	if(_keyState&(PTKeyStateA | PTKeyStateLeft))	sidewaysVelocity = 1.0f;
+	if(_keyState&(PTKeyStateD | PTKeyStateRight))	sidewaysVelocity = -1.0f;
+
+	_game->setMovementVelocity(sidewaysVelocity, 0.0f, forwardsVelocity);
 }
 
 - (void)windowDidResize:(NSNotification *)notification
 {
 	[self setupViewport];
-//	[self updateDisplay];
 }
 
 - (void)setupViewport

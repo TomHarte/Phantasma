@@ -29,6 +29,7 @@ class Game
 		void setupOpenGL();
 
 		void rotateView(float x, float y, float z);
+		void setMovementVelocity(float x, float y, float z);
 
 	private:
 		uint32_t timeOfLastTick;
@@ -36,7 +37,7 @@ class Game
 
 		AreaMap *areasByAreaID;
 
-		float rotation[3];
+		float rotation[3], velocity[3], position[3];
 };
 
 #endif /* defined(__Phantasma__Game__) */

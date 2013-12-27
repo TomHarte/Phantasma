@@ -19,6 +19,14 @@ Game::Game(AreaMap *_areasByAreaID)
 	rotation[0] =
 	rotation[1] =
 	rotation[2] = 0.0f;
+
+	position[0] = -1000.0f;
+	position[1] = -300.0f;
+	position[2] = -1000.0f;
+
+	velocity[0] =
+	velocity[1] =
+	velocity[2] = 0.0f;
 }
 
 Game::~Game()
@@ -44,7 +52,7 @@ void Game::draw()
 	Matrix zRotationMatrix = Matrix::rotationMatrix(rotation[2], 0.0f, 0.0f, 1.0f);
 	Matrix rotationMatrix = xRotationMatrix * yRotationMatrix * zRotationMatrix;
 
-	Matrix translationMatrix = Matrix::translationMatrix(-1000.0f, -300.0f, -1000.0f);
+	Matrix translationMatrix = Matrix::translationMatrix(position[0], position[1], position[2]);
 	GeometricObject::setViewMatrix((rotationMatrix * translationMatrix).contents);
 
 	(*areasByAreaID)[1]->draw();
@@ -71,7 +79,10 @@ void Game::advanceToTime(uint32_t millisecondsSinceArbitraryMoment)
 	uint32_t timeDifference = millisecondsSinceArbitraryMoment - timeOfLastTick;
 
 	// TODO: player movement updates out here
-
+	float velocityMultiplier = (float)timeDifference;
+	position[0] += velocityMultiplier * velocity[0];
+	position[1] += velocityMultiplier * velocity[1];
+	position[2] += velocityMultiplier * velocity[2];
 
 	// we'll advance at 50hz, which makes for some easy integer arithmetic here
 	while(timeDifference > 20)
@@ -88,4 +99,11 @@ void Game::rotateView(float x, float y, float z)
 	rotation[0] -= x;
 	rotation[1] -= y;
 	rotation[2] -= z;
+}
+
+void Game::setMovementVelocity(float x, float y, float z)
+{
+	velocity[0] = x;
+	velocity[1] = y;
+	velocity[2] = z;
 }
