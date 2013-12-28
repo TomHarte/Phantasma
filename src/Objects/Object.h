@@ -12,9 +12,18 @@
 #include <vector>
 #include "Instruction.h"
 
-typedef struct
+typedef struct Vector3d
 {
 	uint16_t x, y, z;
+	uint16_t &operator [](int index)
+	{
+		switch(index)
+		{
+			default: return x;
+			case 1: return y;
+			case 2: return z;
+		}
+	};
 } Vector3d;
 
 class VertexBuffer;

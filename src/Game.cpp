@@ -37,7 +37,7 @@ Game::~Game()
 void Game::setAspectRatio(float aspectRatio)
 {
 	// create a projection matrix
-	Matrix projectionMatrix = Matrix::projectionMatrix(60.0f, aspectRatio, 1.0f, 10000.0f);
+	Matrix projectionMatrix = Matrix::projectionMatrix(60.0f, aspectRatio, 1.0f, 100000.0f);
 	GeometricObject::setProjectionMatrix(projectionMatrix.contents);
 }
 
