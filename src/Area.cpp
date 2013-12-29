@@ -43,18 +43,11 @@ Area::Area(
 	areaBuffer = nullptr;
 
 	// create a list of drawable obejcts only
-//	int c = 0;
 	for(ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++)
 	{
 		if(iterator->second->isDrawable())
 		{
-//			c++;
-//			if(
-//				(c == 5) ||
-//				(c == 6) ||
-//				(c == 7)
-//			)
-				drawableObjects.push_back(iterator->second);
+			drawableObjects.push_back(iterator->second);
 		}
 	}
 }
@@ -80,7 +73,7 @@ void Area::setupOpenGL()
 		iterator->second->setupOpenGL(areaBuffer);
 }
 
-int compareObjects(Object *object1, Object *object2, float *position)
+static int compareObjects(Object *object1, Object *object2, float *position)
 {
 	Vector3d objectOrigins[2]	= {	object1->getOrigin(),	object2->getOrigin()	};
 	Vector3d objectSizes[2]		= {	object1->getSize(),		object2->getSize()		};
