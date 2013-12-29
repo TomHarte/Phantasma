@@ -277,7 +277,7 @@ class Parser
 					case Token::THEN:
 					{
 						FCLInstructionVector thenInstructions = getInstructions(true);
-						FCLInstructionVector elseInstructions = NULL;
+						FCLInstructionVector elseInstructions = nullptr;
 
 						// check for an else branch
 						Token nextToken = getToken();

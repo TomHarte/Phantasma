@@ -23,7 +23,7 @@ VertexAttribute::VertexAttribute(GLuint _index, GLint _size, GLenum _type, GLboo
 	startOffset = _startOffset;
 
 	// nominate that we haven't got a buffer for prepared values yet
-	preparedValue = NULL;
+	preparedValue = nullptr;
 }
 
 VertexAttribute::~VertexAttribute()
@@ -95,5 +95,5 @@ void VertexAttribute::commitValue()
 void VertexAttribute::deleteTemporaryStorage()
 {
 	delete[] preparedValue;
-	preparedValue = NULL;
+	preparedValue = nullptr;
 }

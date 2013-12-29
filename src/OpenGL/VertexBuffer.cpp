@@ -39,7 +39,7 @@ VertexBuffer::~VertexBuffer()
 	// that pointer is never dereferenced but a subsequent VertexBuffer
 	// might get this address
 	if(boundBuffer == this)
-		boundBuffer = NULL;
+		boundBuffer = nullptr;
 }
 
 void VertexBuffer::bind()

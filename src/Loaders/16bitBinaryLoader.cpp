@@ -150,7 +150,7 @@ static Object *loadObject(StreamLoader &stream)
 
 			// read extra vertices if required...
 			int numberOfOrdinates = GeometricObject::numberOfOrdinatesForType(objectType);
-			std::vector<uint16_t> *ordinates = NULL;
+			std::vector<uint16_t> *ordinates = nullptr;
 
 			if(numberOfOrdinates)
 			{
@@ -196,7 +196,7 @@ static Object *loadObject(StreamLoader &stream)
 	// skip whatever we didn't understand
 	stream.skipBytes(byteSizeOfObject);
 
-	return NULL;
+	return nullptr;
 }
 
 static shared_ptr<Area> loadArea(StreamLoader &stream)
@@ -289,7 +289,7 @@ Game *load16bitBinary(vector <uint8_t> &binary)
 
 		// check that the next two bytes are "PC", then
 		// skip the number that comes after
-		if(streamLoader.get8() != 'C' || streamLoader.get8() != 'P') return NULL;
+		if(streamLoader.get8() != 'C' || streamLoader.get8() != 'P') return nullptr;
 	}
 
 	// skip an unknown meaning

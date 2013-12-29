@@ -12,8 +12,8 @@
 
 Object *Area::objectWithIDFromMap(ObjectMap *map, uint16_t objectID)
 {
-	if(!map) return NULL;
-	if(!map->count(objectID)) return NULL;
+	if(!map) return nullptr;
+	if(!map->count(objectID)) return nullptr;
 	return (*map)[objectID];
 }
 
@@ -87,7 +87,7 @@ static int compareObjects(Object *object1, Object *object2, float *position)
 		int invertResult;
 		int lowerObject;
 
-		if(objectOrigins[1][axis] < objectOrigins[0][axis])
+		if((objectOrigins[1][axis] + objectSizes[1][axis]) <= objectOrigins[0][axis])
 		{
 			invertResult = -1;
 			lowerObject = 1;
@@ -98,7 +98,7 @@ static int compareObjects(Object *object1, Object *object2, float *position)
 			lowerObject = 0;
 		}
 
-		// is there a separating plane between these two at all?
+		// is there a separating plane between these two?
 		uint16_t endOfLowerObject = objectOrigins[lowerObject][axis] + objectSizes[lowerObject][axis];
 		if(endOfLowerObject <= objectOrigins[lowerObject ^ 1][axis])
 		{
@@ -117,7 +117,13 @@ static int compareObjects(Object *object1, Object *object2, float *position)
 
 	// if no opinion was expressed then the two are coplanar, so compare by ID
 	if(separations == 0x7)
+	{
+		std::cout << "x: (" << objectOrigins[0][0] << " " << objectOrigins[0][0]+objectSizes[0][0] << ") (" << objectOrigins[1][0] << " " << objectOrigins[1][0]+objectSizes[1][0] << ")" << std::endl;
+		std::cout << "y: (" << objectOrigins[0][1] << " " << objectOrigins[0][1]+objectSizes[0][1] << ") (" << objectOrigins[1][1] << " " << objectOrigins[1][1]+objectSizes[1][1] << ")" << std::endl;
+		std::cout << "z: (" << objectOrigins[0][2] << " " << objectOrigins[0][2]+objectSizes[0][2] << ") (" << objectOrigins[1][2] << " " << objectOrigins[1][2]+objectSizes[1][2] << ")" << std::endl;
+		std::cout << std::endl;
 		return (object1->getObjectID() < object2->getObjectID()) ? -1 : 1;
+	}
 
 	// otherwise we need all axes with opinions to match
 	int result = 0;
@@ -169,7 +175,7 @@ void Area::draw(float *playerPosition)
 	for(std::vector<Object *>::iterator incomingIterator = drawableObjects.begin(); incomingIterator != drawableObjects.end(); incomingIterator++)
 	{
 		bool didInsert = false;
-	
+
 		for(std::list<Object *>::iterator existingIterator = orderedObjects.begin(); existingIterator != orderedObjects.end(); existingIterator++)
 		{
 			int comparison = compareObjects(*incomingIterator, *existingIterator, playerPosition);
