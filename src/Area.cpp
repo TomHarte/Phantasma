@@ -8,6 +8,7 @@
 
 #include "Area.h"
 #include "Object.h"
+#include <list>
 
 Object *Area::objectWithIDFromMap(ObjectMap *map, uint16_t objectID)
 {
@@ -79,6 +80,70 @@ void Area::setupOpenGL()
 		iterator->second->setupOpenGL(areaBuffer);
 }
 
+int compareObjects(Object *object1, Object *object2, float *position)
+{
+	Vector3d objectOrigins[2]	= {	object1->getOrigin(),	object2->getOrigin()	};
+	Vector3d objectSizes[2]		= {	object1->getSize(),		object2->getSize()		};
+
+	int results[3] = {0, 0, 0};
+
+	for(int axis = 0; axis < 3; axis++)
+	{
+		// figure out which box is lower down this axis than the other
+		int invertResult;
+		int lowerObject;
+
+		if(objectOrigins[1][axis] < objectOrigins[0][axis])
+		{
+			invertResult = -1;
+			lowerObject = 1;
+		}
+		else
+		{
+			invertResult = 1;
+			lowerObject = 0;
+		}
+
+		// is there a separating plane between these two at all?
+		uint16_t endOfLowerObject = objectOrigins[lowerObject][axis] + objectSizes[lowerObject][axis];
+		if(endOfLowerObject <= objectOrigins[lowerObject ^ 1][axis])
+		{
+			// if so, is the player positioned within the gap? We don't have
+			// an opinion on draw order if that's the case
+			if((position[axis] < endOfLowerObject) || (position[axis] >  objectOrigins[lowerObject ^ 1][axis]))
+			{
+				int result = (position[axis] >= endOfLowerObject) ? 1 : -1;
+				result *= invertResult;
+				results[axis] = result;
+			}
+		}
+	}
+
+	// if no opinion was expressed then the two are coplanar, so compare by ID
+	if(!results[0] && !results[1] && !results[2])
+		return (object1->getObjectID() < object2->getObjectID()) ? -1 : 1;
+
+	// otherwise we need all axes with opinions to match
+	int result = 0;
+	for(int c = 0; c < 3; c++)
+	{
+		if(results[c])
+		{
+			if(!result)
+			{
+				result = results[c];
+			}
+			else
+			{
+				if(results[c] != result)
+					return 0;
+			}
+		}
+	}
+
+	return result;
+}
+
 void Area::draw(float *playerPosition)
 {
 	/*
@@ -103,78 +168,30 @@ void Area::draw(float *playerPosition)
 				overdraw is not a concern.
 
 	*/
-/*	static const char *names[] =
-	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		"building",
-		"awning",
-		"block",
-		
-	};*/
+	std::list <Object *> orderedObjects;
 
-	struct PositionComparitor
+	for(std::vector<Object *>::iterator incomingIterator = drawableObjects.begin(); incomingIterator != drawableObjects.end(); incomingIterator++)
 	{
-		float *position;
-		
-		bool operator() (Object *object1, Object *object2)
+		bool didInsert = false;
+	
+		for(std::list<Object *>::iterator existingIterator = orderedObjects.begin(); existingIterator != orderedObjects.end(); existingIterator++)
 		{
-//			std::cout << names[object1->getObjectID()] << " v " << names[object2->getObjectID()] << "; ";
+			int comparison = compareObjects(*incomingIterator, *existingIterator, playerPosition);
 
-			Vector3d objectOrigins[2]	= {	object1->getOrigin(),	object2->getOrigin()	};
-			Vector3d objectSizes[2]		= {	object1->getSize(),		object2->getSize()		};
-
-			for(int axis = 0; axis < 3; axis++)
+			if(comparison > 0)
 			{
-				// figure out which box is lower down this axis than the other
-				bool invertResult;
-				int lowerObject;
-				
-				if(objectOrigins[1][axis] < objectOrigins[0][axis])
-				{
-					invertResult = true;
-					lowerObject = 1;
-				}
-				else
-				{
-					invertResult = false;
-					lowerObject = 0;
-				}
-
-				// is there a separating plane between these two at all?
-				uint16_t endOfLowerObject = objectOrigins[lowerObject][axis] + objectSizes[lowerObject][axis];
-				if(endOfLowerObject <= objectOrigins[lowerObject ^ 1][axis])
-				{
-					// if so, is the player positioned within the gap? We don't have
-					// an opinion on draw order if that's the case
-					if((position[axis] < endOfLowerObject) || (position[axis] >  objectOrigins[lowerObject ^ 1][axis]))
-					{
-						bool result = (position[axis] >= endOfLowerObject) ^ invertResult;
-//						std::cout << "axis: " << names[(result ? object1->getObjectID() : object2->getObjectID())] << std::endl;
-						return result;
-					}
-				}
+				didInsert = true;
+				orderedObjects.insert(existingIterator, *incomingIterator);
+				break;
 			}
-
-			// if no separation was found, sort by object ID
-//			std::cout << "ID: " << names[((object1->getObjectID() < object2->getObjectID()) ? object1->getObjectID() : object2->getObjectID())] << std::endl;
-			return object1->getObjectID() < object2->getObjectID();
 		}
-	} comparitor;
-	comparitor.position = playerPosition;
 
-//	std::cout << "===" << std::endl;
-	std::sort(drawableObjects.begin(), drawableObjects.end(), comparitor);
-
-	for(std::vector<Object *>::iterator iterator = drawableObjects.begin(); iterator != drawableObjects.end(); iterator++)
-	{
-//		std::cout << names[(*iterator)->getObjectID()] << " ";
-		(*iterator)->draw(areaBuffer);
+		if(!didInsert)
+			orderedObjects.push_back(*incomingIterator);
 	}
 
-//	std::cout << std::endl;
+	for(std::list<Object *>::iterator iterator = orderedObjects.begin(); iterator != orderedObjects.end(); iterator++)
+	{
+		(*iterator)->draw(areaBuffer);
+	}
 }
