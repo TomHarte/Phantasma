@@ -86,6 +86,7 @@ int compareObjects(Object *object1, Object *object2, float *position)
 	Vector3d objectSizes[2]		= {	object1->getSize(),		object2->getSize()		};
 
 	int results[3] = {0, 0, 0};
+	int separations = 0;
 
 	for(int axis = 0; axis < 3; axis++)
 	{
@@ -117,10 +118,12 @@ int compareObjects(Object *object1, Object *object2, float *position)
 				results[axis] = result;
 			}
 		}
+		else
+			separations |= (1 << axis);
 	}
 
 	// if no opinion was expressed then the two are coplanar, so compare by ID
-	if(!results[0] && !results[1] && !results[2])
+	if(separations == 0x7)
 		return (object1->getObjectID() < object2->getObjectID()) ? -1 : 1;
 
 	// otherwise we need all axes with opinions to match
