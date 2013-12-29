@@ -136,11 +136,19 @@ static CVReturn CVDisplayLinkCallback(
 	CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink,
 		(CGLContextObj)[[self.openGLView openGLContext] CGLContextObj],
 		(CGLPixelFormatObj)[[self.openGLView pixelFormat] CGLPixelFormatObj]);
+
+	[self.openGLView setNeedsDisplay:YES];
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
 	_game->rotateView((float)theEvent.deltaY, (float)theEvent.deltaX, 0.0f);
+	[self.openGLView setNeedsDisplay:YES];
+}
+
+- (void)rotateWithEvent:(NSEvent *)theEvent
+{
+	_game->rotateView(0.0f, 0.0f, -(float)theEvent.rotation);
 	[self.openGLView setNeedsDisplay:YES];
 }
 

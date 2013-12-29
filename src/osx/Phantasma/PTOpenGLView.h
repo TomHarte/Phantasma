@@ -14,6 +14,7 @@
 - (void)scrollWheel:(NSEvent *)theEvent;
 - (void)keyDown:(NSEvent *)theEvent;
 - (void)keyUp:(NSEvent *)theEvent;
+- (void)rotateWithEvent:(NSEvent *)theEvent;
 
 - (void)drawOpenGLView:(PTOpenGLView *)openGLView;
 

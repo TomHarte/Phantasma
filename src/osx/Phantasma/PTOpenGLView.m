@@ -10,9 +10,10 @@
 
 @implementation PTOpenGLView
 
-- (void)scrollWheel:(NSEvent *)theEvent	{	[self.delegate scrollWheel:theEvent];	}
-- (void)keyDown:(NSEvent *)theEvent		{	[self.delegate keyDown:theEvent];		}
-- (void)keyUp:(NSEvent *)theEvent		{	[self.delegate keyUp:theEvent];			}
+- (void)scrollWheel:(NSEvent *)theEvent		{	[self.delegate scrollWheel:theEvent];	}
+- (void)keyDown:(NSEvent *)theEvent			{	[self.delegate keyDown:theEvent];		}
+- (void)keyUp:(NSEvent *)theEvent			{	[self.delegate keyUp:theEvent];			}
+- (void)rotateWithEvent:(NSEvent *)event	{	[self.delegate rotateWithEvent:event];	}
 
 - (BOOL)acceptsFirstResponder
 {

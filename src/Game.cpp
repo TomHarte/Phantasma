@@ -103,7 +103,7 @@ void Game::rotateView(float x, float y, float z)
 	Matrix xRotationMatrix = Matrix::rotationMatrix(rotation[0], 1.0f, 0.0f, 0.0f);
 	Matrix yRotationMatrix = Matrix::rotationMatrix(rotation[1], 0.0f, 1.0f, 0.0f);
 	Matrix zRotationMatrix = Matrix::rotationMatrix(rotation[2], 0.0f, 0.0f, 1.0f);
-	rotationMatrix = xRotationMatrix * yRotationMatrix * zRotationMatrix;
+	rotationMatrix = zRotationMatrix * xRotationMatrix * yRotationMatrix;
 }
 
 void Game::setMovementVelocity(float x, float y, float z)
