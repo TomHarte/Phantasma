@@ -16,5 +16,6 @@ Vector3d Object::getSize()		{	return size;		}
 void Object::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer)		{}
 void Object::draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer)				{}
 bool Object::isDrawable()								{	return false;	}
+bool Object::isPlanar()									{	return false;	}
 
 Object::~Object()				{}

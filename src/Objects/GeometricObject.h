@@ -38,6 +38,7 @@ class GeometricObject: public Object
 		void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
 		void draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
 		bool isDrawable();
+		bool isPlanar();
 
 	private:
 		static GLuint openGLProgram;

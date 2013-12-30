@@ -62,6 +62,7 @@ class Object
 		virtual void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
 		virtual void draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
 		virtual bool isDrawable();
+		virtual bool isPlanar();
 
 		virtual ~Object();
 

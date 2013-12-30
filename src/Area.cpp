@@ -77,10 +77,29 @@ void Area::setupOpenGL()
 		iterator->second->setupOpenGL(vertexBuffer, drawElementsBuffer);
 }
 
-void Area::draw(float *playerPosition)
+void Area::draw(bool allowPolygonOffset)
 {
+	bool polygonOffsetIsEnabled = false;
+	if(allowPolygonOffset)
+	{
+		glDisable(GL_POLYGON_OFFSET_FILL);
+	}
+
 	for(std::vector<Object *>::iterator iterator = drawableObjects.begin(); iterator != drawableObjects.end(); iterator++)
 	{
+		if(allowPolygonOffset && (*iterator)->isPlanar() != polygonOffsetIsEnabled)
+		{
+			polygonOffsetIsEnabled ^= true;
+			if(polygonOffsetIsEnabled)
+			{
+				glEnable(GL_POLYGON_OFFSET_FILL);
+			}
+			else
+			{
+				glDisable(GL_POLYGON_OFFSET_FILL);
+			}
+		}
+
 		(*iterator)->draw(vertexBuffer, drawElementsBuffer);
 	}
 }

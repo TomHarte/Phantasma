@@ -31,7 +31,7 @@ class Area
 		uint16_t getAreaID();
 
 		void setupOpenGL();
-		void draw(float *playerPosition);
+		void draw(bool allowPolygonOffset);
 
 	private:
 		uint16_t areaID;
