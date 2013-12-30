@@ -50,6 +50,7 @@ class GeometricObject: public Object
 
 		size_t drawElementsStartIndex;
 		GLsizei drawElementsCount;
+		GLenum drawElementsMode;
 };
 
 #endif /* defined(__Phantasma__GeometricObject__) */

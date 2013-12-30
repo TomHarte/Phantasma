@@ -21,7 +21,7 @@ Game::Game(AreaMap *_areasByAreaID)
 	rotation[2] = 0.0f;
 
 	position[0] = 1000.0f;
-	position[1] = 300.0f;
+	position[1] = 1300.0f;
 	position[2] = 1000.0f;
 
 	velocity[0] =
@@ -36,8 +36,10 @@ Game::~Game()
 
 void Game::setAspectRatio(float aspectRatio)
 {
-	// create a projection matrix
-	Matrix projectionMatrix = Matrix::projectionMatrix(60.0f, aspectRatio, 1.0f, 100000.0f);
+	// create a projection matrix; the 16-bit kit permits the range 0-8192 to
+	// be used along all three axes and from that comes the far plane distance
+	// of 14189.
+	Matrix projectionMatrix = Matrix::projectionMatrix(60.0f, aspectRatio, 1.0f, 14189.0f);
 	GeometricObject::setProjectionMatrix(projectionMatrix.contents);
 }
 

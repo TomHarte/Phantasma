@@ -54,9 +54,14 @@ void DrawElementsBuffer::bind()
 	}
 }
 
+size_t DrawElementsBuffer::getCurrentIndex()
+{
+	return targetPool.size();
+}
+
 size_t DrawElementsBuffer::addIndex(void *index)
 {
-	size_t writeIndex = targetPool.size();
+	size_t writeIndex = getCurrentIndex();
 
 	uint8_t *ptr = (uint8_t *)index;
 	size_t size = glptSizeOfType(indexType);

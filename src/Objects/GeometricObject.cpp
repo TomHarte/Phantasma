@@ -225,77 +225,144 @@ DrawElementsBuffer *GeometricObject::newDrawElementsBuffer()
 
 void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer)
 {
-	// get the two attributes
-	VertexAttribute *positionAttribute = areaVertexBuffer->attributeForIndex(ObjectGLAttributePosition);
-	VertexAttribute *colourAttribute = areaVertexBuffer->attributeForIndex(ObjectGLAttributeColour);
-
-	// populate with a cube of the bounding box; TODO: shape and colour properly
-	const GLushort cubeVertexData[] =
+	class FaceAdder
 	{
-		(GLushort)origin.x,				(GLushort)origin.y,				(GLushort)(origin.z + size.z),
-		(GLushort)(origin.x + size.x),	(GLushort)origin.y,				(GLushort)(origin.z + size.z),
+		public:
+			FaceAdder(VertexBuffer *_vertexBuffer, DrawElementsBuffer *_drawElementsBuffer)
+			{
+				vertexBuffer = _vertexBuffer;
+				drawElementsBuffer = _drawElementsBuffer;
+				positionAttribute = vertexBuffer->attributeForIndex(ObjectGLAttributePosition);
+				colourAttribute = vertexBuffer->attributeForIndex(ObjectGLAttributeColour);
 
-		(GLushort)origin.x,				(GLushort)(origin.y + size.y),	(GLushort)(origin.z + size.z),
-		(GLushort)(origin.x + size.x),	(GLushort)(origin.y + size.y),	(GLushort)(origin.z + size.z),
+				drawElementsStartIndex = drawElementsBuffer->getCurrentIndex();
 
-		(GLushort)origin.x,				(GLushort)(origin.y + size.y),	(GLushort)origin.z,
-		(GLushort)(origin.x + size.x),	(GLushort)(origin.y + size.y),	(GLushort)origin.z,
+				drawElementsCount = 0;
+			}
 
-		(GLushort)origin.x,				(GLushort)origin.y,				(GLushort)origin.z,
-		(GLushort)(origin.x + size.x),	(GLushort)origin.y,				(GLushort)origin.z,
-	};
+			void beginFace(uint8_t red, uint8_t green, uint8_t blue)
+			{
+				colour[0] = red;
+				colour[1] = green;
+				colour[2] = blue;
+				faceIndices.clear();
+			}
 
-	const GLubyte cubeColourData[] =
+			void addVertex(uint16_t x, uint16_t y, uint16_t z)
+			{
+				colourAttribute->setValue(colour);
+
+				uint16_t position[3] = {x, y, z};
+				positionAttribute->setValue(position);
+
+				faceIndices.push_back((GLushort)vertexBuffer->commitVertex());
+			}
+
+			void endFace()
+			{
+				if(faceIndices.size() < 2)
+					return;
+
+				if(faceIndices.size() > 2)
+				{
+					drawElementsMode = GL_TRIANGLES;
+					
+					for(std::vector<GLushort>::size_type index = 1; index < (faceIndices.size() - 1); index++)
+					{
+						drawElementsBuffer->addIndex(&faceIndices[0]);
+						drawElementsBuffer->addIndex(&faceIndices[index]);
+						drawElementsBuffer->addIndex(&faceIndices[index+1]);
+						drawElementsCount += 3;
+					}
+				}
+				else
+				{
+					drawElementsBuffer->addIndex(&faceIndices[0]);
+					drawElementsBuffer->addIndex(&faceIndices[1]);
+					drawElementsCount += 2;
+					drawElementsMode = GL_LINE;
+				}
+			}
+
+			size_t drawElementsStartIndex;
+			GLsizei drawElementsCount;
+			GLenum drawElementsMode;
+
+		private:
+			VertexBuffer *vertexBuffer;
+			DrawElementsBuffer *drawElementsBuffer;
+			VertexAttribute *positionAttribute, *colourAttribute;
+
+			uint8_t colour[3];
+			std::vector<GLushort> faceIndices;
+
+	} faceAdder(areaVertexBuffer, areaDrawElementsBuffer);
+
+	switch(this->getType())
 	{
-		255,	0,		0,
-		255,	255,	0,
-		255,	255,	255,
-		0,		255,	255,
-		255,	0,		0,
-		255,	255,	0,
-		255,	255,	255,
-		0,		255,	255,
-	};
+		default:
+			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
 
-	GLushort indices[8];
+				faceAdder.addVertex(origin.x,			origin.y,				origin.z + size.z);
+				faceAdder.addVertex(origin.x + size.x,	origin.y,				origin.z + size.z);
+				faceAdder.addVertex(origin.x + size.x,	origin.y + size.y,		origin.z + size.z);
+				faceAdder.addVertex(origin.x,			origin.y + size.y,		origin.z + size.z);
 
-	for(int c = 0; c < 8; c++)
-	{
-		positionAttribute->setValue(&cubeVertexData[c*3]);
-		colourAttribute->setValue(&cubeColourData[c*3]);
-		indices[c] = (GLushort)areaVertexBuffer->commitVertex();
+			faceAdder.endFace();
+
+			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+
+				faceAdder.addVertex(origin.x,			origin.y + size.y,		origin.z);
+				faceAdder.addVertex(origin.x + size.x,	origin.y + size.y,		origin.z);
+				faceAdder.addVertex(origin.x + size.x,	origin.y,				origin.z);
+				faceAdder.addVertex(origin.x,			origin.y,				origin.z);
+
+			faceAdder.endFace();
+
+			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+
+				faceAdder.addVertex(origin.x + size.x,	origin.y + size.y,		origin.z);
+				faceAdder.addVertex(origin.x + size.x,	origin.y + size.y,		origin.z + size.z);
+				faceAdder.addVertex(origin.x + size.x,	origin.y,				origin.z + size.z);
+				faceAdder.addVertex(origin.x + size.x,	origin.y,				origin.z);
+
+			faceAdder.endFace();
+
+			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+
+				faceAdder.addVertex(origin.x,			origin.y,				origin.z);
+				faceAdder.addVertex(origin.x,			origin.y,				origin.z + size.z);
+				faceAdder.addVertex(origin.x,			origin.y + size.y,		origin.z + size.z);
+				faceAdder.addVertex(origin.x,			origin.y + size.y,		origin.z);
+
+			faceAdder.endFace();
+
+			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+
+				faceAdder.addVertex(origin.x + size.x,	origin.y,				origin.z);
+				faceAdder.addVertex(origin.x + size.x,	origin.y,				origin.z + size.z);
+				faceAdder.addVertex(origin.x,			origin.y,				origin.z + size.z);
+				faceAdder.addVertex(origin.x,			origin.y,				origin.z);
+
+			faceAdder.endFace();
+
+			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+
+				faceAdder.addVertex(origin.x,			origin.y + size.y,		origin.z);
+				faceAdder.addVertex(origin.x,			origin.y + size.y,		origin.z + size.z);
+				faceAdder.addVertex(origin.x + size.x,	origin.y + size.y,		origin.z + size.z);
+				faceAdder.addVertex(origin.x + size.x,	origin.y + size.y,		origin.z);
+
+			faceAdder.endFace();
+
+		break;
+		
+//		default: break;
 	}
-
-	// push in the draw indices
-	GLushort drawindices[] =
-	{
-		indices[0], indices[1], indices[2],
-		indices[2], indices[1], indices[3],
-
-		indices[2], indices[3], indices[4],
-		indices[4], indices[3], indices[5],
-
-		indices[4], indices[5], indices[6],
-		indices[6], indices[5], indices[7],
-
-		indices[6], indices[7], indices[0],
-		indices[0], indices[7], indices[1],
-
-		indices[5], indices[3], indices[1],
-		indices[7], indices[5], indices[1],
-
-		indices[0], indices[2], indices[4],
-		indices[0], indices[4], indices[6],
-	};
-
-	drawElementsCount = sizeof(drawindices) / sizeof(GLushort);
-	for(GLsizei index = 0; index < drawElementsCount; index++)
-	{
-		if(!index)
-			drawElementsStartIndex = areaDrawElementsBuffer->addIndex(&drawindices[index]);
-		else
-			areaDrawElementsBuffer->addIndex(&drawindices[index]);
-	}
+	
+	drawElementsCount = faceAdder.drawElementsCount;
+	drawElementsStartIndex = faceAdder.drawElementsStartIndex;
+	drawElementsMode = faceAdder.drawElementsMode;
 }
 
 void GeometricObject::draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer)
@@ -308,7 +375,7 @@ void GeometricObject::draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *a
 	// colour depending which face it belongs to — if you stripped and joined with degenerate
 	// triangles you'd end up with an array of indices exactly as long as just supplying the
 	// triangles directly — four per face plus two two transition to the next face
-	glDrawElements(GL_TRIANGLES, drawElementsCount, GL_UNSIGNED_SHORT, (void *)drawElementsStartIndex);
+	glDrawElements(drawElementsMode, drawElementsCount, GL_UNSIGNED_SHORT, (void *)drawElementsStartIndex);
 }
 
 #pragma mark -

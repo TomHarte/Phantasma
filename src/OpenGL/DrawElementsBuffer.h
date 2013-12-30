@@ -18,6 +18,7 @@ class DrawElementsBuffer
 		virtual ~DrawElementsBuffer();
 
 		size_t addIndex(void *index);
+		size_t getCurrentIndex();
 
 		void bind();
 
