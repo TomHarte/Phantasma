@@ -357,6 +357,42 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 
 		break;
 		
+		case Line:
+			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+
+				faceAdder.addVertex(origin.x,			origin.y,				origin.z);
+				faceAdder.addVertex(origin.x,			origin.y + size.y,		origin.z + size.z);
+
+			faceAdder.endFace();
+		break;
+
+		case Triangle:
+//		case Quadrilateral:
+		case Pentagon:
+		case Hexagon:
+		{
+
+			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+
+				for(std::vector<uint16_t>::size_type index = 0; index < ordinates->size(); index += 3)
+				{
+					faceAdder.addVertex((*ordinates)[index],	(*ordinates)[index + 1],	(*ordinates)[index + 2]);
+				}
+
+			faceAdder.endFace();
+
+			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+
+				for(std::vector<uint16_t>::size_type index = ordinates->size(); index > 0; index -= 3)
+				{
+					faceAdder.addVertex((*ordinates)[index - 3],	(*ordinates)[index - 2],	(*ordinates)[index - 1]);
+				}
+
+			faceAdder.endFace();
+
+		}
+		break;
+
 //		default: break;
 	}
 	
