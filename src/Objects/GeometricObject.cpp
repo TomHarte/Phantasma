@@ -389,13 +389,12 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 				}
 
 			faceAdder.endFace();
-
 		}
 		break;
 
 //		default: break;
 	}
-	
+
 	drawElementsCount = faceAdder.drawElementsCount;
 	drawElementsStartIndex = faceAdder.drawElementsStartIndex;
 	drawElementsMode = faceAdder.drawElementsMode;
