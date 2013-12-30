@@ -257,8 +257,7 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 		0,		255,	255,
 	};
 
-	delete[] indices;
-	indices = new GLushort[8];
+	GLushort indices[8];
 
 	for(int c = 0; c < 8; c++)
 	{
@@ -266,12 +265,8 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 		colourAttribute->setValue(&cubeColourData[c*3]);
 		indices[c] = (GLushort)areaVertexBuffer->commitVertex();
 	}
-}
 
-void GeometricObject::draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer)
-{
-	areaVertexBuffer->bind();
-
+	// push in the draw indices
 	GLushort drawindices[] =
 	{
 		indices[0], indices[1], indices[2],
@@ -293,12 +288,27 @@ void GeometricObject::draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *a
 		indices[0], indices[4], indices[6],
 	};
 
+	drawElementsCount = sizeof(drawindices) / sizeof(GLushort);
+	for(GLsizei index = 0; index < drawElementsCount; index++)
+	{
+		if(!index)
+			drawElementsStartIndex = areaDrawElementsBuffer->addIndex(&drawindices[index]);
+		else
+			areaDrawElementsBuffer->addIndex(&drawindices[index]);
+	}
+}
+
+void GeometricObject::draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer)
+{
+	areaVertexBuffer->bind();
+	areaDrawElementsBuffer->bind();
+
 	// a triangle strip isn't a helpful option, despite the pure geometrics, because each
 	// face may be coloured differently and therefore each vertex may have a different
 	// colour depending which face it belongs to — if you stripped and joined with degenerate
 	// triangles you'd end up with an array of indices exactly as long as just supplying the
 	// triangles directly — four per face plus two two transition to the next face
-	glDrawElements(GL_TRIANGLES, sizeof(drawindices) / sizeof(GLushort), GL_UNSIGNED_SHORT, drawindices);
+	glDrawElements(GL_TRIANGLES, drawElementsCount, GL_UNSIGNED_SHORT, (void *)drawElementsStartIndex);
 }
 
 #pragma mark -
@@ -321,13 +331,10 @@ GeometricObject::GeometricObject(
 	if(_colours)	colours		= std::shared_ptr<std::vector<uint8_t>>(_colours);
 	if(_ordinates)	ordinates	= std::shared_ptr<std::vector<uint16_t>>(_ordinates);
 	condition = _condition;
-
-	indices = nullptr;
 }
 
 GeometricObject::~GeometricObject()
 {
-	delete[] indices;
 }
 
 bool GeometricObject::isDrawable()								{	return true;	}

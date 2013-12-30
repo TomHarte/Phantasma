@@ -17,7 +17,7 @@ class DrawElementsBuffer
 		DrawElementsBuffer(GLenum indexType);
 		virtual ~DrawElementsBuffer();
 
-		int addIndex(void *index);
+		size_t addIndex(void *index);
 
 		void bind();
 

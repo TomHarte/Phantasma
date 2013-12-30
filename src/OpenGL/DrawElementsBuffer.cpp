@@ -15,6 +15,7 @@ DrawElementsBuffer::DrawElementsBuffer(GLenum _indexType)
 {
 	indexType = _indexType;
 	buffer = 0;
+	uploadedLength = 0;
 }
 
 DrawElementsBuffer::~DrawElementsBuffer()
@@ -53,9 +54,9 @@ void DrawElementsBuffer::bind()
 	}
 }
 
-int DrawElementsBuffer::addIndex(void *index)
+size_t DrawElementsBuffer::addIndex(void *index)
 {
-	int writeIndex = (int)targetPool.size();
+	size_t writeIndex = targetPool.size() / glptSizeOfType(indexType);
 
 	uint8_t *ptr = (uint8_t *)index;
 	size_t size = glptSizeOfType(indexType);

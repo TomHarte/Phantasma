@@ -48,7 +48,8 @@ class GeometricObject: public Object
 		std::shared_ptr<std::vector<uint8_t>> colours;
 		std::shared_ptr<std::vector<uint16_t>> ordinates;
 
-		GLushort *indices;
+		size_t drawElementsStartIndex;
+		GLsizei drawElementsCount;
 };
 
 #endif /* defined(__Phantasma__GeometricObject__) */
