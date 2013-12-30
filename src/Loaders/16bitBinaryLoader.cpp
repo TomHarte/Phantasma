@@ -262,7 +262,8 @@ Game *load16bitBinary(vector <uint8_t> &binary)
 	uint16_t platformID = streamLoader.get16();
 
 	if(
-		(platformID == 12428) || (platformID == 51553)
+		(platformID != 0x4120)
+//		(platformID == 12428) || (platformID == 51553)
 	)
 	{
 		// TODO: record original platform type, so we can decode the palette
