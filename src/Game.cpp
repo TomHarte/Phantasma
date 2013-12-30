@@ -21,7 +21,7 @@ Game::Game(AreaMap *_areasByAreaID)
 	rotation[2] = 0.0f;
 
 	position[0] = 1000.0f;
-	position[1] = 1300.0f;
+	position[1] = 300.0f;
 	position[2] = 1000.0f;
 
 	velocity[0] =
@@ -45,18 +45,37 @@ void Game::setAspectRatio(float aspectRatio)
 
 void Game::draw()
 {
-	// just clear the display to a salmon colour
+	// set the clear colour to salmon; we're not catching floor/ceiling
+	// colours yet
 	glClearColor(1.0f, 0.5f, 0.5f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
 
+	// clear depth and colour
+	glDepthMask(GL_TRUE);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// establish the view matrix
 	GeometricObject::setViewMatrix((rotationMatrix * translationMatrix).contents);
 
+	// draw once to populate the z buffer without a polygon offset applied
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glDisable(GL_POLYGON_OFFSET_FILL);
+	(*areasByAreaID)[1]->draw(position);
+
+	// draw with a polygon offset, allowing only reading from the depth buffer —
+	// the overall objective here is to allow arbitrary coplanar rendering
+	glDepthMask(GL_FALSE);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glEnable(GL_POLYGON_OFFSET_FILL);
 	(*areasByAreaID)[1]->draw(position);
 }
 
 void Game::setupOpenGL()
 {
 	GeometricObject::setupOpenGL();
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glPolygonOffset(-1.0f, -1.0f);
 
 	for(AreaMap::iterator iterator = areasByAreaID->begin(); iterator != areasByAreaID->end(); iterator++)
 		iterator->second->setupOpenGL();
