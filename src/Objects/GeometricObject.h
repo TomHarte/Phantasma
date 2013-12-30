@@ -23,6 +23,7 @@ class GeometricObject: public Object
 		static void setViewMatrix(const GLfloat *projectionMatrix);
 
 		static VertexBuffer *newVertexBuffer();
+		static DrawElementsBuffer *newDrawElementsBuffer();
 
 		GeometricObject(
 			Type type,
@@ -34,8 +35,8 @@ class GeometricObject: public Object
 			FCLInstructionVector condition);
 		virtual ~GeometricObject();
 
-		void setupOpenGL(VertexBuffer *areaBuffer);
-		void draw(VertexBuffer *areaBuffer);
+		void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
+		void draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
 		bool isDrawable();
 
 	private:

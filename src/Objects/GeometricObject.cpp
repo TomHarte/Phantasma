@@ -10,6 +10,7 @@
 
 #include <string.h>
 #include "VertexBuffer.h"
+#include "DrawElementsBuffer.h"
 
 #pragma mark -
 #pragma mark Static Getters
@@ -213,14 +214,20 @@ VertexBuffer *GeometricObject::newVertexBuffer()
 	return newBuffer;
 }
 
+DrawElementsBuffer *GeometricObject::newDrawElementsBuffer()
+{
+	return new DrawElementsBuffer(GL_UNSIGNED_SHORT);
+}
+
 #pragma mark -
 #pragma mark Rendering
 
-void GeometricObject::setupOpenGL(VertexBuffer *areaBuffer)
+
+void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer)
 {
 	// get the two attributes
-	VertexAttribute *positionAttribute = areaBuffer->attributeForIndex(ObjectGLAttributePosition);
-	VertexAttribute *colourAttribute = areaBuffer->attributeForIndex(ObjectGLAttributeColour);
+	VertexAttribute *positionAttribute = areaVertexBuffer->attributeForIndex(ObjectGLAttributePosition);
+	VertexAttribute *colourAttribute = areaVertexBuffer->attributeForIndex(ObjectGLAttributeColour);
 
 	// populate with a cube of the bounding box; TODO: shape and colour properly
 	const GLushort cubeVertexData[] =
@@ -257,13 +264,13 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaBuffer)
 	{
 		positionAttribute->setValue(&cubeVertexData[c*3]);
 		colourAttribute->setValue(&cubeColourData[c*3]);
-		indices[c] = (GLushort)areaBuffer->commitVertex();
+		indices[c] = (GLushort)areaVertexBuffer->commitVertex();
 	}
 }
 
-void GeometricObject::draw(VertexBuffer *areaBuffer)
+void GeometricObject::draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer)
 {
-	areaBuffer->bind();
+	areaVertexBuffer->bind();
 
 	GLushort drawindices[] =
 	{

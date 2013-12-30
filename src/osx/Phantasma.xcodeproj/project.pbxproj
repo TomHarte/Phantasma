@@ -26,6 +26,8 @@
 		4B1E688E18554BFD003A9847 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E688D18554BFD003A9847 /* Images.xcassets */; };
 		4B1E68AB18554E7D003A9847 /* FreescapeGL Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 4B1E68AA18554E7D003A9847 /* FreescapeGL Icon.icns */; };
 		4B1E68B91855571E003A9847 /* GameState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B1E68B71855571E003A9847 /* GameState.cpp */; };
+		4B2FF31E18710E32001CA90C /* DrawElementsBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B2FF31D18710E32001CA90C /* DrawElementsBuffer.cpp */; };
+		4B2FF32018711123001CA90C /* GLHelpers.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B2FF31F18711123001CA90C /* GLHelpers.c */; };
 		4B600A5818681BE300A1294E /* Matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B600A5118681BE300A1294E /* Matrix.cpp */; };
 		4B600A5918681BE300A1294E /* VertexAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B600A5418681BE300A1294E /* VertexAttribute.cpp */; };
 		4B600A5A18681BE300A1294E /* VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B600A5618681BE300A1294E /* VertexBuffer.cpp */; };
@@ -76,6 +78,10 @@
 		4B1E68AA18554E7D003A9847 /* FreescapeGL Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "FreescapeGL Icon.icns"; path = "../../../res/FreescapeGL Icon.icns"; sourceTree = "<group>"; };
 		4B1E68B71855571E003A9847 /* GameState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameState.cpp; path = ../../GameState.cpp; sourceTree = "<group>"; };
 		4B1E68B81855571E003A9847 /* GameState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameState.h; path = ../../GameState.h; sourceTree = "<group>"; };
+		4B2FF31C18710E21001CA90C /* DrawElementsBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrawElementsBuffer.h; sourceTree = "<group>"; };
+		4B2FF31D18710E32001CA90C /* DrawElementsBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawElementsBuffer.cpp; sourceTree = "<group>"; };
+		4B2FF31F18711123001CA90C /* GLHelpers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GLHelpers.c; sourceTree = "<group>"; };
+		4B2FF32118711130001CA90C /* GLHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLHelpers.h; sourceTree = "<group>"; };
 		4B600A5118681BE300A1294E /* Matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Matrix.cpp; sourceTree = "<group>"; };
 		4B600A5218681BE300A1294E /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix.h; sourceTree = "<group>"; };
 		4B600A5418681BE300A1294E /* VertexAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VertexAttribute.cpp; sourceTree = "<group>"; };
@@ -236,6 +242,10 @@
 				4B600A5518681BE300A1294E /* VertexAttribute.h */,
 				4B600A5618681BE300A1294E /* VertexBuffer.cpp */,
 				4B600A5718681BE300A1294E /* VertexBuffer.h */,
+				4B2FF31D18710E32001CA90C /* DrawElementsBuffer.cpp */,
+				4B2FF31C18710E21001CA90C /* DrawElementsBuffer.h */,
+				4B2FF31F18711123001CA90C /* GLHelpers.c */,
+				4B2FF32118711130001CA90C /* GLHelpers.h */,
 			);
 			name = OpenGL;
 			path = ../../OpenGL;
@@ -363,12 +373,14 @@
 				4B1CB74C186B6AB800067310 /* Object.cpp in Sources */,
 				4B600A5A18681BE300A1294E /* VertexBuffer.cpp in Sources */,
 				4B1CB755186B6BC900067310 /* Sensor.cpp in Sources */,
+				4B2FF31E18710E32001CA90C /* DrawElementsBuffer.cpp in Sources */,
 				4B1CB74F186B6AD000067310 /* GeometricObject.cpp in Sources */,
 				4B1CB75B186BB59200067310 /* Area.cpp in Sources */,
 				4B600A6818681C2000A1294E /* 16bitDetokeniser.cpp in Sources */,
 				4B1E687F18554BFD003A9847 /* main.m in Sources */,
 				4B8BC75118616B01003D9447 /* Game.cpp in Sources */,
 				4B600A7118681C4100A1294E /* 16bitBinaryLoader.cpp in Sources */,
+				4B2FF32018711123001CA90C /* GLHelpers.c in Sources */,
 				4B600A5918681BE300A1294E /* VertexAttribute.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -13,6 +13,8 @@ uint16_t Object::getObjectID()	{	return objectID;	}
 Vector3d Object::getOrigin()	{	return origin;		}
 Vector3d Object::getSize()		{	return size;		}
 
-void Object::setupOpenGL(VertexBuffer *areaBuffer)		{}
-void Object::draw(VertexBuffer *areaBuffer)				{}
+void Object::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer)		{}
+void Object::draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer)				{}
 bool Object::isDrawable()								{	return false;	}
+
+Object::~Object()				{}

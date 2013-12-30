@@ -7,6 +7,7 @@
 //
 
 #include "VertexAttribute.h"
+#include "GLHelpers.h"
 
 VertexAttribute::VertexAttribute(GLuint _index, GLint _size, GLenum _type, GLboolean _normalised, std::shared_ptr<std::vector <uint8_t>> &_targetPool, std::vector<uint8_t>::size_type _startOffset)
 {
@@ -36,23 +37,7 @@ GLsizei VertexAttribute::sizeOfValue()
 	// size is the number of components in each item multiplied by the
 	// number of bytes per item
 	GLsizei numberOfBytes = attributeSize;
-	switch(attributeType)
-	{
-		default:
-		break;
-
-		case GL_UNSIGNED_BYTE:
-		case GL_BYTE:				numberOfBytes *= sizeof(GLbyte);	break;
-
-		case GL_UNSIGNED_SHORT:
-		case GL_SHORT:				numberOfBytes *= sizeof(GLshort);	break;
-
-		case GL_UNSIGNED_INT:
-		case GL_INT:				numberOfBytes *= sizeof(GLint);		break;
-
-		case GL_FLOAT:				numberOfBytes *= sizeof(GLfloat);	break;
-		case GL_DOUBLE:				numberOfBytes *= sizeof(GLdouble);	break;
-	}
+	numberOfBytes *= glptSizeOfType(attributeType);
 
 	return numberOfBytes;
 }

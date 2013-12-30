@@ -27,6 +27,7 @@ typedef struct Vector3d
 } Vector3d;
 
 class VertexBuffer;
+class DrawElementsBuffer;
 class Object
 {
 	public:
@@ -58,9 +59,11 @@ class Object
 		Vector3d	getOrigin();
 		Vector3d	getSize();
 
-		virtual void setupOpenGL(VertexBuffer *areaBuffer);
-		virtual void draw(VertexBuffer *areaBuffer);
+		virtual void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
+		virtual void draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
 		virtual bool isDrawable();
+
+		virtual ~Object();
 
 	protected:
 		Type type;

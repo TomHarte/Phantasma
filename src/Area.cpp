@@ -40,7 +40,8 @@ Area::Area(
 	areaID = _areaID;
 	objectsByID = _objectsByID;
 	entrancesByID = _entrancesByID;
-	areaBuffer = nullptr;
+	vertexBuffer = nullptr;
+	drawElementsBuffer = nullptr;
 
 	// create a list of drawable obejcts only
 	for(ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++)
@@ -66,11 +67,14 @@ Area::~Area()
 
 void Area::setupOpenGL()
 {
-	delete areaBuffer;
-	areaBuffer = GeometricObject::newVertexBuffer();
+	delete vertexBuffer;
+	vertexBuffer = GeometricObject::newVertexBuffer();
+
+	delete drawElementsBuffer;
+	drawElementsBuffer = GeometricObject::newDrawElementsBuffer();
 
 	for(ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++)
-		iterator->second->setupOpenGL(areaBuffer);
+		iterator->second->setupOpenGL(vertexBuffer, drawElementsBuffer);
 }
 
 static int compareObjects(Object *object1, Object *object2, float *position)
@@ -194,6 +198,6 @@ void Area::draw(float *playerPosition)
 
 	for(std::list<Object *>::iterator iterator = orderedObjects.begin(); iterator != orderedObjects.end(); iterator++)
 	{
-		(*iterator)->draw(areaBuffer);
+		(*iterator)->draw(vertexBuffer, drawElementsBuffer);
 	}
 }

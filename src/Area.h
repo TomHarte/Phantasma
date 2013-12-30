@@ -13,6 +13,7 @@
 #include <map>
 #include "Object.h"
 #include "VertexBuffer.h"
+#include "DrawElementsBuffer.h"
 
 typedef std::map<uint16_t, Object *> ObjectMap;
 
@@ -40,7 +41,8 @@ class Area
 
 		Object *objectWithIDFromMap(ObjectMap *map, uint16_t objectID);
 
-		VertexBuffer *areaBuffer;
+		VertexBuffer *vertexBuffer;
+		DrawElementsBuffer *drawElementsBuffer;
 };
 
 #endif /* defined(__Phantasma__Area__) */
