@@ -368,7 +368,7 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 		break;
 
 		case Triangle:
-//		case Quadrilateral:
+		case Quadrilateral:
 		case Pentagon:
 		case Hexagon:
 		{
@@ -377,7 +377,7 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 
 				for(std::vector<uint16_t>::size_type index = 0; index < ordinates->size(); index += 3)
 				{
-					faceAdder.addVertex((*ordinates)[index],	(*ordinates)[index + 1],	(*ordinates)[index + 2]);
+					faceAdder.addVertex(origin.x + (*ordinates)[index],	 origin.y + (*ordinates)[index + 1],	origin.z + (*ordinates)[index + 2]);
 				}
 
 			faceAdder.endFace();
@@ -386,7 +386,7 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 
 				for(std::vector<uint16_t>::size_type index = ordinates->size(); index > 0; index -= 3)
 				{
-					faceAdder.addVertex((*ordinates)[index - 3],	(*ordinates)[index - 2],	(*ordinates)[index - 1]);
+					faceAdder.addVertex(origin.x + (*ordinates)[index - 3],	origin.y + (*ordinates)[index - 2],	origin.z + (*ordinates)[index - 1]);
 				}
 
 			faceAdder.endFace();
