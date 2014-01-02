@@ -40,6 +40,7 @@
 		4B600A7118681C4100A1294E /* 16bitBinaryLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B600A6F18681C4100A1294E /* 16bitBinaryLoader.cpp */; };
 		4B8BC75118616B01003D9447 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B8BC74F18616B01003D9447 /* Game.cpp */; };
 		4BD2BF291874F7F5004A6810 /* BatchDrawer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BD2BF271874F7F5004A6810 /* BatchDrawer.cpp */; };
+		4BD2BF2C187531D5004A6810 /* GeometricObject+Drawing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BD2BF2A187531D5004A6810 /* GeometricObject+Drawing.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -107,6 +108,7 @@
 		4B8BC75018616B01003D9447 /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Game.h; path = ../../Game.h; sourceTree = "<group>"; };
 		4BD2BF271874F7F5004A6810 /* BatchDrawer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BatchDrawer.cpp; sourceTree = "<group>"; };
 		4BD2BF281874F7F5004A6810 /* BatchDrawer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchDrawer.h; sourceTree = "<group>"; };
+		4BD2BF2A187531D5004A6810 /* GeometricObject+Drawing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "GeometricObject+Drawing.cpp"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +131,7 @@
 				4B1CB74A186B6AB800067310 /* Object.cpp */,
 				4B1CB74B186B6AB800067310 /* Object.h */,
 				4B1CB74D186B6AD000067310 /* GeometricObject.cpp */,
+				4BD2BF2A187531D5004A6810 /* GeometricObject+Drawing.cpp */,
 				4B1CB74E186B6AD000067310 /* GeometricObject.h */,
 				4B1CB750186B6ADB00067310 /* Entrance.cpp */,
 				4B1CB751186B6ADB00067310 /* Entrance.h */,
@@ -383,6 +386,7 @@
 				4B1CB74F186B6AD000067310 /* GeometricObject.cpp in Sources */,
 				4B1CB75B186BB59200067310 /* Area.cpp in Sources */,
 				4B600A6818681C2000A1294E /* 16bitDetokeniser.cpp in Sources */,
+				4BD2BF2C187531D5004A6810 /* GeometricObject+Drawing.cpp in Sources */,
 				4B1E687F18554BFD003A9847 /* main.m in Sources */,
 				4B8BC75118616B01003D9447 /* Game.cpp in Sources */,
 				4B600A7118681C4100A1294E /* 16bitBinaryLoader.cpp in Sources */,
