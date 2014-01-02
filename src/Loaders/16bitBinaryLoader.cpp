@@ -113,6 +113,16 @@ static Object *loadObject(StreamLoader &stream)
 	uint8_t objectFlags = stream.get8();
 	Object::Type objectType = (Object::Type)stream.get8();
 
+	/*
+		Notes to self:
+		
+			0 = no flags
+			128 = Movable, Animated
+			134 = Movable, Animated, Default invis, invis
+			6 = Default invis, Invis
+			32 = collided
+	*/
+
 	// get unknown value
 	uint16_t skippedShort = stream.get16();
 
@@ -133,7 +143,7 @@ static Object *loadObject(StreamLoader &stream)
 	// length beyond here
 	uint32_t byteSizeOfObject = (uint32_t)(stream.get16() << 1) - 20;
 
-	std::cout << "Object " << objectID << "; type " << (int)objectType << std::endl;
+	std::cout << "Object " << objectID << "; type " << (int)objectType << "; flags " << (int)objectFlags << std::endl;
 
 	switch(objectType)
 	{
