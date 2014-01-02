@@ -50,6 +50,7 @@ int GeometricObject::numberOfOrdinatesForType(Type type)
 		default:
 		case Entrance:
 		case Group:
+		case Rectangle:
 		case Sensor:			return 0;
 
 		case EastPyramid:
@@ -281,7 +282,7 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 					drawElementsBuffer->addIndex(&faceIndices[0]);
 					drawElementsBuffer->addIndex(&faceIndices[1]);
 					drawElementsCount += 2;
-					drawElementsMode = GL_LINE;
+					drawElementsMode = GL_LINES;
 				}
 			}
 
