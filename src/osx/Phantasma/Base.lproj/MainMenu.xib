@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4514" systemVersion="13A603" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4514" systemVersion="13B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment defaultVersion="1070" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4514"/>
@@ -119,25 +119,36 @@
                         </items>
                     </menu>
                 </menuItem>
-                <menuItem title="Window" id="19">
-                    <menu key="submenu" title="Window" systemMenu="window" id="24">
+                <menuItem title="View" id="19">
+                    <menu key="submenu" title="View" systemMenu="window" id="24">
                         <items>
-                            <menuItem title="Minimize" keyEquivalent="m" id="23">
+                            <menuItem title="Enter Full Screen" keyEquivalent="f" id="icv-uD-vYl">
                                 <connections>
-                                    <action selector="performMiniaturize:" target="-1" id="37"/>
+                                    <action selector="toggleFullScreen:" target="-1" id="azb-xM-vE5"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Zoom" id="239">
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Window" id="0WG-hP-VcP">
+                    <menu key="submenu" title="Window" systemMenu="window" id="wOx-ZB-f2Q">
+                        <items>
+                            <menuItem title="Minimize" keyEquivalent="m" id="4Y5-yE-hhA">
                                 <connections>
-                                    <action selector="performZoom:" target="-1" id="240"/>
+                                    <action selector="performMiniaturize:" target="-1" id="SHh-yw-0iv"/>
                                 </connections>
                             </menuItem>
-                            <menuItem isSeparatorItem="YES" id="92">
+                            <menuItem title="Zoom" id="iT1-66-5OP">
+                                <connections>
+                                    <action selector="performZoom:" target="-1" id="B5p-8j-aan"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="lrC-hS-uBj">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Bring All to Front" id="5">
+                            <menuItem title="Bring All to Front" id="2dy-76-i44">
                                 <connections>
-                                    <action selector="arrangeInFront:" target="-1" id="39"/>
+                                    <action selector="arrangeInFront:" target="-1" id="yHQ-G1-7Nj"/>
                                 </connections>
                             </menuItem>
                         </items>
