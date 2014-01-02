@@ -356,16 +356,7 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 			faceAdder.endFace();
 
 		break;
-		
-		case Line:
-			faceAdder.beginFace();
 
-				faceAdder.addVertex(origin.x,			origin.y,				origin.z);
-				faceAdder.addVertex(origin.x,			origin.y + size.y,		origin.z + size.z);
-
-			faceAdder.endFace();
-		break;
-		
 		case EastPyramid:
 		case WestPyramid:
 		case UpPyramid:
@@ -491,13 +482,13 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 		}
 		break;
 
+		case Line:
 		case Triangle:
 		case Quadrilateral:
 		case Pentagon:
 		case Hexagon:
 		{
 			// these are fairly easy; just post on the points
-
 			faceAdder.beginFace();
 
 				for(std::vector<uint16_t>::size_type index = 0; index < ordinates->size(); index += 3)
@@ -507,14 +498,19 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 
 			faceAdder.endFace();
 
-			faceAdder.beginFace();
+			// lines don't have two faces but the other types all do,
+			// so repeat the above but backwards
+			if(this->getType() != Line)
+			{
+				faceAdder.beginFace();
 
-				for(std::vector<uint16_t>::size_type index = ordinates->size(); index > 0; index -= 3)
-				{
-					faceAdder.addVertex(origin.x + (*ordinates)[index - 3],	origin.y + (*ordinates)[index - 2],	origin.z + (*ordinates)[index - 1]);
-				}
+					for(std::vector<uint16_t>::size_type index = ordinates->size(); index > 0; index -= 3)
+					{
+						faceAdder.addVertex(origin.x + (*ordinates)[index - 3],	origin.y + (*ordinates)[index - 2],	origin.z + (*ordinates)[index - 1]);
+					}
 
-			faceAdder.endFace();
+				faceAdder.endFace();
+			}
 		}
 		break;
 	}
