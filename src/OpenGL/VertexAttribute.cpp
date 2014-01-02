@@ -9,7 +9,7 @@
 #include "VertexAttribute.h"
 #include "GLHelpers.h"
 
-VertexAttribute::VertexAttribute(GLuint _index, GLint _size, GLenum _type, GLboolean _normalised, std::shared_ptr<std::vector <uint8_t>> &_targetPool, std::vector<uint8_t>::size_type _startOffset)
+VertexAttribute::VertexAttribute(GLuint _index, GLint _size, GLenum _type, GLboolean _normalised, std::vector <uint8_t> *_targetPool, std::vector<uint8_t>::size_type _startOffset)
 {
 	// store the properties that describe this attribute
 	attributeIndex = _index;

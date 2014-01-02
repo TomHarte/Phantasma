@@ -14,7 +14,6 @@ VertexBuffer *VertexBuffer::boundBuffer;
 VertexBuffer::VertexBuffer()
 {
 	// create a vector to write new values to and seed our stride as 0
-	targetPool = std::shared_ptr<std::vector <uint8_t>>(new std::vector <uint8_t>);
 	stride = 0;
 
 	// the first write index will be zero
@@ -59,18 +58,18 @@ void VertexBuffer::bind()
 
 	// make sure we've uploaded the latest data; if we've gained anything
 	// new then add it to the pile
-	if(uploadedLength != targetPool->size())
+	if(uploadedLength != targetPool.size())
 	{
 		if(!uploadedLength)
 		{
-			glBufferData(GL_ARRAY_BUFFER, (GLsizei)targetPool->size(), &(*targetPool)[0], GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, (GLsizei)targetPool.size(), &targetPool[0], GL_STATIC_DRAW);
 		}
 		else
 		{
-			glBufferSubData(GL_ARRAY_BUFFER, (GLsizei)uploadedLength, (GLsizei)(targetPool->size() - uploadedLength), &(*targetPool)[uploadedLength]);
+			glBufferSubData(GL_ARRAY_BUFFER, (GLsizei)uploadedLength, (GLsizei)(targetPool.size() - uploadedLength), &targetPool[uploadedLength]);
 		}
 
-		uploadedLength = targetPool->size();
+		uploadedLength = targetPool.size();
 
 		// use this opportunity to release temporary storage
 		for(std::vector <VertexAttribute *>::size_type index = 0; index < attributes.size(); index++)
@@ -89,7 +88,7 @@ void VertexBuffer::addAttribute(GLuint index, GLint size, GLenum type, GLboolean
 {
 	// allocate an attribute, add it to our list; we can figure out its start offset
 	// from our current idea of stride
-	VertexAttribute *newAttribute = new VertexAttribute(index, size, type, normalised, targetPool, (std::vector<uint8_t>::size_type)stride);
+	VertexAttribute *newAttribute = new VertexAttribute(index, size, type, normalised, &targetPool, (std::vector<uint8_t>::size_type)stride);
 	attributes.push_back(newAttribute);
 
 	// stride is the sum of all attribute values, so update it now

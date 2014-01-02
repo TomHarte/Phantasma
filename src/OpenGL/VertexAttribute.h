@@ -15,7 +15,7 @@
 class VertexAttribute
 {
 	public:
-		VertexAttribute(GLuint index, GLint size, GLenum type, GLboolean normalised, std::shared_ptr<std::vector <uint8_t>> &targetPool, std::vector<uint8_t>::size_type startOffset);
+		VertexAttribute(GLuint index, GLint size, GLenum type, GLboolean normalised, std::vector <uint8_t> *targetPool, std::vector<uint8_t>::size_type startOffset);
 		virtual ~VertexAttribute();
 
 		void setValue(const void *value);
@@ -24,7 +24,7 @@ class VertexAttribute
 		GLsizei sizeOfValue();
 
 	private:
-		std::shared_ptr<std::vector <uint8_t>> targetPool;
+		std::vector<uint8_t> *targetPool;
 		std::vector<uint8_t>::size_type startOffset;
 
 		uint8_t *preparedValue;

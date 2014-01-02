@@ -46,7 +46,7 @@ class VertexBuffer
 		size_t commitVertex();
 
 	private:
-		std::shared_ptr<std::vector <uint8_t>> targetPool;
+		std::vector <uint8_t> targetPool;
 		std::vector <VertexAttribute *> attributes;
 		std::map <GLuint, VertexAttribute *> attributesByIndex;
 
