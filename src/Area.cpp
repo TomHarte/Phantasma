@@ -53,18 +53,17 @@ Area::Area(
 	}
 
 	// sort so that those that are planar are drawn last
-/*	struct
+	struct
 	{
 		bool operator() (Object *object1, Object *object2)
 		{
 			if(!object1->isPlanar() && object2->isPlanar()) return true;
-			return false;
+			if(object1->isPlanar() && !object2->isPlanar()) return false;
+			return object1->getObjectID() < object2->getObjectID();
 		};
 	} compareObjects;
-	
-	std::cout << drawableObjects.size() << " before" << std::endl;
+
 	std::sort(drawableObjects.begin(), drawableObjects.end(), compareObjects);
-	std::cout << drawableObjects.size() << " after" << std::endl;*/
 }
 
 Area::~Area()
@@ -87,8 +86,8 @@ void Area::setupOpenGL()
 	delete drawElementsBuffer;
 	drawElementsBuffer = GeometricObject::newDrawElementsBuffer();
 
-	for(ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++)
-		iterator->second->setupOpenGL(vertexBuffer, drawElementsBuffer);
+	for(std::vector<Object *>::iterator iterator = drawableObjects.begin(); iterator != drawableObjects.end(); iterator++)
+		(*iterator)->setupOpenGL(vertexBuffer, drawElementsBuffer);
 }
 
 void Area::draw(bool allowPolygonOffset, BatchDrawer *batchDrawer)
