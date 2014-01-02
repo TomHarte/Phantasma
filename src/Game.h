@@ -13,6 +13,7 @@
 #include <map>
 #include "Area.h"
 #include "Matrix.h"
+#include "BatchDrawer.h"
 
 typedef std::map<uint16_t, std::shared_ptr<Area>> AreaMap;
 class Game
@@ -40,6 +41,8 @@ class Game
 		float rotation[3], velocity[3], position[3];
 		Matrix rotationMatrix;
 		Matrix translationMatrix;
+
+		BatchDrawer batchDrawer;
 };
 
 #endif /* defined(__Phantasma__Game__) */

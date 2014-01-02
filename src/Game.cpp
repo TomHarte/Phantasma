@@ -59,13 +59,18 @@ void Game::draw()
 	// draw once to populate the z buffer without a polygon offset applied
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDisable(GL_POLYGON_OFFSET_FILL);
-	(*areasByAreaID)[1]->draw(false);
+	(*areasByAreaID)[1]->draw(false, &batchDrawer);
+	batchDrawer.flush();
 
 	// draw with a polygon offset, allowing only reading from the depth buffer —
 	// the overall objective here is to allow arbitrary coplanar rendering
 	glDepthMask(GL_FALSE);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	(*areasByAreaID)[1]->draw(true);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	(*areasByAreaID)[1]->draw(true, &batchDrawer);
+	batchDrawer.flush();
+
+//	std::cout << std::endl;
 }
 
 void Game::setupOpenGL()
@@ -74,7 +79,6 @@ void Game::setupOpenGL()
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-	glPolygonOffset(-1.0f, -1.0f);
 
 	for(AreaMap::iterator iterator = areasByAreaID->begin(); iterator != areasByAreaID->end(); iterator++)
 		iterator->second->setupOpenGL();

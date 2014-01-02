@@ -11,6 +11,7 @@
 #include <string.h>
 #include "VertexBuffer.h"
 #include "DrawElementsBuffer.h"
+#include "BatchDrawer.h"
 
 #pragma mark -
 #pragma mark Static Getters
@@ -400,8 +401,11 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 	drawElementsMode = faceAdder.drawElementsMode;
 }
 
-void GeometricObject::draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer)
+void GeometricObject::draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer, BatchDrawer *areaBatchDrawer, bool allowPolygonOffset)
 {
+	areaBatchDrawer->drawElements(areaVertexBuffer, areaDrawElementsBuffer, drawElementsMode, drawElementsCount, GL_UNSIGNED_SHORT, drawElementsStartIndex, (allowPolygonOffset && this->isPlanar()) ? -1.0f : 0.0f);
+	return;
+
 	areaVertexBuffer->bind();
 	areaDrawElementsBuffer->bind();
 

@@ -17,6 +17,7 @@
 
 typedef std::map<uint16_t, Object *> ObjectMap;
 
+class BatchDrawer;
 class Area
 {
 	public:
@@ -31,7 +32,7 @@ class Area
 		uint16_t getAreaID();
 
 		void setupOpenGL();
-		void draw(bool allowPolygonOffset);
+		void draw(bool allowPolygonOffset, BatchDrawer *batchDrawer);
 
 	private:
 		uint16_t areaID;

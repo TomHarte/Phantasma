@@ -11,6 +11,7 @@
 
 #include "Object.h"
 
+class BatchDrawer;
 class GeometricObject: public Object
 {
 	public:
@@ -36,7 +37,7 @@ class GeometricObject: public Object
 		virtual ~GeometricObject();
 
 		void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
-		void draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
+		void draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer, BatchDrawer *areaBatchDrawer, bool allowPolygonOffset);
 		bool isDrawable();
 		bool isPlanar();
 

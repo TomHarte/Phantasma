@@ -28,6 +28,7 @@ typedef struct Vector3d
 
 class VertexBuffer;
 class DrawElementsBuffer;
+class BatchDrawer;
 class Object
 {
 	public:
@@ -60,7 +61,7 @@ class Object
 		Vector3d	getSize();
 
 		virtual void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
-		virtual void draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
+		virtual void draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer, BatchDrawer *batchDrawer, bool allowPolygonOffset);
 		virtual bool isDrawable();
 		virtual bool isPlanar();
 

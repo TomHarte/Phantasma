@@ -51,6 +51,20 @@ Area::Area(
 			drawableObjects.push_back(iterator->second);
 		}
 	}
+
+	// sort so that those that are planar are drawn last
+/*	struct
+	{
+		bool operator() (Object *object1, Object *object2)
+		{
+			if(!object1->isPlanar() && object2->isPlanar()) return true;
+			return false;
+		};
+	} compareObjects;
+	
+	std::cout << drawableObjects.size() << " before" << std::endl;
+	std::sort(drawableObjects.begin(), drawableObjects.end(), compareObjects);
+	std::cout << drawableObjects.size() << " after" << std::endl;*/
 }
 
 Area::~Area()
@@ -77,29 +91,10 @@ void Area::setupOpenGL()
 		iterator->second->setupOpenGL(vertexBuffer, drawElementsBuffer);
 }
 
-void Area::draw(bool allowPolygonOffset)
+void Area::draw(bool allowPolygonOffset, BatchDrawer *batchDrawer)
 {
-	bool polygonOffsetIsEnabled = false;
-	if(allowPolygonOffset)
-	{
-		glDisable(GL_POLYGON_OFFSET_FILL);
-	}
-
 	for(std::vector<Object *>::iterator iterator = drawableObjects.begin(); iterator != drawableObjects.end(); iterator++)
 	{
-		if(allowPolygonOffset && (*iterator)->isPlanar() != polygonOffsetIsEnabled)
-		{
-			polygonOffsetIsEnabled ^= true;
-			if(polygonOffsetIsEnabled)
-			{
-				glEnable(GL_POLYGON_OFFSET_FILL);
-			}
-			else
-			{
-				glDisable(GL_POLYGON_OFFSET_FILL);
-			}
-		}
-
-		(*iterator)->draw(vertexBuffer, drawElementsBuffer);
+		(*iterator)->draw(vertexBuffer, drawElementsBuffer, batchDrawer, allowPolygonOffset);
 	}
 }

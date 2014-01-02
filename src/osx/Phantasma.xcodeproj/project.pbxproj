@@ -39,6 +39,7 @@
 		4B600A6D18681C2000A1294E /* Token.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B600A6618681C2000A1294E /* Token.cpp */; };
 		4B600A7118681C4100A1294E /* 16bitBinaryLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B600A6F18681C4100A1294E /* 16bitBinaryLoader.cpp */; };
 		4B8BC75118616B01003D9447 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B8BC74F18616B01003D9447 /* Game.cpp */; };
+		4BD2BF291874F7F5004A6810 /* BatchDrawer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BD2BF271874F7F5004A6810 /* BatchDrawer.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -104,6 +105,8 @@
 		4B600A7018681C4100A1294E /* 16bitBinaryLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 16bitBinaryLoader.h; sourceTree = "<group>"; };
 		4B8BC74F18616B01003D9447 /* Game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Game.cpp; path = ../../Game.cpp; sourceTree = "<group>"; };
 		4B8BC75018616B01003D9447 /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Game.h; path = ../../Game.h; sourceTree = "<group>"; };
+		4BD2BF271874F7F5004A6810 /* BatchDrawer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BatchDrawer.cpp; sourceTree = "<group>"; };
+		4BD2BF281874F7F5004A6810 /* BatchDrawer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchDrawer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -246,6 +249,8 @@
 				4B2FF31C18710E21001CA90C /* DrawElementsBuffer.h */,
 				4B2FF31F18711123001CA90C /* GLHelpers.c */,
 				4B2FF32118711130001CA90C /* GLHelpers.h */,
+				4BD2BF271874F7F5004A6810 /* BatchDrawer.cpp */,
+				4BD2BF281874F7F5004A6810 /* BatchDrawer.h */,
 			);
 			name = OpenGL;
 			path = ../../OpenGL;
@@ -366,6 +371,7 @@
 				4B600A6D18681C2000A1294E /* Token.cpp in Sources */,
 				4B600A6B18681C2000A1294E /* Instruction.cpp in Sources */,
 				4B1E688618554BFD003A9847 /* PTDocument.mm in Sources */,
+				4BD2BF291874F7F5004A6810 /* BatchDrawer.cpp in Sources */,
 				4B1A5C54186D241D004F3708 /* PTOpenGLView.m in Sources */,
 				4B1E68B91855571E003A9847 /* GameState.cpp in Sources */,
 				4B1CB758186B6BD300067310 /* Group.cpp in Sources */,
