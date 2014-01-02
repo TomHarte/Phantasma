@@ -55,14 +55,18 @@ void BatchDrawer::drawElements(VertexBuffer *vertexBuffer, DrawElementsBuffer *d
 
 void BatchDrawer::flush()
 {
+	// we can flush only if we have something to flush...
 	if(hasDrawOngoing)
 	{
+		// bind the specified buffers
 		currentVertexBuffer->bind();
 		currentDrawElementsBuffer->bind();
 
+		// set the polygon offset, draw the requested elements
 		glPolygonOffset(currentPolygonOffset, currentPolygonOffset);
 		glDrawElements(currentMode, currentCount, currentType, (void *)startIndex);
 
+		// record that we've now got nothing to flush
 		hasDrawOngoing = false;
 	}
 }
