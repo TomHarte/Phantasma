@@ -242,12 +242,21 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 				drawElementsCount = 0;
 			}
 
-			void beginFace(uint8_t red, uint8_t green, uint8_t blue)
+			void beginFace() //uint8_t red, uint8_t green, uint8_t blue)
 			{
+				uint8_t red = (uint8_t)arc4random_uniform(256);
+				uint8_t green = (uint8_t)arc4random_uniform(256);
+				uint8_t blue = (uint8_t)arc4random_uniform(256);
+
 				colour[0] = red;
 				colour[1] = green;
 				colour[2] = blue;
 				faceIndices.clear();
+			}
+
+			void addVertex(Vector3d vertex)
+			{
+				addVertex(vertex.x, vertex.y, vertex.z);
 			}
 
 			void addVertex(uint16_t x, uint16_t y, uint16_t z)
@@ -303,7 +312,7 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 	switch(this->getType())
 	{
 		default:
-			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+			faceAdder.beginFace();
 
 				faceAdder.addVertex(origin.x,			origin.y,				origin.z + size.z);
 				faceAdder.addVertex(origin.x + size.x,	origin.y,				origin.z + size.z);
@@ -312,7 +321,7 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 
 			faceAdder.endFace();
 
-			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+			faceAdder.beginFace();
 
 				faceAdder.addVertex(origin.x,			origin.y + size.y,		origin.z);
 				faceAdder.addVertex(origin.x + size.x,	origin.y + size.y,		origin.z);
@@ -321,7 +330,7 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 
 			faceAdder.endFace();
 
-			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+			faceAdder.beginFace();
 
 				faceAdder.addVertex(origin.x + size.x,	origin.y + size.y,		origin.z);
 				faceAdder.addVertex(origin.x + size.x,	origin.y + size.y,		origin.z + size.z);
@@ -330,7 +339,7 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 
 			faceAdder.endFace();
 
-			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+			faceAdder.beginFace();
 
 				faceAdder.addVertex(origin.x,			origin.y,				origin.z);
 				faceAdder.addVertex(origin.x,			origin.y,				origin.z + size.z);
@@ -339,7 +348,7 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 
 			faceAdder.endFace();
 
-			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+			faceAdder.beginFace();
 
 				faceAdder.addVertex(origin.x + size.x,	origin.y,				origin.z);
 				faceAdder.addVertex(origin.x + size.x,	origin.y,				origin.z + size.z);
@@ -348,7 +357,7 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 
 			faceAdder.endFace();
 
-			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+			faceAdder.beginFace();
 
 				faceAdder.addVertex(origin.x,			origin.y + size.y,		origin.z);
 				faceAdder.addVertex(origin.x,			origin.y + size.y,		origin.z + size.z);
@@ -360,12 +369,135 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 		break;
 		
 		case Line:
-			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+			faceAdder.beginFace();
 
 				faceAdder.addVertex(origin.x,			origin.y,				origin.z);
 				faceAdder.addVertex(origin.x,			origin.y + size.y,		origin.z + size.z);
 
 			faceAdder.endFace();
+		break;
+		
+		case EastPyramid:
+		case WestPyramid:
+		case UpPyramid:
+		case DownPyramid:
+		case NorthPyramid:
+		case SouthPyramid:
+		{
+			Vector3d vertices[8] =
+			{
+				origin,		origin,		origin,		origin,
+				origin,		origin,		origin,		origin,
+			};
+
+			switch(this->getType())
+			{
+				default: break;
+
+				case EastPyramid:
+
+					vertices[4].x += size.x;	vertices[5].x += size.x;
+					vertices[6].x += size.x;	vertices[7].x += size.x;
+
+					vertices[0].z += size.z;	vertices[1].z += size.z;
+					vertices[1].y += size.y;	vertices[2].y += size.y;
+
+
+					vertices[4].y += (*ordinates)[0];	vertices[4].z += (*ordinates)[3];
+					vertices[5].y += (*ordinates)[2];	vertices[5].z += (*ordinates)[3];
+					vertices[6].y += (*ordinates)[2];	vertices[6].z += (*ordinates)[1];
+					vertices[7].y += (*ordinates)[0];	vertices[7].z += (*ordinates)[1];
+
+				break;
+				
+				case WestPyramid:
+
+					vertices[0].x += size.x;	vertices[1].x += size.x;
+					vertices[2].x += size.x;	vertices[3].x += size.x;
+
+					vertices[1].y += size.y;	vertices[2].y += size.y;
+					vertices[2].z += size.z;	vertices[3].z += size.z;
+
+					vertices[4].y += (*ordinates)[0];	vertices[4].z += (*ordinates)[1];
+					vertices[5].y += (*ordinates)[2];	vertices[5].z += (*ordinates)[1];
+					vertices[6].y += (*ordinates)[2];	vertices[6].z += (*ordinates)[3];
+					vertices[7].y += (*ordinates)[0];	vertices[7].z += (*ordinates)[3];
+
+				break;
+				
+				case UpPyramid:
+					vertices[4].y += size.y;	vertices[5].y += size.y;
+					vertices[6].y += size.y;	vertices[7].y += size.y;
+
+					vertices[1].x += size.x;	vertices[2].x += size.x;
+					vertices[2].z += size.z;	vertices[3].z += size.z;
+
+					vertices[4].x += (*ordinates)[0];	vertices[4].z += (*ordinates)[1];
+					vertices[5].x += (*ordinates)[2];	vertices[5].z += (*ordinates)[1];
+					vertices[6].x += (*ordinates)[2];	vertices[6].z += (*ordinates)[3];
+					vertices[7].x += (*ordinates)[0];	vertices[7].z += (*ordinates)[3];
+				break;
+
+				case DownPyramid:
+					vertices[0].y += size.y;	vertices[1].y += size.y;
+					vertices[2].y += size.y;	vertices[3].y += size.y;
+
+					vertices[0].x += size.x;	vertices[3].x += size.x;
+					vertices[2].z += size.z;	vertices[3].z += size.z;
+
+					vertices[4].x += (*ordinates)[2];	vertices[4].z += (*ordinates)[1];
+					vertices[5].x += (*ordinates)[0];	vertices[5].z += (*ordinates)[1];
+					vertices[6].x += (*ordinates)[0];	vertices[6].z += (*ordinates)[3];
+					vertices[7].x += (*ordinates)[2];	vertices[7].z += (*ordinates)[3];
+				break;
+
+				case NorthPyramid:
+					vertices[4].z += size.z;	vertices[5].z += size.z;
+					vertices[6].z += size.z;	vertices[7].z += size.z;
+
+					vertices[0].y += size.y;	vertices[1].y += size.y;
+					vertices[1].x += size.x;	vertices[2].x += size.x;
+
+					vertices[4].x += (*ordinates)[0];	vertices[4].y += (*ordinates)[3];
+					vertices[5].x += (*ordinates)[2];	vertices[5].y += (*ordinates)[3];
+					vertices[6].x += (*ordinates)[2];	vertices[6].y += (*ordinates)[1];
+					vertices[7].x += (*ordinates)[0];	vertices[7].y += (*ordinates)[1];
+				break;
+
+				case SouthPyramid:
+					vertices[0].z += size.z;	vertices[1].z += size.z;
+					vertices[2].z += size.z;	vertices[3].z += size.z;
+
+					vertices[1].x += size.x;	vertices[2].x += size.x;
+					vertices[2].y += size.y;	vertices[3].y += size.y;
+
+					vertices[4].x += (*ordinates)[0];	vertices[4].y += (*ordinates)[1];
+					vertices[5].x += (*ordinates)[2];	vertices[5].y += (*ordinates)[1];
+					vertices[6].x += (*ordinates)[2];	vertices[6].y += (*ordinates)[3];
+					vertices[7].x += (*ordinates)[0];	vertices[7].y += (*ordinates)[3];
+				break;
+			}
+
+			faceAdder.beginFace();
+				faceAdder.addVertex(vertices[5]); faceAdder.addVertex(vertices[6]); faceAdder.addVertex(vertices[2]); faceAdder.addVertex(vertices[1]);
+			faceAdder.endFace();
+			faceAdder.beginFace();
+				faceAdder.addVertex(vertices[7]); faceAdder.addVertex(vertices[4]); faceAdder.addVertex(vertices[0]); faceAdder.addVertex(vertices[3]);
+			faceAdder.endFace();
+			faceAdder.beginFace();
+				faceAdder.addVertex(vertices[4]); faceAdder.addVertex(vertices[5]); faceAdder.addVertex(vertices[1]); faceAdder.addVertex(vertices[0]);
+			faceAdder.endFace();
+			faceAdder.beginFace();
+				faceAdder.addVertex(vertices[6]); faceAdder.addVertex(vertices[7]); faceAdder.addVertex(vertices[3]); faceAdder.addVertex(vertices[2]);
+			faceAdder.endFace();
+			faceAdder.beginFace();
+				faceAdder.addVertex(vertices[0]); faceAdder.addVertex(vertices[1]); faceAdder.addVertex(vertices[2]); faceAdder.addVertex(vertices[3]);
+			faceAdder.endFace();
+			faceAdder.beginFace();
+				faceAdder.addVertex(vertices[7]); faceAdder.addVertex(vertices[6]); faceAdder.addVertex(vertices[5]); faceAdder.addVertex(vertices[4]);
+			faceAdder.endFace();
+
+		}
 		break;
 
 		case Triangle:
@@ -374,7 +506,7 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 		case Hexagon:
 		{
 
-			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+			faceAdder.beginFace();
 
 				for(std::vector<uint16_t>::size_type index = 0; index < ordinates->size(); index += 3)
 				{
@@ -383,7 +515,7 @@ void GeometricObject::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBu
 
 			faceAdder.endFace();
 
-			faceAdder.beginFace( (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256), (uint8_t)arc4random_uniform(256));
+			faceAdder.beginFace();
 
 				for(std::vector<uint16_t>::size_type index = ordinates->size(); index > 0; index -= 3)
 				{

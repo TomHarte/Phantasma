@@ -61,7 +61,7 @@ void Game::draw()
 	// draw once to populate the z buffer without a polygon offset applied
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDisable(GL_POLYGON_OFFSET_FILL);
-	(*areasByAreaID)[5]->draw(false, &batchDrawer);
+	(*areasByAreaID)[6]->draw(false, &batchDrawer);
 	batchDrawer.flush();
 
 	// draw with a polygon offset, allowing only reading from the depth buffer —
@@ -69,7 +69,7 @@ void Game::draw()
 	glDepthMask(GL_FALSE);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glEnable(GL_POLYGON_OFFSET_FILL);
-	(*areasByAreaID)[5]->draw(true, &batchDrawer);
+	(*areasByAreaID)[6]->draw(true, &batchDrawer);
 	batchDrawer.flush();
 
 //	std::cout << std::endl;
@@ -81,6 +81,7 @@ void Game::setupOpenGL()
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
+	glLineWidth(4.0f);
 
 	for(AreaMap::iterator iterator = areasByAreaID->begin(); iterator != areasByAreaID->end(); iterator++)
 		iterator->second->setupOpenGL();
@@ -100,13 +101,13 @@ void Game::advanceToTime(uint32_t millisecondsSinceArbitraryMoment)
 
 	// TODO: player movement updates out here
 	float velocityMultiplier = (float)timeDifference;
-	position[0] -= velocityMultiplier * (velocity[0] * rotationMatrix.contents[0] + velocity[2] * rotationMatrix.contents[2]);
-	position[1] -= velocityMultiplier * velocity[1];
-	position[2] -= velocityMultiplier * (velocity[0] * rotationMatrix.contents[8] + velocity[2] * rotationMatrix.contents[10]);
+//	position[0] -= velocityMultiplier * (velocity[0] * rotationMatrix.contents[0] + velocity[2] * rotationMatrix.contents[2]);
+//	position[1] -= velocityMultiplier * velocity[1];
+//	position[2] -= velocityMultiplier * (velocity[0] * rotationMatrix.contents[8] + velocity[2] * rotationMatrix.contents[10]);
 
-//	position[0] += velocityMultiplier * (velocity[0] * rotationMatrix.contents[0] + velocity[1] * rotationMatrix.contents[1] + velocity[2] * rotationMatrix.contents[2]);
-//	position[1] += velocityMultiplier * (velocity[0] * rotationMatrix.contents[4] + velocity[1] * rotationMatrix.contents[5] + velocity[2] * rotationMatrix.contents[6]);
-//	position[2] += velocityMultiplier * (velocity[0] * rotationMatrix.contents[8] + velocity[1] * rotationMatrix.contents[9] + velocity[2] * rotationMatrix.contents[10]);
+	position[0] -= velocityMultiplier * (velocity[0] * rotationMatrix.contents[0] + velocity[1] * rotationMatrix.contents[1] + velocity[2] * rotationMatrix.contents[2]);
+	position[1] -= velocityMultiplier * (velocity[0] * rotationMatrix.contents[4] + velocity[1] * rotationMatrix.contents[5] + velocity[2] * rotationMatrix.contents[6]);
+	position[2] -= velocityMultiplier * (velocity[0] * rotationMatrix.contents[8] + velocity[1] * rotationMatrix.contents[9] + velocity[2] * rotationMatrix.contents[10]);
 
 	translationMatrix = Matrix::translationMatrix(-position[0], -position[1], -position[2]);
 
