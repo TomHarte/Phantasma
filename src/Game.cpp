@@ -57,11 +57,12 @@ void Game::draw()
 	GeometricObject::setViewMatrix((rotationMatrix * translationMatrix).contents);
 
 	// 4 is the rocket
+	const uint16_t areaNumber = 1;
 
 	// draw once to populate the z buffer without a polygon offset applied
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDisable(GL_POLYGON_OFFSET_FILL);
-	(*areasByAreaID)[1]->draw(false, &batchDrawer);
+	(*areasByAreaID)[areaNumber]->draw(false, &batchDrawer);
 	batchDrawer.flush();
 
 	// draw with a polygon offset, allowing only reading from the depth buffer —
@@ -69,7 +70,7 @@ void Game::draw()
 	glDepthMask(GL_FALSE);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glEnable(GL_POLYGON_OFFSET_FILL);
-	(*areasByAreaID)[1]->draw(true, &batchDrawer);
+	(*areasByAreaID)[areaNumber]->draw(true, &batchDrawer);
 	batchDrawer.flush();
 }
 
