@@ -155,9 +155,9 @@ void GeometricObject::setProjectionMatrix(const GLfloat *projectionMatrix)
 	glUniformMatrix4fv(projectionMatrixUniform, 1, GL_FALSE, projectionMatrix);
 }
 
-void GeometricObject::setViewMatrix(const GLfloat *projectionMatrix)
+void GeometricObject::setViewMatrix(const GLfloat *viewMatrix)
 {
-	glUniformMatrix4fv(viewMatrixUniform, 1, GL_FALSE, projectionMatrix);
+	glUniformMatrix4fv(viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 }
 
 #pragma mark -
