@@ -26,6 +26,14 @@ typedef struct Vector3d
 	};
 } Vector3d;
 
+typedef enum
+{
+	DrawOrderThisFirst,
+	DrawOrderOtherFirst,
+	DrawOrderDoesntMatter,
+	DrawOrderUnknown
+} DrawOrder;
+
 class VertexBuffer;
 class DrawElementsBuffer;
 class BatchDrawer;
@@ -60,6 +68,8 @@ class Object
 		Vector3d	getOrigin();
 		Vector3d	getSize();
 
+		DrawOrder	drawOrderFromComparedTo(Vector3d &position, Object &otherObject);
+
 		virtual void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
 		virtual void draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer, BatchDrawer *batchDrawer, bool allowPolygonOffset);
 		virtual bool isDrawable();
@@ -71,6 +81,9 @@ class Object
 		Type type;
 		uint16_t objectID;
 		Vector3d origin, size;
+
+	private:
+		static DrawOrder	oneWayDrawOrderFromOfComparedTo(Vector3d &position, Object &object, Object &otherObject);
 };
 
 #include "GeometricObject.h"
