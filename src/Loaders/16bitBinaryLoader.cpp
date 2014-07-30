@@ -123,8 +123,8 @@ static Object *loadObject(StreamLoader &stream)
 			32 = collided
 	*/
 
-	// get unknown value
-	uint16_t skippedShort = stream.get16();
+	// skip unknown value
+	stream.get16();
 
 	// grab location, size
 	Vector3d position, size;
@@ -182,7 +182,10 @@ static Object *loadObject(StreamLoader &stream)
 				shared_ptr<string> conditionSource = detokenise16bitCondition(*conditionData);
 				instructions = getInstructions(conditionSource.get());
 			}
-			byteSizeOfObject = 0;
+
+			// the return below obviates the need explicitly to set this
+			// to zero bytes outstanding
+			// byteSizeOfObject = 0;
 
 			// create an object
 			return
