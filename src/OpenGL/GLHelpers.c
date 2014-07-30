@@ -26,6 +26,10 @@ size_t glptSizeOfType(GLenum type)
 
 		case GL_FLOAT:				return sizeof(GLfloat);
 		case GL_DOUBLE:				return sizeof(GLdouble);
+
+		case GL_2_BYTES:			return 2*sizeof(GLbyte);
+		case GL_3_BYTES:			return 3*sizeof(GLbyte);
+		case GL_4_BYTES:			return 4*sizeof(GLbyte);
 	}
 
 	return sizeof(int);
