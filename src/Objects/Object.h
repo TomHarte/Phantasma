@@ -68,7 +68,7 @@ class Object
 		Vector3d	getOrigin();
 		Vector3d	getSize();
 
-		DrawOrder	drawOrderFromComparedTo(Vector3d &position, Object &otherObject);
+		DrawOrder	drawOrderFromComparedTo(float *position, Object &otherObject);
 
 		virtual void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
 		virtual void draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer, BatchDrawer *batchDrawer, bool allowPolygonOffset);
@@ -83,7 +83,7 @@ class Object
 		Vector3d origin, size;
 
 	private:
-		static DrawOrder	oneWayDrawOrderFromOfComparedTo(Vector3d &position, Object &object, Object &otherObject);
+		static DrawOrder	oneWayDrawOrderFromOfComparedTo(float *position, Object &object, Object &otherObject);
 };
 
 #include "GeometricObject.h"

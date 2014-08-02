@@ -20,7 +20,7 @@ bool Object::isPlanar()									{	return false;	}
 
 Object::~Object()				{}
 
-DrawOrder Object::oneWayDrawOrderFromOfComparedTo(Vector3d &position, Object &object, Object &otherObject)
+DrawOrder Object::oneWayDrawOrderFromOfComparedTo(float *position, Object &object, Object &otherObject)
 {
 	DrawOrder axisOrder[3] = {DrawOrderUnknown, DrawOrderUnknown, DrawOrderUnknown};
 
@@ -79,7 +79,7 @@ DrawOrder Object::oneWayDrawOrderFromOfComparedTo(Vector3d &position, Object &ob
 	return DrawOrderUnknown;
 }
 
-DrawOrder Object::drawOrderFromComparedTo(Vector3d &position, Object &otherObject)
+DrawOrder Object::drawOrderFromComparedTo(float *position, Object &otherObject)
 {
 	// compose this test of two one-way tests, with the slight caveat that...
 	DrawOrder drawOrder = Object::oneWayDrawOrderFromOfComparedTo(position, *this, otherObject);
